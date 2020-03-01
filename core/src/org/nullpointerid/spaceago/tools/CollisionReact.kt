@@ -1,23 +1,13 @@
-package org.nullpointerid.spaceago.tools;
+package org.nullpointerid.spaceago.tools
 
-public class CollisionReact {
-
-    private float x, y;
-    private int width, height;
-
-    public CollisionReact(float x, float y, int width, int height) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+class CollisionReact(var x: Float, var y: Float, val width: Int, val height: Int) {
+    fun move(x: Float, y: Float) {
+        this.x = x
+        this.y = y
     }
 
-    public void move(float x, float y) {
-        this.x = x;
-        this.y = y;
+    fun collidesWith(react: CollisionReact): Boolean {
+        return x < react.x + react.width && y < react.y + react.height && x + width > react.x && y + height > react.y
     }
 
-    public boolean collidesWith(CollisionReact react) {
-        return x < react.x + react.width && y < react.y + react.height && x + width > react.x && y + height > react.y;
-    }
 }

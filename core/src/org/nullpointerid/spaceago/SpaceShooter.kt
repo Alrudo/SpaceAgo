@@ -1,38 +1,30 @@
-package org.nullpointerid.spaceago;
+package org.nullpointerid.spaceago
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import org.nullpointerid.spaceago.screens.MainMenuScreen;
-import org.nullpointerid.spaceago.tools.MovingBackground;
+import com.badlogic.gdx.Game
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import org.nullpointerid.spaceago.screens.MainMenuScreen
+import org.nullpointerid.spaceago.tools.MovingBackground
 
-public class SpaceShooter extends Game {
-
-    public static final int WIDTH = 600;
-    public static final int HEIGHT = 800;
-    public static final String TITLE = "SpaceAgo";
-
-    public SpriteBatch batch;
-    public MovingBackground movingBackground;
-
-    @Override
-    public void create() {
-        batch = new SpriteBatch();
-        this.movingBackground = new MovingBackground();
-        this.setScreen(new MainMenuScreen(this));
+class SpaceShooter : Game() {
+    companion object {
+        const val WIDTH = 600
+        const val HEIGHT = 800
+        const val TITLE = "SpaceAgo"
     }
 
-    @Override
-    public void render() {
-        super.render();
+    lateinit var batch: SpriteBatch
+    lateinit var movingBackground: MovingBackground
+
+    override fun create() {
+        batch = SpriteBatch()
+        movingBackground = MovingBackground()
+        setScreen(MainMenuScreen(this))
     }
 
-    @Override
-    public void dispose() {
-    }
+    override fun dispose() {}
 
-    @Override
-    public void resize(int width, int height) {
-        this.movingBackground.resize(width, height);
-        super.resize(width, height);
+    override fun resize(width: Int, height: Int) {
+        movingBackground.resize(width, height)
+        super.resize(width, height)
     }
 }

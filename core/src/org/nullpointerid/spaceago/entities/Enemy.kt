@@ -1,51 +1,36 @@
-package org.nullpointerid.spaceago.entities;
+package org.nullpointerid.spaceago.entities
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import org.nullpointerid.spaceago.SpaceShooter;
-import org.nullpointerid.spaceago.tools.CollisionReact;
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import org.nullpointerid.spaceago.SpaceShooter
+import org.nullpointerid.spaceago.screens.GameOverScreen
+import org.nullpointerid.spaceago.screens.MainGameScreen
+import org.nullpointerid.spaceago.tools.CollisionReact
 
-public class Enemy {
-    public static final int WIDTH = 64;
-    public static final int HEIGHT = 64;
-    public static final int SPEED = 250;
-    private static Texture texture;
-
-    private float x, y;
-    private CollisionReact react;
-    public boolean remove = false;
-
-    public Enemy(float x) {
-        this.x = x;
-        this.y = SpaceShooter.HEIGHT;
-        this.react = new CollisionReact(x, y, WIDTH, HEIGHT);
-
-        if (texture == null)
-            texture = new Texture("images/corona1.png");
+class Enemy(
+        x: Float,
+        y: Float = SpaceShooter.HEIGHT.toFloat()
+) : Entity(x, y, width, height, texture) {
+    companion object {
+        const val width: Int = 64
+        const val height: Int = 64
+        private val texture: Texture = Texture("images/corona1.png")
+        const val SPEED = 250
     }
 
-    public void update(float deltaTime) {
-        y -= SPEED * deltaTime;
-        if (y < -HEIGHT)
-            remove = true;
-
-        react.move(x, y);
+    override fun action(scene: MainGameScreen) {
+        if (collidesWith(scene.player)) {
+            this.remove = true
+            scene.player.health -= 0.1f
+        }
+    }
+    override fun update(deltaTime: Float) {
+        posY -= SPEED * deltaTime
+        if (posY < -height) remove = true
+        changePos(posX, posY)
     }
 
-    public void render(SpriteBatch batch) {
-        batch.draw(texture, x, y, WIDTH, HEIGHT);
+    override fun render(batch: SpriteBatch) {
+        batch.draw(texture, posX, posY, width.toFloat(), height.toFloat())
     }
-
-    public CollisionReact getCollisionReact() {
-        return react;
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
 }
