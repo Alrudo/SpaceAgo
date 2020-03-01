@@ -7,12 +7,12 @@ import org.nullpointerid.spaceago.screens.MainGameScreen
 abstract class Entity(var posX: Float, var posY: Float, val width: Int, val height: Int, val texture: Texture) {
     var remove: Boolean = false
 
-    fun changePos(x: Float, y: Float) {
+    open fun changePos(x: Float, y: Float) {
         this.posX = x
         this.posY = y
     }
 
-    fun collidesWith(react: Entity): Boolean {
+    open fun collidesWith(react: Entity): Boolean {
         return posX < react.posX + react.width && posY < react.posY + react.height && posX + width > react.posX && posY + height > react.posY
     }
 

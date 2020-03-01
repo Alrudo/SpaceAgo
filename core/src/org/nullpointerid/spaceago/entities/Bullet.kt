@@ -20,7 +20,7 @@ class Bullet(
             if (this.collidesWith(enemy)) {
                 this.remove = true
                 enemy.remove = true
-                scene.addEntity(Explosion(enemy.posX, enemy.posY))
+                scene.addEntity(Explosion(enemy.posX + 24f, enemy.posY))
                 scene.player.score += 100
             }
         }

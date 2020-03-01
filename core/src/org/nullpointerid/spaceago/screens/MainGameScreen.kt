@@ -14,6 +14,7 @@ import org.nullpointerid.spaceago.entities.Enemy
 import org.nullpointerid.spaceago.entities.Entity
 import org.nullpointerid.spaceago.entities.Player
 import org.nullpointerid.spaceago.tools.MovingBackground
+import org.nullpointerid.spaceago.tools.limitByRange
 import java.awt.event.MouseEvent
 import kotlin.random.Random
 
@@ -106,25 +107,13 @@ class MainGameScreen(private val game: SpaceShooter) : Screen {
     }
 
     fun move() {
+        Gdx.input.isCursorCatched = false
         cursorLocation.x = Gdx.input.x.toFloat()
         cursorLocation.y = screenHeight - Gdx.input.y.toFloat()
-        player.posX = cursorLocation.x - player.width / 2
-        player.posY = cursorLocation.y - player.height / 2
-        if (!((cursorLocation.x < screenWidth) and (cursorLocation.x > 0) and (cursorLocation.y < screenHeight) and (cursorLocation.y > 0))) {
-            Gdx.input.isCursorCatched = false
-            if (cursorLocation.y <= 0) {
-                player.posY = 0f
-            }
-            if (cursorLocation.x <= 0) {
-                player.posX = 0f
-            }
-            if (cursorLocation.y >= screenHeight) {
-                player.posY = 0f
-            }
-            if (cursorLocation.x >= screenWidth) {
-                cursorLocation.x = 0f
-            }
-        } else { //Gdx.input.setCursorCatched(true);
+        player.changePos(
+                (cursorLocation.x - player.width / 2).limitByRange(0f - 32f, screenWidth - player.width.toFloat() + 32f),
+                (cursorLocation.y - player.height / 2).limitByRange(0f - 16f, screenHeight - player.height.toFloat())
+        )
 /*
             //pm = new Pixmap(Gdx.files.internal("xxx.png"));
             //cursor = Gdx.graphics.newCursor(pm, 2, 2);
@@ -143,7 +132,6 @@ class MainGameScreen(private val game: SpaceShooter) : Screen {
             }
 
              */
-        }
     }
 
     override fun resize(width: Int, height: Int) {}
