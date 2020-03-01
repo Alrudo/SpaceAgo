@@ -1,7 +1,6 @@
 package org.nullpointerid.spaceago.entities
 
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.screens.MainGameScreen
 

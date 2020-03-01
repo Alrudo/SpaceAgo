@@ -3,9 +3,7 @@ package org.nullpointerid.spaceago.entities
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import org.nullpointerid.spaceago.SpaceShooter
-import org.nullpointerid.spaceago.screens.GameOverScreen
 import org.nullpointerid.spaceago.screens.MainGameScreen
-import org.nullpointerid.spaceago.tools.CollisionReact
 
 class Enemy(
         x: Float,
@@ -24,6 +22,7 @@ class Enemy(
             scene.player.health -= 0.1f
         }
     }
+
     override fun update(deltaTime: Float) {
         posY -= SPEED * deltaTime
         if (posY < -height) remove = true

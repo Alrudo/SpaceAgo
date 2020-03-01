@@ -13,7 +13,7 @@ class MovingBackground {
     private var finalSpeed: Int
     private var imageScale: Float
     private var fixedSpeed: Boolean
-    fun updateRender(dt: Float, batch: SpriteBatch?) {
+    fun updateRender(dt: Float, batch: SpriteBatch) {
         if (speed < finalSpeed) {
             speed += REACH_ACCELERATION * dt.toInt()
             if (speed > finalSpeed) {
@@ -37,7 +37,7 @@ class MovingBackground {
             y2 = y1 + img.height * imageScale
         }
         //Render
-        batch!!.draw(img, 0f, y1, SpaceShooter.WIDTH.toFloat(), img.height * imageScale)
+        batch.draw(img, 0f, y1, SpaceShooter.WIDTH.toFloat(), img.height * imageScale)
         batch.draw(img, 0f, y2, SpaceShooter.WIDTH.toFloat(), img.height * imageScale)
     }
 

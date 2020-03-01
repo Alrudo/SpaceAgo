@@ -2,12 +2,17 @@ package org.nullpointerid.spaceago.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
-import com.badlogic.gdx.graphics.*
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.math.Vector2
 import org.nullpointerid.spaceago.SpaceShooter
-import org.nullpointerid.spaceago.entities.*
+import org.nullpointerid.spaceago.entities.Bullet
+import org.nullpointerid.spaceago.entities.Enemy
+import org.nullpointerid.spaceago.entities.Entity
+import org.nullpointerid.spaceago.entities.Player
 import org.nullpointerid.spaceago.tools.MovingBackground
 import java.awt.event.MouseEvent
 import kotlin.random.Random
@@ -35,7 +40,7 @@ class MainGameScreen(private val game: SpaceShooter) : Screen {
         game.movingBackground.setSpeed(MovingBackground.DEFAULT_SPEED)
     }
 
-    fun addEntity(entity: Entity){
+    fun addEntity(entity: Entity) {
         entityAddQueue.add(entity)
     }
 
@@ -66,7 +71,7 @@ class MainGameScreen(private val game: SpaceShooter) : Screen {
 
         //Remove entities
         // Jätab listis alles need, kellel klapib tingimus !entity.remove
-        entities.retainAll { entity ->  !entity.remove }
+        entities.retainAll { entity -> !entity.remove }
 
         // Adds entities that were queued
         entities.addAll(entityAddQueue)

@@ -5,7 +5,6 @@ import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
 import org.nullpointerid.spaceago.SpaceShooter
@@ -21,14 +20,24 @@ class MainMenuScreen(private val game: SpaceShooter) : Screen {
         private const val PLAY_BUTTON_Y = 325
     }
 
-    private val background: Texture
-    private val playActive: Texture
-    private val playInActive: Texture
-    private val exitActive: Texture
-    private val exitInActive: Texture
-    private val fontGenerator: FreeTypeFontGenerator
-    private val fontParameter: FreeTypeFontParameter
-    private val font: BitmapFont
+    private val background = Texture("images/menuBackg.jfif")
+    private val playActive = Texture("images/play_button_active.png")
+    private val playInActive = Texture("images/play_button_inactive.png")
+    private val exitActive = Texture("images/exit_button_active.png")
+    private val exitInActive = Texture("images/exit_button_inactive.png")
+    private val font = FreeTypeFontGenerator(Gdx.files.internal("fonts/Halo3.ttf"))
+            .generateFont(FreeTypeFontParameter().apply {
+                size = 55
+                borderWidth = 10f
+                borderColor = Color.BLACK
+                color = Color.LIGHT_GRAY
+            })
+
+    init {
+        Gdx.input.isCursorCatched = false
+        game.movingBackground.setFixedSpeed(true)
+        game.movingBackground.setSpeed(MovingBackground.DEFAULT_SPEED)
+    }
 
     override fun show() {}
     override fun render(delta: Float) {
@@ -68,22 +77,4 @@ class MainMenuScreen(private val game: SpaceShooter) : Screen {
     override fun resume() {}
     override fun hide() {}
     override fun dispose() {}
-
-    init {
-        Gdx.input.isCursorCatched = false
-        background = Texture("images/menuBackg.jfif")
-        playActive = Texture("images/play_button_active.png")
-        playInActive = Texture("images/play_button_inactive.png")
-        exitActive = Texture("images/exit_button_active.png")
-        exitInActive = Texture("images/exit_button_inactive.png")
-        fontGenerator = FreeTypeFontGenerator(Gdx.files.internal("fonts/Halo3.ttf"))
-        fontParameter = FreeTypeFontParameter()
-        fontParameter.size = 55
-        fontParameter.borderWidth = 10f
-        fontParameter.borderColor = Color.BLACK
-        fontParameter.color = Color.LIGHT_GRAY
-        font = fontGenerator.generateFont(fontParameter)
-        game.movingBackground.setFixedSpeed(true)
-        game.movingBackground.setSpeed(MovingBackground.DEFAULT_SPEED)
-    }
 }
