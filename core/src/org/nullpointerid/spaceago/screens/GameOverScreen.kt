@@ -73,7 +73,7 @@ class GameOverScreen(private val game: SpaceShooter, private val score: Int) : S
         val mainMenuLayout = GlyphLayout(scoreFont, "Main Menu")
         font.draw(game.batch, "Game over", 75f, SpaceShooter.HEIGHT - 60.toFloat())
         font2.draw(game.batch, "Score: \n$score", 75f, SpaceShooter.HEIGHT - 150.toFloat())
-        font2.draw(game.batch, "Highcore: \n$highscore", 75f, SpaceShooter.HEIGHT - 250.toFloat())
+        font2.draw(game.batch, "Highscore: \n$highscore", 75f, SpaceShooter.HEIGHT - 250.toFloat())
         val tryAgainX: Float = SpaceShooter.WIDTH / 2 - tryAgainLayout.width / 2
         val tryAgainY: Float = SpaceShooter.HEIGHT / 2 - tryAgainLayout.height / 2
         val mainMenuX: Float = SpaceShooter.WIDTH / 2 - mainMenuLayout.width / 2
