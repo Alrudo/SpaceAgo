@@ -17,8 +17,6 @@ class Enemy(
         const val SPEED = 250
     }
 
-    private var health = 0.1f
-
     override fun action(scene: MainGameScreen) {
         if (collidesWith(scene.player)) {
             this.remove = true
@@ -34,9 +32,5 @@ class Enemy(
 
     override fun render(batch: SpriteBatch) {
         batch.draw(texture, posX, posY, width.toFloat(), height.toFloat())
-    }
-
-    fun subtractFromHealth() {
-
     }
 }
