@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.screens.MainGameScreen
 
+
 class Bullet(
         x: Float,
         y: Float
@@ -21,7 +22,7 @@ class Bullet(
                 this.remove = true
                 enemy.remove = true
                 scene.addEntity(Explosion(enemy.posX + 24f, enemy.posY))
-                scene.player.score += 100
+                scene.player.addToScore(100)
             }
         }
     }
@@ -31,5 +32,4 @@ class Bullet(
         if (posY > SpaceShooter.HEIGHT) remove = true
         changePos(posX, posY)
     }
-
 }

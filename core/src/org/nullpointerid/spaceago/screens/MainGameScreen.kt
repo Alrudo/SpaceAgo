@@ -18,6 +18,7 @@ import org.nullpointerid.spaceago.tools.limitByRange
 import java.awt.event.MouseEvent
 import kotlin.random.Random
 
+
 class MainGameScreen(private val game: SpaceShooter) : Screen {
     companion object {
         private const val SHOOT_WAIT_TIME = 0.2f
@@ -32,9 +33,9 @@ class MainGameScreen(private val game: SpaceShooter) : Screen {
     private val cursorLocation = Vector2()
     private val scoreFont = BitmapFont(Gdx.files.internal("fonts/score.fnt"))
     private var asteroidSpawnTimer = Random.nextFloat() * (MAX_ENEMY_SPAWN_TIME - MIN_ENEMY_SPAWN_TIME) + MIN_ENEMY_SPAWN_TIME
+    private var entityAddQueue: MutableList<Entity> = mutableListOf()
     val player = Player(0f, 0f)
     var entities: MutableList<Entity> = mutableListOf(player)
-    var entityAddQueue: MutableList<Entity> = mutableListOf()
 
     init {
         game.movingBackground.setFixedSpeed(false)
@@ -49,9 +50,9 @@ class MainGameScreen(private val game: SpaceShooter) : Screen {
 
     override fun render(delta: Float) { // move
         move()
-        player.shootTimer += delta
-        if (Gdx.input.isButtonPressed(MouseEvent.NOBUTTON) && player.shootTimer >= SHOOT_WAIT_TIME) {
-            player.shootTimer = 0f
+        player.addToShootTimer(delta)
+        if (Gdx.input.isButtonPressed(MouseEvent.NOBUTTON) && player.getShootTimer() >= SHOOT_WAIT_TIME) {
+            player.setShootTimer(0f)
             val xOffset = 55 // bullet exit location offset
             val yOffset = 85 // bullet exit location offset
             entities.add(Bullet(player.posX + xOffset, player.posY + yOffset))
@@ -83,30 +84,30 @@ class MainGameScreen(private val game: SpaceShooter) : Screen {
         game.batch.begin()
         game.batch.draw(background, 0f, 0f)
         game.movingBackground.updateRender(delta, game.batch)
-        val scoreLayout = GlyphLayout(scoreFont, "" + player.score)
+        val scoreLayout = GlyphLayout(scoreFont, "" + player.getScore())
         scoreFont.draw(game.batch, scoreLayout, Gdx.graphics.width / 2 - scoreLayout.width / 2, Gdx.graphics.height - scoreLayout.height - 10)
         player.render(game.batch)
 
         entities.forEach { it.render(game.batch) }
 
         game.batch.color = when {
-            player.health > 0.6f -> Color.GREEN
-            player.health > 0.2f -> Color.ORANGE
+            player.getHealth() > 0.6f -> Color.GREEN
+            player.getHealth() > 0.2f -> Color.ORANGE
             else -> Color.RED
         }
 
-        game.batch.draw(blank, 0f, 0f, Gdx.graphics.width * player.health, 5f)
+        game.batch.draw(blank, 0f, 0f, Gdx.graphics.width * player.getHealth(), 5f)
         game.batch.color = Color.WHITE
         game.batch.end()
 
         // If dead, go to game over
-        if (player.health <= 0) {
+        if (player.getHealth() <= 0) {
             dispose()
-            game.screen = GameOverScreen(game, player.score)
+            game.screen = GameOverScreen(game, player.getScore())
         }
     }
 
-    fun move() {
+    private fun move() {
         Gdx.input.isCursorCatched = false
         cursorLocation.x = Gdx.input.x.toFloat()
         cursorLocation.y = screenHeight - Gdx.input.y.toFloat()

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.screens.MainGameScreen
 
+
 class Enemy(
         x: Float,
         y: Float = SpaceShooter.HEIGHT.toFloat()
@@ -16,10 +17,12 @@ class Enemy(
         const val SPEED = 250
     }
 
+    private var health = 0.1f
+
     override fun action(scene: MainGameScreen) {
         if (collidesWith(scene.player)) {
             this.remove = true
-            scene.player.health -= 0.1f
+            scene.player.subtractFromHealth(0.1f)
         }
     }
 
@@ -31,5 +34,9 @@ class Enemy(
 
     override fun render(batch: SpriteBatch) {
         batch.draw(texture, posX, posY, width.toFloat(), height.toFloat())
+    }
+
+    fun subtractFromHealth() {
+
     }
 }
