@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.screens.MainGameScreen
 
-class Enemy(
+class SimpleEnemy(
         x: Float,
         y: Float = SpaceShooter.HEIGHT.toFloat()
 ) : Entity(x, y, width, height, texture) {

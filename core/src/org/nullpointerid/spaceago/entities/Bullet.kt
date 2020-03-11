@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.screens.MainGameScreen
 
+
 class Bullet(
         x: Float,
         y: Float
@@ -16,7 +17,7 @@ class Bullet(
     }
 
     override fun action(scene: MainGameScreen) {
-        scene.entities.filterIsInstance<Enemy>().forEach { enemy ->
+        scene.entities.filterIsInstance<SimpleEnemy>().forEach { enemy ->
             if (this.collidesWith(enemy)) {
                 this.remove = true
                 enemy.remove = true
@@ -31,5 +32,4 @@ class Bullet(
         if (posY > SpaceShooter.HEIGHT) remove = true
         changePos(posX, posY)
     }
-
 }

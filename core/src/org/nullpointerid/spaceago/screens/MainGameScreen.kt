@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.math.Vector2
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.entities.Bullet
-import org.nullpointerid.spaceago.entities.Enemy
+import org.nullpointerid.spaceago.entities.SimpleEnemy
 import org.nullpointerid.spaceago.entities.Entity
 import org.nullpointerid.spaceago.entities.Player
 import org.nullpointerid.spaceago.tools.MovingBackground
@@ -61,7 +61,7 @@ class MainGameScreen(private val game: SpaceShooter) : Screen {
         asteroidSpawnTimer -= delta
         if (asteroidSpawnTimer <= 0) {
             asteroidSpawnTimer = Random.nextFloat() * (MAX_ENEMY_SPAWN_TIME - MIN_ENEMY_SPAWN_TIME) + MIN_ENEMY_SPAWN_TIME
-            entities.add(Enemy(Random.nextInt(Gdx.graphics.width - Enemy.width).toFloat()))
+            entities.add(SimpleEnemy(Random.nextInt(Gdx.graphics.width - SimpleEnemy.width).toFloat()))
         }
 
         //Update entities
