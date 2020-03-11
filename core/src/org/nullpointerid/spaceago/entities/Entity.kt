@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import org.nullpointerid.spaceago.screens.MainGameScreen
 
+
 abstract class Entity(var posX: Float, var posY: Float, val width: Int, val height: Int, val texture: Texture) {
     var remove: Boolean = false
 
@@ -23,5 +24,4 @@ abstract class Entity(var posX: Float, var posY: Float, val width: Int, val heig
     open fun render(batch: SpriteBatch) {
         batch.draw(texture, posX, posY)
     }
-
 }
