@@ -19,7 +19,7 @@ class SimpleEnemy(
     override fun action(scene: MainGameScreen) {
         if (collidesWith(scene.player)) {
             this.remove = true
-            scene.player.health -= 0.1f
+            scene.player.damage(0.1f)
         }
     }
 

@@ -1,6 +1,7 @@
 package org.nullpointerid.spaceago.entities
 
 import com.badlogic.gdx.graphics.Texture
+import kotlin.math.max
 
 
 class Player(
@@ -11,42 +12,25 @@ class Player(
         const val width = 128
         const val height = 128
         val texture = Texture("images/jet1.png")
+
     }
 
-    private var health = 1f
-    private var score = 0
-    private var shootTimer = 0f
+    var shootTimer = 0f
+    var health = 1f
+        private set
+    var score = 0
+        private set
 
-    fun getHealth(): Float {
-        return health
+    fun damage(damage: Float) {
+        health -= max(0f, damage)
     }
 
-    fun setHealth(health: Float) {
-        this.health = health
+    fun heal(heal: Float) {
+        health += max(0f, heal)
     }
 
-    fun subtractFromHealth(damage: Float) {
-        health -= damage
-    }
-
-    fun addToHealth(healAmount: Float) {
-        health += healAmount
-    }
-
-    fun getScore(): Int {
-        return score
-    }
-
-    fun addToScore(score: Int) {
-        this.score += score
-    }
-
-    fun getShootTimer(): Float {
-        return shootTimer
-    }
-
-    fun setShootTimer(shootTimer: Float) {
-        this.shootTimer = shootTimer
+    fun addScore(score: Int) {
+        this.score += max(0, score)
     }
 
     fun addToShootTimer(shootTimer: Float) {
