@@ -51,8 +51,8 @@ class MainGameScreen(private val game: SpaceShooter) : Screen {
     override fun render(delta: Float) { // move
         move()
         player.addToShootTimer(delta)
-        if (Gdx.input.isButtonPressed(MouseEvent.NOBUTTON) && player.getShootTimer() >= SHOOT_WAIT_TIME) {
-            player.setShootTimer(0f)
+        if (Gdx.input.isButtonPressed(MouseEvent.NOBUTTON) && player.shootTimer >= SHOOT_WAIT_TIME) {
+            player.shootTimer = 0f
             val xOffset = 55 // bullet exit location offset
             val yOffset = 85 // bullet exit location offset
             entities.add(Bullet(player.posX + xOffset, player.posY + yOffset))
@@ -84,26 +84,26 @@ class MainGameScreen(private val game: SpaceShooter) : Screen {
         game.batch.begin()
         game.batch.draw(background, 0f, 0f)
         game.movingBackground.updateRender(delta, game.batch)
-        val scoreLayout = GlyphLayout(scoreFont, "" + player.getScore())
+        val scoreLayout = GlyphLayout(scoreFont, "" + player.score)
         scoreFont.draw(game.batch, scoreLayout, Gdx.graphics.width / 2 - scoreLayout.width / 2, Gdx.graphics.height - scoreLayout.height - 10)
         player.render(game.batch)
 
         entities.forEach { it.render(game.batch) }
 
         game.batch.color = when {
-            player.getHealth() > 0.6f -> Color.GREEN
-            player.getHealth() > 0.2f -> Color.ORANGE
+            player.health > 0.6f -> Color.GREEN
+            player.health > 0.2f -> Color.ORANGE
             else -> Color.RED
         }
 
-        game.batch.draw(blank, 0f, 0f, Gdx.graphics.width * player.getHealth(), 5f)
+        game.batch.draw(blank, 0f, 0f, Gdx.graphics.width * player.health, 5f)
         game.batch.color = Color.WHITE
         game.batch.end()
 
         // If dead, go to game over
-        if (player.getHealth() <= 0) {
+        if (player.health <= 0) {
             dispose()
-            game.screen = GameOverScreen(game, player.getScore())
+            game.screen = GameOverScreen(game, player.score)
         }
     }
 
