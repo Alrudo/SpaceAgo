@@ -11,7 +11,7 @@ class GameRenderer(assetManager: AssetManager,
                    private val controller: GameController) : Disposable {
 
     private val camera = OrthographicCamera()
-    private val viewport = FitViewport(GameConfig.)
+//    private val viewport = FitViewport(GameConfig.)
 
     fun render() {
 
