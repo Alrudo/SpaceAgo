@@ -5,10 +5,8 @@ import org.nullpointerid.spaceago.SpaceShooterOld
 import org.nullpointerid.spaceago.screen.MainGameScreenOld
 
 
-class BulletOld(
-        x: Float,
-        y: Float
-) : EntityOld(x, y, width, height, texture) {
+class Bullet(x: Float, y: Float
+) : Entity(x, y, width, height, texture) {
     companion object {
         private const val width: Int = 3
         private const val height: Int = 12
@@ -17,11 +15,11 @@ class BulletOld(
     }
 
     override fun action(scene: MainGameScreenOld) {
-        scene.entities.filterIsInstance<EnemyOld>().forEach { enemy ->
+        scene.entities.filterIsInstance<Enemy>().forEach { enemy ->
             if (this.collidesWith(enemy)) {
                 this.remove = true
                 enemy.remove = true
-                scene.addEntity(ExplosionOld(enemy.posX + 24f, enemy.posY))
+                scene.addEntity(Explosion(enemy.posX + 24f, enemy.posY))
                 scene.player.score += 100
             }
         }

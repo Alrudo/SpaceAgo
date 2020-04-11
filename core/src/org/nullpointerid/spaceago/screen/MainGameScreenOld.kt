@@ -9,10 +9,10 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.math.Vector2
 import org.nullpointerid.spaceago.SpaceShooterOld
 import org.nullpointerid.spaceago.config.GameConfig
-import org.nullpointerid.spaceago.entities.BulletOld
-import org.nullpointerid.spaceago.entities.EnemyOld
-import org.nullpointerid.spaceago.entities.EntityOld
-import org.nullpointerid.spaceago.entities.PlayerOld
+import org.nullpointerid.spaceago.entities.Bullet
+import org.nullpointerid.spaceago.entities.Enemy
+import org.nullpointerid.spaceago.entities.Entity
+import org.nullpointerid.spaceago.entities.Player
 import org.nullpointerid.spaceago.tools.MovingBackground
 import org.nullpointerid.spaceago.tools.limitByRange
 import org.nullpointerid.spaceago.utils.clearScreen
@@ -35,16 +35,16 @@ class MainGameScreenOld(private val game: SpaceShooterOld) : Screen {
     private val cursorLocation = Vector2()
     private val scoreFont = BitmapFont("fonts/score.fnt".toInternalFile())
     private var asteroidSpawnTimer = Random.nextFloat() * (MAX_ENEMY_SPAWN_TIME - MIN_ENEMY_SPAWN_TIME) + MIN_ENEMY_SPAWN_TIME
-    private var entityAddQueue: MutableList<EntityOld> = mutableListOf()
-    val player = PlayerOld(0f, 0f)
-    var entities: MutableList<EntityOld> = mutableListOf(player)
+    private var entityAddQueue: MutableList<Entity> = mutableListOf()
+    val player = Player(0f, 0f)
+    var entities: MutableList<Entity> = mutableListOf(player)
 
     init {
         game.movingBackground.setFixedSpeed(false)
         game.movingBackground.setSpeed(MovingBackground.DEFAULT_SPEED)
     }
 
-    fun addEntity(entity: EntityOld) {
+    fun addEntity(entity: Entity) {
         entityAddQueue.add(entity)
     }
 
@@ -57,14 +57,14 @@ class MainGameScreenOld(private val game: SpaceShooterOld) : Screen {
             player.shootTimer = 0f
             val xOffset = 55 // bullet exit location offset
             val yOffset = 85 // bullet exit location offset
-            entities.add(BulletOld(player.posX + xOffset, player.posY + yOffset))
+            entities.add(Bullet(player.posX + xOffset, player.posY + yOffset))
         }
 
         //Enemy spawn
         asteroidSpawnTimer -= delta
         if (asteroidSpawnTimer <= 0) {
             asteroidSpawnTimer = Random.nextFloat() * (MAX_ENEMY_SPAWN_TIME - MIN_ENEMY_SPAWN_TIME) + MIN_ENEMY_SPAWN_TIME
-            entities.add(EnemyOld(Random.nextInt(Gdx.graphics.width - EnemyOld.width).toFloat()))
+            entities.add(Enemy(Random.nextInt(Gdx.graphics.width - Enemy.width).toFloat()))
         }
 
         //Update entities

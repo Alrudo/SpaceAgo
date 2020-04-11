@@ -3,10 +3,10 @@ package org.nullpointerid.spaceago.entities
 import com.badlogic.gdx.graphics.Texture
 
 
-class PlayerOld(
+class Player(
         x: Float,
         y: Float
-) : EntityOld(x, y, width, height, texture) {
+) : Entity(x, y, width, height, texture) {
     companion object {
         const val width = 128
         const val height = 128
