@@ -1,19 +1,20 @@
-package org.nullpointerid.spaceago.screens
+package org.nullpointerid.spaceago.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
 import com.badlogic.gdx.utils.Align
-import org.nullpointerid.spaceago.SpaceShooter
+import org.nullpointerid.spaceago.SpaceShooterOld
 import org.nullpointerid.spaceago.tools.MovingBackground
+import org.nullpointerid.spaceago.utils.clearScreen
+import org.nullpointerid.spaceago.utils.toInternalFile
 
-class GameOverScreen(private val game: SpaceShooter, private val score: Int) : Screen {
+class GameOverScreenOld(private val game: SpaceShooterOld, private val score: Int) : Screen {
     companion object {
         private const val BANNER_WIDTH = 350
         private const val BANNER_HEIGHT = 100
@@ -23,7 +24,7 @@ class GameOverScreen(private val game: SpaceShooter, private val score: Int) : S
     private val gameOverBanner: Texture
     private val scoreFont: BitmapFont
 
-    private val font = FreeTypeFontGenerator(Gdx.files.internal("fonts/Halo3.ttf"))
+    private val font = FreeTypeFontGenerator("fonts/Halo3.ttf".toInternalFile())
             .generateFont(FreeTypeFontParameter().apply {
                 size = 55
                 borderWidth = 10f
@@ -31,7 +32,7 @@ class GameOverScreen(private val game: SpaceShooter, private val score: Int) : S
                 color = Color.WHITE
             })
 
-    private val font2 = FreeTypeFontGenerator(Gdx.files.internal("fonts/game_over.ttf"))
+    private val font2 = FreeTypeFontGenerator("fonts/game_over.ttf".toInternalFile())
             .generateFont(FreeTypeFontParameter().apply {
                 size = 70
                 borderWidth = 10f
@@ -50,16 +51,15 @@ class GameOverScreen(private val game: SpaceShooter, private val score: Int) : S
             prefs.flush()
         }
         //Textures and fonts
-        gameOverBanner = Texture("images/game_over.png")
-        scoreFont = BitmapFont(Gdx.files.internal("fonts/score.fnt"))
+        gameOverBanner = Texture("images/game_over.png".toInternalFile())
+        scoreFont = BitmapFont("fonts/score.fnt".toInternalFile())
         game.movingBackground.setFixedSpeed(true)
         game.movingBackground.setSpeed(MovingBackground.DEFAULT_SPEED)
     }
 
     override fun show() {}
     override fun render(delta: Float) {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+        clearScreen()
         game.batch.begin()
         game.movingBackground.updateRender(delta, game.batch)
         /*
@@ -71,13 +71,13 @@ class GameOverScreen(private val game: SpaceShooter, private val score: Int) : S
          */
         val tryAgainLayout = GlyphLayout(scoreFont, "Try Again")
         val mainMenuLayout = GlyphLayout(scoreFont, "Main Menu")
-        font.draw(game.batch, "Game over", 75f, SpaceShooter.HEIGHT - 60.toFloat())
-        font2.draw(game.batch, "Score: \n$score", 75f, SpaceShooter.HEIGHT - 150.toFloat())
-        font2.draw(game.batch, "Highscore: \n$highscore", 75f, SpaceShooter.HEIGHT - 250.toFloat())
-        val tryAgainX: Float = SpaceShooter.WIDTH / 2 - tryAgainLayout.width / 2
-        val tryAgainY: Float = SpaceShooter.HEIGHT / 2 - tryAgainLayout.height / 2
-        val mainMenuX: Float = SpaceShooter.WIDTH / 2 - mainMenuLayout.width / 2
-        val mainMenuY: Float = SpaceShooter.HEIGHT / 2 - mainMenuLayout.height / 2 - tryAgainLayout.height - 15
+        font.draw(game.batch, "Game over", 75f, SpaceShooterOld.HEIGHT - 60.toFloat())
+        font2.draw(game.batch, "Score: \n$score", 75f, SpaceShooterOld.HEIGHT - 150.toFloat())
+        font2.draw(game.batch, "Highscore: \n$highscore", 75f, SpaceShooterOld.HEIGHT - 250.toFloat())
+        val tryAgainX: Float = SpaceShooterOld.WIDTH / 2 - tryAgainLayout.width / 2
+        val tryAgainY: Float = SpaceShooterOld.HEIGHT / 2 - tryAgainLayout.height / 2
+        val mainMenuX: Float = SpaceShooterOld.WIDTH / 2 - mainMenuLayout.width / 2
+        val mainMenuY: Float = SpaceShooterOld.HEIGHT / 2 - mainMenuLayout.height / 2 - tryAgainLayout.height - 15
         val touchX = Gdx.input.x.toFloat()
         val touchY = Gdx.graphics.height - Gdx.input.y.toFloat()
         //Checks if hovering over try again button
@@ -89,14 +89,14 @@ class GameOverScreen(private val game: SpaceShooter, private val score: Int) : S
             if (touchX > tryAgainX && touchX < tryAgainX + tryAgainLayout.width && touchY > tryAgainY - tryAgainLayout.height && touchY < tryAgainY) {
                 dispose()
                 game.batch.end()
-                game.screen = MainGameScreen(game)
+                game.screen = MainGameScreenOld(game)
                 return
             }
             //main menu
             if (touchX > mainMenuX && touchX < mainMenuX + mainMenuLayout.width && touchY > mainMenuY - mainMenuLayout.height && touchY < mainMenuY) {
                 dispose()
                 game.batch.end()
-                game.screen = MainMenuScreen(game)
+                game.screen = MainMenuScreenOld(game)
                 return
             }
         }

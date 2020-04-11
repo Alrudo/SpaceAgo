@@ -2,14 +2,14 @@ package org.nullpointerid.spaceago.entities
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import org.nullpointerid.spaceago.SpaceShooter
-import org.nullpointerid.spaceago.screens.MainGameScreen
+import org.nullpointerid.spaceago.SpaceShooterOld
+import org.nullpointerid.spaceago.screen.MainGameScreenOld
 
 
-class Enemy(
+class EnemyOld(
         x: Float,
-        y: Float = SpaceShooter.HEIGHT.toFloat()
-) : Entity(x, y, width, height, texture) {
+        y: Float = SpaceShooterOld.HEIGHT.toFloat()
+) : EntityOld(x, y, width, height, texture) {
     companion object {
         const val width: Int = 64
         const val height: Int = 64
@@ -17,10 +17,10 @@ class Enemy(
         const val SPEED = 250
     }
 
-    override fun action(scene: MainGameScreen) {
+    override fun action(scene: MainGameScreenOld) {
         if (collidesWith(scene.player)) {
             this.remove = true
-            scene.player.subtractFromHealth(0.1f)
+            scene.player.health = 0.1f
         }
     }
 

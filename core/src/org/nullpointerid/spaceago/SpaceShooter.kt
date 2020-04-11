@@ -1,30 +1,24 @@
 package org.nullpointerid.spaceago
 
+import com.badlogic.gdx.Application
 import com.badlogic.gdx.Game
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import org.nullpointerid.spaceago.screens.MainMenuScreen
-import org.nullpointerid.spaceago.tools.MovingBackground
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.utils.Logger
+import org.nullpointerid.spaceago.screen.loading.LoadingScreen
 
 class SpaceShooter : Game() {
-    companion object {
-        const val WIDTH = 600
-        const val HEIGHT = 800
-        const val TITLE = "SpaceAgo"
-    }
 
-    lateinit var batch: SpriteBatch
-    lateinit var movingBackground: MovingBackground
+    val assetManager = AssetManager()
 
     override fun create() {
-        batch = SpriteBatch()
-        movingBackground = MovingBackground()
-        setScreen(MainMenuScreen(this))
+        Gdx.app.logLevel = Application.LOG_DEBUG
+        assetManager.logger.level = Logger.DEBUG
+        setScreen(LoadingScreen(this))
     }
 
-    override fun dispose() {}
-
-    override fun resize(width: Int, height: Int) {
-        movingBackground.resize(width, height)
-        super.resize(width, height)
+    override fun dispose() {
+        super.dispose()
+        assetManager.dispose()
     }
 }

@@ -1,48 +1,50 @@
-package org.nullpointerid.spaceago.screens
+package org.nullpointerid.spaceago.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.math.Vector2
-import org.nullpointerid.spaceago.SpaceShooter
-import org.nullpointerid.spaceago.entities.Bullet
-import org.nullpointerid.spaceago.entities.Enemy
-import org.nullpointerid.spaceago.entities.Entity
-import org.nullpointerid.spaceago.entities.Player
+import org.nullpointerid.spaceago.SpaceShooterOld
+import org.nullpointerid.spaceago.config.GameConfig
+import org.nullpointerid.spaceago.entities.BulletOld
+import org.nullpointerid.spaceago.entities.EnemyOld
+import org.nullpointerid.spaceago.entities.EntityOld
+import org.nullpointerid.spaceago.entities.PlayerOld
 import org.nullpointerid.spaceago.tools.MovingBackground
 import org.nullpointerid.spaceago.tools.limitByRange
+import org.nullpointerid.spaceago.utils.clearScreen
+import org.nullpointerid.spaceago.utils.toInternalFile
 import java.awt.event.MouseEvent
 import kotlin.random.Random
 
 
-class MainGameScreen(private val game: SpaceShooter) : Screen {
+class MainGameScreenOld(private val game: SpaceShooterOld) : Screen {
     companion object {
         private const val SHOOT_WAIT_TIME = 0.2f
         private const val MIN_ENEMY_SPAWN_TIME = 0.3f
         private const val MAX_ENEMY_SPAWN_TIME = 0.6f
     }
 
-    private val screenWidth: Int = SpaceShooter.WIDTH
-    private val screenHeight: Int = SpaceShooter.HEIGHT
-    private var background = Texture("images/backg.jfif")
-    private val blank = Texture("images/blank.png")
+    private val screenWidth = GameConfig.WIDTH
+    private val screenHeight = SpaceShooterOld.HEIGHT
+    private var background = Texture("images/backg.jfif".toInternalFile())
+    private val blank = Texture("images/blank.png".toInternalFile())
     private val cursorLocation = Vector2()
-    private val scoreFont = BitmapFont(Gdx.files.internal("fonts/score.fnt"))
+    private val scoreFont = BitmapFont("fonts/score.fnt".toInternalFile())
     private var asteroidSpawnTimer = Random.nextFloat() * (MAX_ENEMY_SPAWN_TIME - MIN_ENEMY_SPAWN_TIME) + MIN_ENEMY_SPAWN_TIME
-    private var entityAddQueue: MutableList<Entity> = mutableListOf()
-    val player = Player(0f, 0f)
-    var entities: MutableList<Entity> = mutableListOf(player)
+    private var entityAddQueue: MutableList<EntityOld> = mutableListOf()
+    val player = PlayerOld(0f, 0f)
+    var entities: MutableList<EntityOld> = mutableListOf(player)
 
     init {
         game.movingBackground.setFixedSpeed(false)
         game.movingBackground.setSpeed(MovingBackground.DEFAULT_SPEED)
     }
 
-    fun addEntity(entity: Entity) {
+    fun addEntity(entity: EntityOld) {
         entityAddQueue.add(entity)
     }
 
@@ -50,19 +52,19 @@ class MainGameScreen(private val game: SpaceShooter) : Screen {
 
     override fun render(delta: Float) { // move
         move()
-        player.addToShootTimer(delta)
-        if (Gdx.input.isButtonPressed(MouseEvent.NOBUTTON) && player.getShootTimer() >= SHOOT_WAIT_TIME) {
-            player.setShootTimer(0f)
+        player.shootTimer += delta
+        if (Gdx.input.isButtonPressed(MouseEvent.NOBUTTON) && player.shootTimer >= SHOOT_WAIT_TIME) {
+            player.shootTimer = 0f
             val xOffset = 55 // bullet exit location offset
             val yOffset = 85 // bullet exit location offset
-            entities.add(Bullet(player.posX + xOffset, player.posY + yOffset))
+            entities.add(BulletOld(player.posX + xOffset, player.posY + yOffset))
         }
 
         //Enemy spawn
         asteroidSpawnTimer -= delta
         if (asteroidSpawnTimer <= 0) {
             asteroidSpawnTimer = Random.nextFloat() * (MAX_ENEMY_SPAWN_TIME - MIN_ENEMY_SPAWN_TIME) + MIN_ENEMY_SPAWN_TIME
-            entities.add(Enemy(Random.nextInt(Gdx.graphics.width - Enemy.width).toFloat()))
+            entities.add(EnemyOld(Random.nextInt(Gdx.graphics.width - EnemyOld.width).toFloat()))
         }
 
         //Update entities
@@ -79,31 +81,30 @@ class MainGameScreen(private val game: SpaceShooter) : Screen {
         entities.addAll(entityAddQueue)
         entityAddQueue.clear()
 
-        Gdx.gl.glClearColor(1f, 0f, 0f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+        clearScreen(1, 0, 0, 1)
         game.batch.begin()
         game.batch.draw(background, 0f, 0f)
         game.movingBackground.updateRender(delta, game.batch)
-        val scoreLayout = GlyphLayout(scoreFont, "" + player.getScore())
+        val scoreLayout = GlyphLayout(scoreFont, "" + player.score)
         scoreFont.draw(game.batch, scoreLayout, Gdx.graphics.width / 2 - scoreLayout.width / 2, Gdx.graphics.height - scoreLayout.height - 10)
         player.render(game.batch)
 
         entities.forEach { it.render(game.batch) }
 
         game.batch.color = when {
-            player.getHealth() > 0.6f -> Color.GREEN
-            player.getHealth() > 0.2f -> Color.ORANGE
+            player.health > 0.6f -> Color.GREEN
+            player.health > 0.2f -> Color.ORANGE
             else -> Color.RED
         }
 
-        game.batch.draw(blank, 0f, 0f, Gdx.graphics.width * player.getHealth(), 5f)
+        game.batch.draw(blank, 0f, 0f, Gdx.graphics.width * player.health, 5f)
         game.batch.color = Color.WHITE
         game.batch.end()
 
         // If dead, go to game over
-        if (player.getHealth() <= 0) {
+        if (player.health <= 0) {
             dispose()
-            game.screen = GameOverScreen(game, player.getScore())
+            game.screen = GameOverScreenOld(game, player.score)
         }
     }
 
@@ -112,8 +113,8 @@ class MainGameScreen(private val game: SpaceShooter) : Screen {
         cursorLocation.x = Gdx.input.x.toFloat()
         cursorLocation.y = screenHeight - Gdx.input.y.toFloat()
         player.changePos(
-                (cursorLocation.x - player.width / 2).limitByRange(0f - 32f, screenWidth - player.width.toFloat() + 32f),
-                (cursorLocation.y - player.height / 2).limitByRange(0f - 16f, screenHeight - player.height.toFloat())
+                (cursorLocation.x - player.width / 2).limitByRange(-32f, screenWidth - player.width.toFloat() + 32f),
+                (cursorLocation.y - player.height / 2).limitByRange(-16f, screenHeight - player.height.toFloat())
         )
 /*
             //pm = new Pixmap(Gdx.files.internal("xxx.png"));

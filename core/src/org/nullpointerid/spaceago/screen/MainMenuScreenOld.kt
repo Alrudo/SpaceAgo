@@ -1,4 +1,4 @@
-package org.nullpointerid.spaceago.screens
+package org.nullpointerid.spaceago.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
@@ -7,10 +7,11 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
-import org.nullpointerid.spaceago.SpaceShooter
+import org.nullpointerid.spaceago.SpaceShooterOld
 import org.nullpointerid.spaceago.tools.MovingBackground
+import org.nullpointerid.spaceago.utils.clearScreen
 
-class MainMenuScreen(private val game: SpaceShooter) : Screen {
+class MainMenuScreenOld(private val game: SpaceShooterOld) : Screen {
     companion object {
         private const val EXIT_BUTTON_WIDTH = 150
         private const val EXIT_BUTTON_Height = 50
@@ -41,33 +42,34 @@ class MainMenuScreen(private val game: SpaceShooter) : Screen {
 
     override fun show() {}
     override fun render(delta: Float) {
+        clearScreen(1, 0, 0, 1)
         Gdx.gl.glClearColor(1f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         game.batch.begin()
         game.batch.draw(background, 0f, 0f)
         game.movingBackground.updateRender(delta, game.batch)
-        val xExit: Int = SpaceShooter.WIDTH / 2 - EXIT_BUTTON_WIDTH / 2 //X starting point
-        val xPlay: Int = SpaceShooter.WIDTH / 2 - PLAY_BUTTON_WIDTH / 2
+        val xExit: Int = SpaceShooterOld.WIDTH / 2 - EXIT_BUTTON_WIDTH / 2 //X starting point
+        val xPlay: Int = SpaceShooterOld.WIDTH / 2 - PLAY_BUTTON_WIDTH / 2
         //Menu icon
-        font.draw(game.batch, "SpaceAgo", 0f, SpaceShooter.HEIGHT - 50.toFloat())
+        font.draw(game.batch, "SpaceAgo", 0f, SpaceShooterOld.HEIGHT - 50.toFloat())
         //Start button
-        if (Gdx.input.x < xPlay + PLAY_BUTTON_WIDTH && Gdx.input.x > xPlay && SpaceShooter.HEIGHT - Gdx.input.y < PLAY_BUTTON_Y + PLAY_BUTTON_Height && SpaceShooter.HEIGHT - Gdx.input.y > PLAY_BUTTON_Y) {
-            game.batch.draw(playActive, SpaceShooter.WIDTH / 2 - PLAY_BUTTON_WIDTH / 2.toFloat(), PLAY_BUTTON_Y.toFloat(), PLAY_BUTTON_WIDTH.toFloat(), PLAY_BUTTON_Height.toFloat())
+        if (Gdx.input.x < xPlay + PLAY_BUTTON_WIDTH && Gdx.input.x > xPlay && SpaceShooterOld.HEIGHT - Gdx.input.y < PLAY_BUTTON_Y + PLAY_BUTTON_Height && SpaceShooterOld.HEIGHT - Gdx.input.y > PLAY_BUTTON_Y) {
+            game.batch.draw(playActive, SpaceShooterOld.WIDTH / 2 - PLAY_BUTTON_WIDTH / 2.toFloat(), PLAY_BUTTON_Y.toFloat(), PLAY_BUTTON_WIDTH.toFloat(), PLAY_BUTTON_Height.toFloat())
             if (Gdx.input.isTouched) {
                 dispose()
-                game.screen = MainGameScreen(game)
+                game.screen = MainGameScreenOld(game)
             }
         } else {
-            game.batch.draw(playInActive, SpaceShooter.WIDTH / 2 - PLAY_BUTTON_WIDTH / 2.toFloat(), PLAY_BUTTON_Y.toFloat(), PLAY_BUTTON_WIDTH.toFloat(), PLAY_BUTTON_Height.toFloat())
+            game.batch.draw(playInActive, SpaceShooterOld.WIDTH / 2 - PLAY_BUTTON_WIDTH / 2.toFloat(), PLAY_BUTTON_Y.toFloat(), PLAY_BUTTON_WIDTH.toFloat(), PLAY_BUTTON_Height.toFloat())
         }
         //Exit button
-        if (Gdx.input.x < xExit + EXIT_BUTTON_WIDTH && Gdx.input.x > xExit && SpaceShooter.HEIGHT - Gdx.input.y < EXIT_BUTTON_Y + EXIT_BUTTON_Height && SpaceShooter.HEIGHT - Gdx.input.y > EXIT_BUTTON_Y) {
-            game.batch.draw(exitActive, SpaceShooter.WIDTH / 2 - EXIT_BUTTON_WIDTH / 2.toFloat(), EXIT_BUTTON_Y.toFloat(), EXIT_BUTTON_WIDTH.toFloat(), EXIT_BUTTON_Height.toFloat())
+        if (Gdx.input.x < xExit + EXIT_BUTTON_WIDTH && Gdx.input.x > xExit && SpaceShooterOld.HEIGHT - Gdx.input.y < EXIT_BUTTON_Y + EXIT_BUTTON_Height && SpaceShooterOld.HEIGHT - Gdx.input.y > EXIT_BUTTON_Y) {
+            game.batch.draw(exitActive, SpaceShooterOld.WIDTH / 2 - EXIT_BUTTON_WIDTH / 2.toFloat(), EXIT_BUTTON_Y.toFloat(), EXIT_BUTTON_WIDTH.toFloat(), EXIT_BUTTON_Height.toFloat())
             if (Gdx.input.isTouched) {
                 Gdx.app.exit()
             }
         } else {
-            game.batch.draw(exitInActive, SpaceShooter.WIDTH / 2 - EXIT_BUTTON_WIDTH / 2.toFloat(), EXIT_BUTTON_Y.toFloat(), EXIT_BUTTON_WIDTH.toFloat(), EXIT_BUTTON_Height.toFloat())
+            game.batch.draw(exitInActive, SpaceShooterOld.WIDTH / 2 - EXIT_BUTTON_WIDTH / 2.toFloat(), EXIT_BUTTON_Y.toFloat(), EXIT_BUTTON_WIDTH.toFloat(), EXIT_BUTTON_Height.toFloat())
         }
         game.batch.end()
     }

@@ -6,10 +6,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 
 
-class Explosion(
+class ExplosionOld(
         x: Float,
         y: Float
-) : Entity(x, y, width, height, texture) {
+) : EntityOld(x, y, width, height, texture) {
     companion object {
         private const val FRAME_LENGTH = 0.2f
         private const val OFFSET = 8
