@@ -114,7 +114,7 @@ class GameRenderer(private val assetManager: AssetManager,
 
         renderer.begin(ShapeRenderer.ShapeType.Filled)
         when {
-            player.lives < 0.4f -> renderer.color = Color.RED
+            player.lives < 0.3f -> renderer.color = Color.RED
             player.lives < 0.6f -> renderer.color = Color.ORANGE
             player.lives < 0.8f -> renderer.color = Color.YELLOW
             else -> renderer.color = Color.GREEN

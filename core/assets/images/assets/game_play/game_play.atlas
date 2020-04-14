@@ -1,0 +1,48 @@
+
+game_play.png
+size: 2048,2048
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+bullet
+  rotate: false
+  xy: 2, 2
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+explosion
+  rotate: false
+  xy: 504, 410
+  size: 96, 32
+  orig: 96, 32
+  offset: 0, 0
+  index: -1
+gameplay_background
+  rotate: false
+  xy: 2, 1046
+  size: 1777, 1000
+  orig: 1777, 1000
+  offset: 0, 0
+  index: -1
+moving_background
+  rotate: false
+  xy: 504, 444
+  size: 800, 600
+  orig: 800, 600
+  offset: 0, 0
+  index: -1
+player
+  rotate: false
+  xy: 1781, 1918
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+simple_enemy
+  rotate: false
+  xy: 2, 20
+  size: 500, 1024
+  orig: 500, 1024
+  offset: 0, 0
+  index: -1

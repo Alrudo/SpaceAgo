@@ -53,6 +53,7 @@ class GameController {
         if (Input.Keys.A.isKeyPressed()) xSpeed = -Player.MAX_SPEED
         if (Input.Keys.W.isKeyPressed()) ySpeed = Player.MAX_SPEED
         if (Input.Keys.S.isKeyPressed()) ySpeed = -Player.MAX_SPEED
+        if (Input.Keys.S.isKeyPressed())
 
         player.x += xSpeed
         player.y += ySpeed
