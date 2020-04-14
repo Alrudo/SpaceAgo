@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
 import org.nullpointerid.spaceago.SpaceShooterOld
-import org.nullpointerid.spaceago.tools.MovingBackground
+import org.nullpointerid.spaceago.tools.MovingBackgroundOld
 import org.nullpointerid.spaceago.utils.clearScreen
 
 class MainMenuScreenOld(private val game: SpaceShooterOld) : Screen {
@@ -36,8 +36,8 @@ class MainMenuScreenOld(private val game: SpaceShooterOld) : Screen {
 
     init {
         Gdx.input.isCursorCatched = false
-        game.movingBackground.setFixedSpeed(true)
-        game.movingBackground.setSpeed(MovingBackground.DEFAULT_SPEED)
+        game.movingBackgroundOld.setFixedSpeed(true)
+        game.movingBackgroundOld.setSpeed(MovingBackgroundOld.DEFAULT_SPEED)
     }
 
     override fun show() {}
@@ -47,7 +47,7 @@ class MainMenuScreenOld(private val game: SpaceShooterOld) : Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         game.batch.begin()
         game.batch.draw(background, 0f, 0f)
-        game.movingBackground.updateRender(delta, game.batch)
+        game.movingBackgroundOld.updateRender(delta, game.batch)
         val xExit: Int = SpaceShooterOld.WIDTH / 2 - EXIT_BUTTON_WIDTH / 2 //X starting point
         val xPlay: Int = SpaceShooterOld.WIDTH / 2 - PLAY_BUTTON_WIDTH / 2
         //Menu icon

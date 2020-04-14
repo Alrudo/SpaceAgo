@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.badlogic.gdx.math.Circle
+import com.badlogic.gdx.math.Rectangle
 import java.awt.Color
 
 @JvmOverloads  // if you want to mix Java and Kotlin
@@ -30,7 +30,6 @@ inline fun ShapeRenderer.use(action: () -> Unit) {
     end()
 }
 
-@JvmOverloads
-fun ShapeRenderer.circle(c: Circle, segments: Int = 30) {
-    circle(c.x, c.y, c.radius, segments)
+fun ShapeRenderer.rectangle(r: Rectangle, width: Float, height: Float) {
+    rect(r.x, r.y, width, height)
 }

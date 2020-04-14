@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.viewport.Viewport
 
 @JvmOverloads
-fun Viewport.drawGrid(renderer: ShapeRenderer, cellSize: Int = 1) {
+fun Viewport.drawGrid(renderer: ShapeRenderer, cellSize: Float = 1f) {
     val oldColor = renderer.color.cpy() // copy the previous color.
     val doubleWorldWidth = worldWidth * 2
     val doubleWorldHeight = worldHeight * 2

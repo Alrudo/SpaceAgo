@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.assets.AssetDescriptors
 import org.nullpointerid.spaceago.config.GameConfig
-import org.nullpointerid.spaceago.screen.game.GameScreen
+import org.nullpointerid.spaceago.screen.menu.MenuScreen
 import org.nullpointerid.spaceago.utils.clearScreen
 
 class LoadingScreen(private val game: SpaceShooter) : ScreenAdapter() {
@@ -17,6 +17,7 @@ class LoadingScreen(private val game: SpaceShooter) : ScreenAdapter() {
 
         private const val PROGRESS_BAR_WIDTH = GameConfig.HUD_WIDTH / 2f // world units
         private const val PROGRESS_BAR_HEIGHT = 120f // world units
+
     }
 
     private val assetManager = game.assetManager
@@ -33,10 +34,10 @@ class LoadingScreen(private val game: SpaceShooter) : ScreenAdapter() {
         viewport = FitViewport(GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT, camera)
         renderer = ShapeRenderer()
 
-        // load necessary stuff to AssetManager
-        assetManager.load(AssetDescriptors.GAME_OVER_FONT)
-        assetManager.load(AssetDescriptors.HALO_FONT)
-        assetManager.load(AssetDescriptors.HUNGER_GAMES_FONT)
+        // load necessary assets to AssetManager
+        assetManager.load(AssetDescriptors.MAIN_MENU_ATLAS)
+        assetManager.load(AssetDescriptors.GAME_OVER_ATLAS)
+        assetManager.load(AssetDescriptors.GAME_PLAY_ATLAS)
         assetManager.load(AssetDescriptors.SCORE_FONT)
 
         // blocks until all resources/assets are loaded
@@ -55,7 +56,7 @@ class LoadingScreen(private val game: SpaceShooter) : ScreenAdapter() {
         draw()
         renderer.end()
 
-        if (changeScreen) game.screen = GameScreen(game) // change screen when done.
+        if (changeScreen) game.screen = MenuScreen(game) // change screen when done.
     }
 
     override fun resize(width: Int, height: Int) {
@@ -89,7 +90,7 @@ class LoadingScreen(private val game: SpaceShooter) : ScreenAdapter() {
 
     private fun draw() {
         val progressBarX = (GameConfig.HUD_WIDTH - PROGRESS_BAR_WIDTH) / 2f // center of screen on x
-        val progressBarY = (GameConfig.HUD_HEIGHT - PROGRESS_BAR_HEIGHT) / 2 // center of screen on y
+        val progressBarY = (GameConfig.HUD_HEIGHT - PROGRESS_BAR_HEIGHT) / 2f // center of screen on y
 
         renderer.rect(progressBarX, progressBarY, progress * PROGRESS_BAR_WIDTH, PROGRESS_BAR_HEIGHT)
     }

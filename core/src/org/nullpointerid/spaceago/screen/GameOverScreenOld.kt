@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
 import com.badlogic.gdx.utils.Align
 import org.nullpointerid.spaceago.SpaceShooterOld
-import org.nullpointerid.spaceago.tools.MovingBackground
+import org.nullpointerid.spaceago.tools.MovingBackgroundOld
 import org.nullpointerid.spaceago.utils.clearScreen
 import org.nullpointerid.spaceago.utils.toInternalFile
 
@@ -53,15 +53,15 @@ class GameOverScreenOld(private val game: SpaceShooterOld, private val score: In
         //Textures and fonts
         gameOverBanner = Texture("images/game_over.png".toInternalFile())
         scoreFont = BitmapFont("fonts/score.fnt".toInternalFile())
-        game.movingBackground.setFixedSpeed(true)
-        game.movingBackground.setSpeed(MovingBackground.DEFAULT_SPEED)
+        game.movingBackgroundOld.setFixedSpeed(true)
+        game.movingBackgroundOld.setSpeed(MovingBackgroundOld.DEFAULT_SPEED)
     }
 
     override fun show() {}
     override fun render(delta: Float) {
         clearScreen()
         game.batch.begin()
-        game.movingBackground.updateRender(delta, game.batch)
+        game.movingBackgroundOld.updateRender(delta, game.batch)
         /*
         game.batch.draw(gameOverBanner, SpaceShooter.WIDTH / 2 - BANNER_WIDTH / 2, SpaceShooter.HEIGHT - BANNER_HEIGHT - 15, BANNER_WIDTH, BANNER_HEIGHT);
         GlyphLayout scoreLayout = new GlyphLayout(scoreFont, "Score: \n" + score, Color.WHITE, 0, Align.left, false);

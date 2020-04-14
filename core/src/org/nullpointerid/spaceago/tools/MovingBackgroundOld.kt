@@ -2,11 +2,10 @@ package org.nullpointerid.spaceago.tools
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import org.nullpointerid.spaceago.assets.AssetPaths
-import org.nullpointerid.spaceago.config.GameConfig
+import org.nullpointerid.spaceago.SpaceShooterOld
 import org.nullpointerid.spaceago.utils.toInternalFile
 
-class MovingBackground {
+class MovingBackgroundOld {
 
     companion object {
         const val DEFAULT_SPEED = 80
@@ -14,14 +13,24 @@ class MovingBackground {
         private const val REACH_ACCELERATION = 200
     }
 
-    var finalSpeed = DEFAULT_SPEED
-    var fixedSpeed = true
+    private val img: Texture = Texture("images/mov_background2.png".toInternalFile())
+    private var y1: Float
+    private var y2: Float
 
-    private val img = Texture(AssetPaths.MOVING_BG.toInternalFile())
-    private var y1 = 0f
-    private var y2 = img.height.toFloat()
-    private var speed = 0 // Pixels per second
-    private var imageScale = GameConfig.HUD_WIDTH / img.height.toFloat()
+    private var speed: Int // Pixels per second
+    var finalSpeed: Int
+    private var imageScale: Float
+
+    private var fixedSpeed: Boolean
+
+    init {
+        y1 = 0f
+        y2 = img.height.toFloat()
+        speed = 0
+        finalSpeed = DEFAULT_SPEED
+        imageScale = SpaceShooterOld.WIDTH / img.width.toFloat()
+        fixedSpeed = true
+    }
 
     fun updateRender(delta: Float, batch: SpriteBatch) {
         if (speed < finalSpeed) {
@@ -46,13 +55,20 @@ class MovingBackground {
         if (y2 + img.height * imageScale <= 0) {
             y2 = y1 + img.height * imageScale
         }
-
         //Render
-        batch.draw(img, 0f, y1, GameConfig.HUD_WIDTH, img.height * imageScale)
-        batch.draw(img, 0f, y2, GameConfig.HUD_WIDTH, img.height * imageScale)
+        batch.draw(img, 0f, y1, SpaceShooterOld.WIDTH.toFloat(), img.height * imageScale)
+        batch.draw(img, 0f, y2, SpaceShooterOld.WIDTH.toFloat(), img.height * imageScale)
     }
 
     fun resize(width: Int, height: Int) {
         imageScale = width / img.height.toFloat()
+    }
+
+    fun setSpeed(finalSpeed: Int) {
+        this.finalSpeed = finalSpeed
+    }
+
+    fun setFixedSpeed(fixedSpeed: Boolean) {
+        this.fixedSpeed = fixedSpeed
     }
 }

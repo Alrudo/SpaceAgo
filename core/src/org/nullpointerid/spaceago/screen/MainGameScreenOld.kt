@@ -9,12 +9,12 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.math.Vector2
 import org.nullpointerid.spaceago.SpaceShooterOld
 import org.nullpointerid.spaceago.config.GameConfig
-import org.nullpointerid.spaceago.entities.Bullet
-import org.nullpointerid.spaceago.entities.Enemy
-import org.nullpointerid.spaceago.entities.Entity
-import org.nullpointerid.spaceago.entities.Player
-import org.nullpointerid.spaceago.tools.MovingBackground
-import org.nullpointerid.spaceago.tools.limitByRange
+import org.nullpointerid.spaceago.entities.BulletOld
+import org.nullpointerid.spaceago.entities.EnemyOld
+import org.nullpointerid.spaceago.entities.EntityOld
+import org.nullpointerid.spaceago.entities.PlayerOld
+import org.nullpointerid.spaceago.tools.MovingBackgroundOld
+//import org.nullpointerid.spaceago.tools.limitByRange
 import org.nullpointerid.spaceago.utils.clearScreen
 import org.nullpointerid.spaceago.utils.toInternalFile
 import java.awt.event.MouseEvent
@@ -35,17 +35,17 @@ class MainGameScreenOld(private val game: SpaceShooterOld) : Screen {
     private val cursorLocation = Vector2()
     private val scoreFont = BitmapFont("fonts/score.fnt".toInternalFile())
     private var asteroidSpawnTimer = Random.nextFloat() * (MAX_ENEMY_SPAWN_TIME - MIN_ENEMY_SPAWN_TIME) + MIN_ENEMY_SPAWN_TIME
-    private var entityAddQueue: MutableList<Entity> = mutableListOf()
-    val player = Player(0f, 0f)
-    var entities: MutableList<Entity> = mutableListOf(player)
+    private var entityOldAddQueue: MutableList<EntityOld> = mutableListOf()
+    val player = PlayerOld(0f, 0f)
+    var entityOlds: MutableList<EntityOld> = mutableListOf(player)
 
     init {
-        game.movingBackground.setFixedSpeed(false)
-        game.movingBackground.setSpeed(MovingBackground.DEFAULT_SPEED)
+        game.movingBackgroundOld.setFixedSpeed(false)
+        game.movingBackgroundOld.setSpeed(MovingBackgroundOld.DEFAULT_SPEED)
     }
 
-    fun addEntity(entity: Entity) {
-        entityAddQueue.add(entity)
+    fun addEntity(entityOld: EntityOld) {
+        entityOldAddQueue.add(entityOld)
     }
 
     override fun show() {}
@@ -57,39 +57,39 @@ class MainGameScreenOld(private val game: SpaceShooterOld) : Screen {
             player.shootTimer = 0f
             val xOffset = 55 // bullet exit location offset
             val yOffset = 85 // bullet exit location offset
-            entities.add(Bullet(player.posX + xOffset, player.posY + yOffset))
+            entityOlds.add(BulletOld(player.posX + xOffset, player.posY + yOffset))
         }
 
         //Enemy spawn
         asteroidSpawnTimer -= delta
         if (asteroidSpawnTimer <= 0) {
             asteroidSpawnTimer = Random.nextFloat() * (MAX_ENEMY_SPAWN_TIME - MIN_ENEMY_SPAWN_TIME) + MIN_ENEMY_SPAWN_TIME
-            entities.add(Enemy(Random.nextInt(Gdx.graphics.width - Enemy.width).toFloat()))
+            entityOlds.add(EnemyOld(Random.nextInt(Gdx.graphics.width - EnemyOld.width).toFloat()))
         }
 
         //Update entities
-        entities.forEach { entity ->
+        entityOlds.forEach { entity ->
             entity.update(delta)
             entity.action(this)
         }
 
         //Remove entities
         // Jätab listis alles need, kellel klapib tingimus !entity.remove
-        entities.retainAll { entity -> !entity.remove }
+        entityOlds.retainAll { entity -> !entity.remove }
 
         // Adds entities that were queued
-        entities.addAll(entityAddQueue)
-        entityAddQueue.clear()
+        entityOlds.addAll(entityOldAddQueue)
+        entityOldAddQueue.clear()
 
         clearScreen(1, 0, 0, 1)
         game.batch.begin()
         game.batch.draw(background, 0f, 0f)
-        game.movingBackground.updateRender(delta, game.batch)
+        game.movingBackgroundOld.updateRender(delta, game.batch)
         val scoreLayout = GlyphLayout(scoreFont, "" + player.score)
         scoreFont.draw(game.batch, scoreLayout, Gdx.graphics.width / 2 - scoreLayout.width / 2, Gdx.graphics.height - scoreLayout.height - 10)
         player.render(game.batch)
 
-        entities.forEach { it.render(game.batch) }
+        entityOlds.forEach { it.render(game.batch) }
 
         game.batch.color = when {
             player.health > 0.6f -> Color.GREEN
@@ -112,10 +112,10 @@ class MainGameScreenOld(private val game: SpaceShooterOld) : Screen {
         Gdx.input.isCursorCatched = false
         cursorLocation.x = Gdx.input.x.toFloat()
         cursorLocation.y = screenHeight - Gdx.input.y.toFloat()
-        player.changePos(
-                (cursorLocation.x - player.width / 2).limitByRange(-32f, screenWidth - player.width.toFloat() + 32f),
-                (cursorLocation.y - player.height / 2).limitByRange(-16f, screenHeight - player.height.toFloat())
-        )
+//        player.changePos(
+//                (cursorLocation.x - player.width / 2).limitByRange(-32f, screenWidth - player.width.toFloat() + 32f),
+//                (cursorLocation.y - player.height / 2).limitByRange(-16f, screenHeight - player.height.toFloat())
+//        )
 /*
             //pm = new Pixmap(Gdx.files.internal("xxx.png"));
             //cursor = Gdx.graphics.newCursor(pm, 2, 2);

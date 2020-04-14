@@ -1,33 +1,28 @@
 package org.nullpointerid.spaceago.entities
 
-import com.badlogic.gdx.graphics.Texture
-import org.nullpointerid.spaceago.SpaceShooterOld
-import org.nullpointerid.spaceago.screen.MainGameScreenOld
+import com.badlogic.gdx.math.Rectangle
+import org.nullpointerid.spaceago.utils.GdxArray
 
+class Bullet : EntityBase() {
 
-class Bullet(x: Float, y: Float
-) : Entity(x, y, width, height, texture) {
     companion object {
-        private const val width: Int = 3
-        private const val height: Int = 12
-        private val texture: Texture = Texture("images/bullet.png")
-        const val SPEED = 500
+
+        const val TEXTURE_WIDTH = 0.25f
+        const val TEXTURE_HEIGHT = 0.25f
+
+        const val BOUNDS_X_OFFSET = 0.07f
+        const val BOUNDS_Y_OFFSET = 0.04f
+
+        const val BOUNDS_WIDTH = 0.1f
+        const val BOUNDS_HEIGHT = 0.2f
+
+        const val MAX_SPEED = 0.15f
     }
 
-    override fun action(scene: MainGameScreenOld) {
-        scene.entities.filterIsInstance<Enemy>().forEach { enemy ->
-            if (this.collidesWith(enemy)) {
-                this.remove = true
-                enemy.remove = true
-                scene.addEntity(Explosion(enemy.posX + 24f, enemy.posY))
-                scene.player.score += 100
-            }
-        }
-    }
+    private val bound = Rectangle(0f, 0f, BOUNDS_WIDTH, BOUNDS_HEIGHT)
+    override val bounds = GdxArray<Rectangle>().apply { add(bound) }
 
-    override fun update(deltaTime: Float) {
-        posY += SPEED * deltaTime
-        if (posY > SpaceShooterOld.HEIGHT) remove = true
-        changePos(posX, posY)
+    override fun updateBounds() {
+        bound.setPosition(x + BOUNDS_X_OFFSET, y + BOUNDS_Y_OFFSET)
     }
 }

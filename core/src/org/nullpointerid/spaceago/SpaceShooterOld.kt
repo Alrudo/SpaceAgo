@@ -3,7 +3,7 @@ package org.nullpointerid.spaceago
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import org.nullpointerid.spaceago.screen.MainMenuScreenOld
-import org.nullpointerid.spaceago.tools.MovingBackground
+import org.nullpointerid.spaceago.tools.MovingBackgroundOld
 
 @Deprecated("Old Version", ReplaceWith("SpaceShooter"), DeprecationLevel.WARNING)
 class SpaceShooterOld : Game() {
@@ -14,18 +14,18 @@ class SpaceShooterOld : Game() {
     }
 
     lateinit var batch: SpriteBatch
-    lateinit var movingBackground: MovingBackground
+    lateinit var movingBackgroundOld: MovingBackgroundOld
 
     override fun create() {
         batch = SpriteBatch()
-        movingBackground = MovingBackground()
+        movingBackgroundOld = MovingBackgroundOld()
         setScreen(MainMenuScreenOld(this))
     }
 
     override fun dispose() {}
 
     override fun resize(width: Int, height: Int) {
-        movingBackground.resize(width, height)
+        movingBackgroundOld.resize(width, height)
         super.resize(width, height)
     }
 }

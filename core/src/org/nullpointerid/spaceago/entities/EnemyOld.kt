@@ -6,10 +6,10 @@ import org.nullpointerid.spaceago.SpaceShooterOld
 import org.nullpointerid.spaceago.screen.MainGameScreenOld
 
 
-class Enemy(
+class EnemyOld(
         x: Float,
         y: Float = SpaceShooterOld.HEIGHT.toFloat()
-) : Entity(x, y, width, height, texture) {
+) : EntityOld(x, y, width, height, texture) {
     companion object {
         const val width: Int = 64
         const val height: Int = 64
