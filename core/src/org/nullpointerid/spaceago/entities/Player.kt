@@ -26,9 +26,10 @@ class Player : EntityBase() {
         const val MAX_X = GameConfig.WORLD_WIDTH - 0.9f
 
         const val MIN_Y = 0.1f
-        const val MAX_Y = MAX_X
+        const val MAX_Y = GameConfig.WORLD_WIDTH - 2.9f
 
         const val MAX_SPEED = 0.12f
+        const val SHOOT_TIMER = 0.2f
 
         const val START_X = GameConfig.WORLD_CENTER_X * 0.25f
         const val START_Y = 1f

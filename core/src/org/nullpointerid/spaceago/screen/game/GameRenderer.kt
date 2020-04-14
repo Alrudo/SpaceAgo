@@ -13,6 +13,7 @@ import org.nullpointerid.spaceago.assets.AssetDescriptors
 import org.nullpointerid.spaceago.assets.AssetPaths
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
+import org.nullpointerid.spaceago.entities.Bullet
 import org.nullpointerid.spaceago.entities.Player
 import org.nullpointerid.spaceago.entities.SimpleEnemy
 import org.nullpointerid.spaceago.utils.*
@@ -38,6 +39,7 @@ class GameRenderer(private val assetManager: AssetManager,
 
     private val player = controller.player
     private val simpleEnemies = controller.simpleEnemies
+    private val bullets = controller.bullets
 
 
     fun render() {
@@ -70,7 +72,9 @@ class GameRenderer(private val assetManager: AssetManager,
             }
 
             // Draw bullet hitboxes
-            renderer.rect(5.07f, 5.04f, 0.1f, 0.2f)
+            bullets.forEach {
+                renderer.rectangle(it.bounds[0], Bullet.BOUNDS_WIDTH, Bullet.BOUNDS_HEIGHT)
+            }
             renderer.color = oldColor
 
         }
@@ -95,21 +99,23 @@ class GameRenderer(private val assetManager: AssetManager,
         val oldColor = renderer.color.cpy()
 
         batch.use {
-            // Draw background.
+            // Draw background texture
             batch.draw(background, 0f, 0f, GameConfig.WORLD_WIDTH, GameConfig.WORLD_HEIGHT)
 
-            // Draw player.
+            // Draw player texture
             batch.color = Color.GREEN
             batch.draw(playerTexture, player.x, player.y, Player.TEXTURE_WIDTH, Player.TEXTURE_HEIGHT)
             batch.color = oldColor
 
-            // Draw simpleEnemy
+            // Draw simpleEnemy texture
             simpleEnemies.forEach {
                 batch.draw(simpleEnemyTexture, it.x, it.y, SimpleEnemy.TEXTURE_WIDTH, SimpleEnemy.TEXTURE_HEIGHT)
             }
 
-            // Draw bullet
-            batch.draw(bulletTexture, 5f, 5f, 0.25f, 0.25f)
+            // Draw bullet texture
+            bullets.forEach {
+                batch.draw(bulletTexture, it.x, it.y, Bullet.TEXTURE_WIDTH, Bullet.TEXTURE_HEIGHT)
+            }
         }
 
         renderer.begin(ShapeRenderer.ShapeType.Filled)

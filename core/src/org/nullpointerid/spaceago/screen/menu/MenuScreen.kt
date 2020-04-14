@@ -91,7 +91,7 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
             haloFont.draw(batch, layout, 20f, GameConfig.HUD_HEIGHT - layout.height)
 
             // Draw buttons
-            // Fix coordinates of the mouse using Vector and unproject and save them to vector.
+            // Fix coordinates of the mouse using Vector and unproject and save them to Vector.
             val mouseVector = Vector3().set(camera.unproject(Vector3(Gdx.input.x.toFloat(), Gdx.input.y.toFloat(), 0f)))
 
             if (inRectangle(playRect, mouseVector.x, mouseVector.y)) {
@@ -143,6 +143,7 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
     override fun dispose() {
         batch.dispose()
         renderer.dispose()
+        haloFont.dispose()
     }
 
     override fun hide() {
