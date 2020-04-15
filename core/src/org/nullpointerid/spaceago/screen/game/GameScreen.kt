@@ -2,8 +2,9 @@ package org.nullpointerid.spaceago.screen.game
 
 import com.badlogic.gdx.Screen
 import org.nullpointerid.spaceago.SpaceShooter
+import org.nullpointerid.spaceago.screen.gameover.GameOverScreen
 
-class GameScreen(game: SpaceShooter) : Screen {
+class GameScreen(private val game: SpaceShooter) : Screen {
 
     private val assetManager = game.assetManager
     private lateinit var controller: GameController
@@ -11,12 +12,15 @@ class GameScreen(game: SpaceShooter) : Screen {
 
     override fun show() {
         controller = GameController()
-        renderer = GameRenderer(assetManager, controller)
+        renderer = GameRenderer(assetManager, game, controller)
     }
 
     override fun render(delta: Float) {
+        if (controller.player.lives <= 0f) {
+            game.screen = GameOverScreen(assetManager, game, controller.score)
+        }
         controller.update(delta)
-        renderer.render()
+        renderer.render(delta)
     }
 
     override fun resize(width: Int, height: Int) {

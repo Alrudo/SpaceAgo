@@ -33,3 +33,5 @@ inline fun ShapeRenderer.use(action: () -> Unit) {
 fun ShapeRenderer.rectangle(r: Rectangle, width: Float, height: Float) {
     rect(r.x, r.y, width, height)
 }
+
+fun inRectangle(r: Rectangle, x: Float, y: Float) = r.x <= x && r.x + r.width >= x && r.y <= y && r.y + r.height >= y

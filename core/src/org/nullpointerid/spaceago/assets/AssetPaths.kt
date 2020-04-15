@@ -10,4 +10,5 @@ object AssetPaths {
     const val GAME_OVER_ATLAS = "images/assets/game_over/game_over.atlas"
     const val MAIN_MENU_ATLAS = "images/assets/main_menu/main_menu.atlas"
     const val MOVING_BG = "images/raw/game_play/moving_background.png"
+    const val EXPLOSION = "images/raw/game_play/explosion.png"
 }

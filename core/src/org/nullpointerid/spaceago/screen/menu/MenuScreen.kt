@@ -131,10 +131,6 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
         batch.draw(skin, CENTER, y, BUTTON_WIDTH, BUTTON_HEIGHT)
     }
 
-    private fun inRectangle(r: Rectangle, x: Float, y: Float): Boolean {
-        return r.x <= x && r.x + r.width >= x && r.y <= y && r.y + r.height >= y
-    }
-
     override fun resize(width: Int, height: Int) {
         viewport.update(width, height, true)
         movingBackground.resize(width, height)

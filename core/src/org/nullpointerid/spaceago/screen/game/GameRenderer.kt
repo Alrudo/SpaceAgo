@@ -3,23 +3,31 @@ package org.nullpointerid.spaceago.screen.game
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.graphics.g2d.GlyphLayout
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.*
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.FitViewport
+import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.assets.AssetDescriptors
 import org.nullpointerid.spaceago.assets.AssetPaths
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.entities.Bullet
+import org.nullpointerid.spaceago.entities.Explosion
 import org.nullpointerid.spaceago.entities.Player
 import org.nullpointerid.spaceago.entities.SimpleEnemy
+import org.nullpointerid.spaceago.screen.gameover.GameOverScreen
 import org.nullpointerid.spaceago.utils.*
 
 class GameRenderer(private val assetManager: AssetManager,
+                   private val game: SpaceShooter,
                    private val controller: GameController) : Disposable {
+
+    companion object {
+        const val BULLET_OFFSET_X = -0.08f
+        const val BULLET_OFFSET_Y = -0.03f
+    }
 
     private val camera = OrthographicCamera()
     private val uiCamera = OrthographicCamera()
@@ -34,18 +42,18 @@ class GameRenderer(private val assetManager: AssetManager,
     private val playerTexture = gameAtlas[RegionNames.PLAYER]
     private val simpleEnemyTexture = gameAtlas[RegionNames.SIMPLE_ENEMY]?.apply { flip(true, true) }
     private val bulletTexture = gameAtlas[RegionNames.BULLET]
-    private val explosionTexture = gameAtlas[RegionNames.EXPLOSION]
     private val font = BitmapFont(AssetPaths.SCORE_FONT.toInternalFile())
 
     private val player = controller.player
     private val simpleEnemies = controller.simpleEnemies
     private val bullets = controller.bullets
+    private val explosions = controller.explosions
 
 
-    fun render() {
+    fun render(delta: Float) {
         clearScreen()
 
-        renderGameplay()
+        renderGameplay(delta)
         renderUi()
 
         if (GameConfig.DEBUG_MODE) {
@@ -92,10 +100,9 @@ class GameRenderer(private val assetManager: AssetManager,
         }
     }
 
-    private fun renderGameplay() {
+    private fun renderGameplay(delta: Float) {
         viewport.apply()
         batch.projectionMatrix = camera.combined
-
         val oldColor = renderer.color.cpy()
 
         batch.use {
@@ -114,10 +121,18 @@ class GameRenderer(private val assetManager: AssetManager,
 
             // Draw bullet texture
             bullets.forEach {
-                batch.draw(bulletTexture, it.x, it.y, Bullet.TEXTURE_WIDTH, Bullet.TEXTURE_HEIGHT)
+                batch.draw(bulletTexture, it.x + BULLET_OFFSET_X, it.y + BULLET_OFFSET_Y, Bullet.TEXTURE_WIDTH, Bullet.TEXTURE_HEIGHT)
+            }
+
+            // Draw explosion texture
+            explosions.forEach {
+                it.stateTime += delta
+                batch.draw(it.animation.getKeyFrame(it.stateTime), it.x, it.y, Explosion.TEXTURE_WIDTH, Explosion.TEXTURE_HEIGHT)
+                if (it.animation.isAnimationFinished(it.stateTime)) explosions.removeValue(it, true)
             }
         }
 
+        renderer.projectionMatrix = camera.combined
         renderer.begin(ShapeRenderer.ShapeType.Filled)
         when {
             player.lives < 0.3f -> renderer.color = Color.RED
@@ -136,7 +151,5 @@ class GameRenderer(private val assetManager: AssetManager,
     }
 
     override fun dispose() {
-        renderer.dispose()
-        batch.dispose()
     }
 }

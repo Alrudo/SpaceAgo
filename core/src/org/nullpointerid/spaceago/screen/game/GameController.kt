@@ -4,6 +4,7 @@ import com.badlogic.gdx.Input
 import com.badlogic.gdx.math.MathUtils
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.entities.Bullet
+import org.nullpointerid.spaceago.entities.Explosion
 import org.nullpointerid.spaceago.entities.Player
 import org.nullpointerid.spaceago.entities.SimpleEnemy
 import org.nullpointerid.spaceago.utils.GdxArray
@@ -13,15 +14,25 @@ import kotlin.random.Random
 
 class GameController {
 
+    companion object {
+        const val BULLET_X = Player.BOUNDS_VER_WIDTH / 2f
+        const val BULLET_Y = Player.BOUNDS_VER_HEIGHT
+
+        const val EXPLOSION_X = (SimpleEnemy.BOUNDS_WIDTH - Explosion.TEXTURE_WIDTH) / 2f
+        const val EXPLOSION_Y = (SimpleEnemy.BOUNDS_HEIGHT - Explosion.TEXTURE_HEIGHT) / 2f
+    }
+
     private var simpleEnemyTimer = Random.nextFloat() * (GameConfig.MAX_ENEMY_SPAWN_TIME - GameConfig.MIN_ENEMY_SPAWN_TIME) + GameConfig.MIN_ENEMY_SPAWN_TIME
     private var playerShootTimer = 0f
     val simpleEnemies = GdxArray<SimpleEnemy>()
     val bullets = GdxArray<Bullet>()
+    val explosions = GdxArray<Explosion>()
     val player = Player().apply { setPosition(Player.START_X, Player.START_Y) }
     var score = 0
 
 
     fun update(delta: Float) {
+        if (player.lives <= 0f) return
         playerShootTimer += delta
 
         playerControl()
@@ -53,7 +64,7 @@ class GameController {
         if (Input.Keys.SPACE.isKeyPressed() && playerShootTimer > Player.SHOOT_TIMER) {
             playerShootTimer = 0f
             bullets.add(Bullet().apply {
-                setPosition(player.x + Bullet.OFFSET_X_PLAYER, player.y + Bullet.OFFSET_Y_PLAYER)
+                setPosition(player.bounds[0].x + BULLET_X, player.bounds[0].y + BULLET_Y)
             })
         }
 
@@ -75,6 +86,7 @@ class GameController {
         simpleEnemies.forEach {
             if (it.isCollidingWith(player)) {
                 simpleEnemies.removeValue(it, true)
+                explosions.add(Explosion().apply { setPosition(it.bounds[0].x + EXPLOSION_X, it.bounds[0].y + EXPLOSION_Y) })
                 score += 100
                 return true
             }
@@ -88,6 +100,7 @@ class GameController {
                 if (bullet.isCollidingWith(enemy)) {
                     bullets.removeValue(bullet, true)
                     simpleEnemies.removeValue(enemy, true)
+                    explosions.add(Explosion().apply { setPosition(enemy.bounds[0].x + EXPLOSION_X, enemy.bounds[0].y + EXPLOSION_Y) })
                     score += 100
                 }
             }
@@ -99,6 +112,8 @@ class GameController {
         simpleEnemies.forEach {
             if (it.y < -SimpleEnemy.BOUNDS_HEIGHT) simpleEnemies.removeValue(it, true)
         }
+
+        // Can be united with "isBulletCollidingWithEntity()"
         bullets.forEach {
             if (it.y > GameConfig.WORLD_HEIGHT + Bullet.BOUNDS_HEIGHT) bullets.removeValue(it, true)
         }
