@@ -9,7 +9,6 @@ import org.nullpointerid.spaceago.entities.Player
 import org.nullpointerid.spaceago.entities.SimpleEnemy
 import org.nullpointerid.spaceago.utils.GdxArray
 import org.nullpointerid.spaceago.utils.isKeyPressed
-import org.nullpointerid.spaceago.utils.logger
 import kotlin.random.Random
 
 class GameController {
@@ -27,7 +26,8 @@ class GameController {
     val simpleEnemies = GdxArray<SimpleEnemy>()
     val bullets = GdxArray<Bullet>()
     val explosions = GdxArray<Explosion>()
-    val player = Player().apply { setPosition(Player.START_X, Player.START_Y) }
+    val player = Player().apply { setPosition(2f, Player.START_Y) }
+    val secondPlayer = Player().apply { setPosition(7f, Player.START_Y) }
     var score = 0
 
 
