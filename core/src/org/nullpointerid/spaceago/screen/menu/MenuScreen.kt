@@ -24,7 +24,7 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
     companion object {
 
         private const val BUTTON_WIDTH = 200f
-        private const val CENTER = (GameConfig.HUD_WIDTH - BUTTON_WIDTH) / 2f  // center of the screen
+        const val CENTER = (GameConfig.HUD_WIDTH - BUTTON_WIDTH) / 2f  // center of the screen
     }
 
     private lateinit var batch: SpriteBatch
@@ -41,7 +41,8 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
     private val upgradesRect = Rectangle(380f, 250f, 240f, 100f)
     private val exitRect = Rectangle(450f, 100f, 100f, 100f)
 
-    private var changeScreen = false
+    private var changeToGame = false
+    private var changeToShop = false
 
     // assets variables.
     private val menuAtlas = game.assetManager[AssetDescriptors.MAIN_MENU_ATLAS]
@@ -71,7 +72,10 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
             renderDebug()
         }
 
-        if (changeScreen) game.screen = GameScreen(game)
+        when {
+            changeToGame -> game.screen = GameScreen(game)
+            changeToShop -> game.screen = UpgradeShopScreen(game)
+        }
     }
 
     private fun renderMenu(delta: Float) {
@@ -97,7 +101,7 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
                 layout.setText(menuFontYellow, "Singleplayer")
                 menuFontYellow.draw(batch, layout, CENTER - 45f, 600f + layout.height / 2f)  // draw active button if mouse is inside button hitbox.
                 if (Gdx.input.justTouched()) {  // if play button is pressed - set change screen variable to true.
-                    changeScreen = true
+                    changeToGame = true
                 }
             } else {  // draw inactive button.
                 layout.setText(menuFont, "Singleplayer")
@@ -117,6 +121,9 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
             if (inRectangle(upgradesRect, mouseVector.x, mouseVector.y)) {
                 layout.setText(menuFontYellow, "Upgrades")
                 menuFontYellow.draw(batch, layout, CENTER - 10f, 300f + layout.height / 2f)
+                if (Gdx.input.justTouched()) {
+                    changeToShop = true
+                }
             } else {
                 layout.setText(menuFont, "Upgrades")
                 menuFont.draw(batch, layout, CENTER - 10f, 300f + layout.height / 2f)
