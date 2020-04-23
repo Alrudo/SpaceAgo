@@ -132,6 +132,7 @@ class GameRenderer(private val assetManager: AssetManager,
             }
         }
 
+        // Draw player healthpoints
         renderer.projectionMatrix = camera.combined
         renderer.begin(ShapeRenderer.ShapeType.Filled)
         when {
