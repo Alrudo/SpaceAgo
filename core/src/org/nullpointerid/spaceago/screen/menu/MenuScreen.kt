@@ -4,9 +4,9 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Rectangle
@@ -17,7 +17,6 @@ import org.nullpointerid.spaceago.assets.AssetDescriptors
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.screen.game.GameScreen
-import org.nullpointerid.spaceago.tools.MovingBackground
 import org.nullpointerid.spaceago.utils.*
 
 class MenuScreen(private val game: SpaceShooter) : Screen {
@@ -25,7 +24,6 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
     companion object {
 
         private const val BUTTON_WIDTH = 200f
-        private const val BUTTON_HEIGHT = 100f
         private const val CENTER = (GameConfig.HUD_WIDTH - BUTTON_WIDTH) / 2f  // center of the screen
     }
 
@@ -38,19 +36,18 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
     private val viewport = FitViewport(GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT, camera)
 
     // save rectangle coordinates.
-    private val playRect = Rectangle(CENTER, 400f, BUTTON_WIDTH, BUTTON_HEIGHT)
-    private val exitRect = Rectangle(CENTER, 200f, BUTTON_WIDTH, BUTTON_HEIGHT)
+    private val singlePlayerRect = Rectangle(350f, 550f, 300f, 100f)
+    private val multiPlayerRect = Rectangle(350f, 400f, 300f, 100f)
+    private val upgradesRect = Rectangle(380f, 250f, 240f, 100f)
+    private val exitRect = Rectangle(450f, 100f, 100f, 100f)
 
     private var changeScreen = false
 
     // assets variables.
     private val menuAtlas = game.assetManager[AssetDescriptors.MAIN_MENU_ATLAS]
-    private val movingBackground = MovingBackground()
-    private val exitButtonActive = menuAtlas[RegionNames.MENU_QUIT_BUTTON_ACTIVE]
-    private val exitButtonIdle = menuAtlas[RegionNames.MENU_QUIT_BUTTON_IDLE]
-    private val playButtonActive = menuAtlas[RegionNames.MENU_PLAY_BUTTON_CLICKED]
-    private val playButtonIdle = menuAtlas[RegionNames.MENU_PLAY_BUTTON_IDLE]
     private val background = menuAtlas[RegionNames.MENU_BACKGROUND]
+    private val menuFont = BitmapFont("fonts/MenuFont.fnt".toInternalFile())
+    private val menuFontYellow = BitmapFont("fonts/MenuFontYellow.fnt".toInternalFile())
     private val haloFont = FreeTypeFontGenerator("fonts/Halo3.ttf".toInternalFile()).generateFont(
             FreeTypeFontGenerator.FreeTypeFontParameter().apply {
                 size = 75
@@ -84,7 +81,7 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
         batch.use {
             // Draw background
             batch.draw(background, 0f, 0f)
-            movingBackground.updateRender(delta, batch)
+            game.movingBackground.updateRender(delta, batch)
 
             // Draw logo
             layout.setText(haloFont, "SpaceAgo")
@@ -94,20 +91,48 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
             // Fix coordinates of the mouse using Vector and unproject and save them to Vector.
             val mouseVector = Vector3().set(camera.unproject(Vector3(Gdx.input.x.toFloat(), Gdx.input.y.toFloat(), 0f)))
 
-            if (inRectangle(playRect, mouseVector.x, mouseVector.y)) {
-                drawButton(playButtonActive, 400f)  // draw active button if mouse is inside button hitbox.
+
+            // play button
+            if (inRectangle(singlePlayerRect, mouseVector.x, mouseVector.y)) {
+                layout.setText(menuFontYellow, "Singleplayer")
+                menuFontYellow.draw(batch, layout, CENTER - 45f, 600f + layout.height / 2f)  // draw active button if mouse is inside button hitbox.
                 if (Gdx.input.justTouched()) {  // if play button is pressed - set change screen variable to true.
                     changeScreen = true
                 }
-            } else drawButton(playButtonIdle, 400f)  // draw inactive button.
+            } else {  // draw inactive button.
+                layout.setText(menuFont, "Singleplayer")
+                menuFont.draw(batch, layout, CENTER - 45f, 600f + layout.height / 2f)
+            }
+
+            // Multiplayer button
+            if (inRectangle(multiPlayerRect, mouseVector.x, mouseVector.y)) {
+                layout.setText(menuFontYellow, "Multiplayer")
+                menuFontYellow.draw(batch, layout, CENTER - 20f, 450f + layout.height / 2f)
+            } else {
+                layout.setText(menuFont, "Multiplayer")
+                menuFont.draw(batch, layout, CENTER - 20f, 450f + layout.height / 2f)
+            }
+
+            // Upgrade button
+            if (inRectangle(upgradesRect, mouseVector.x, mouseVector.y)) {
+                layout.setText(menuFontYellow, "Upgrades")
+                menuFontYellow.draw(batch, layout, CENTER - 10f, 300f + layout.height / 2f)
+            } else {
+                layout.setText(menuFont, "Upgrades")
+                menuFont.draw(batch, layout, CENTER - 10f, 300f + layout.height / 2f)
+            }
 
             // Exit button
             if (inRectangle(exitRect, mouseVector.x, mouseVector.y)) {
-                drawButton(exitButtonActive, 200f)  // draw active button if mouse is inside button hitbox.
+                layout.setText(menuFontYellow, "Exit")
+                menuFontYellow.draw(batch, layout, CENTER + layout.width - 15f, 150f + layout.height / 2f)  // draw active button if mouse is inside button hitbox.
                 if (Gdx.input.justTouched()) {  // if exit button is pressed - exit the app.
                     Gdx.app.exit()
                 }
-            } else drawButton(exitButtonIdle, 200f)  // draw inactive button.
+            } else { // draw inactive button.
+                layout.setText(menuFont, "Exit")
+                menuFont.draw(batch, layout, CENTER + layout.width - 15f, 150f + layout.height / 2f)
+            }
         }
     }
 
@@ -120,26 +145,25 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
             renderer.color = Color.RED
 
             // Buttons hitboxes.
-            renderer.rect(playRect.x, playRect.y, playRect.width, playRect.height)
+            renderer.rect(singlePlayerRect.x, singlePlayerRect.y, singlePlayerRect.width, singlePlayerRect.height)
+            renderer.rect(multiPlayerRect.x, multiPlayerRect.y, multiPlayerRect.width, multiPlayerRect.height)
+            renderer.rect(upgradesRect.x, upgradesRect.y, upgradesRect.width, upgradesRect.height)
             renderer.rect(exitRect.x, exitRect.y, exitRect.width, exitRect.height)
 
             renderer.color = oldColor
         }
     }
 
-    private fun drawButton(skin: TextureRegion?, y: Float) {
-        batch.draw(skin, CENTER, y, BUTTON_WIDTH, BUTTON_HEIGHT)
-    }
-
     override fun resize(width: Int, height: Int) {
         viewport.update(width, height, true)
-        movingBackground.resize(width, height)
-}
+    }
 
     override fun dispose() {
         batch.dispose()
         renderer.dispose()
         haloFont.dispose()
+        menuFont.dispose()
+        menuFontYellow.dispose()
     }
 
     override fun hide() {
