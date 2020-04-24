@@ -136,12 +136,12 @@ class GameRenderer(private val assetManager: AssetManager,
         renderer.projectionMatrix = camera.combined
         renderer.begin(ShapeRenderer.ShapeType.Filled)
         when {
-            player.lives < 0.3f -> renderer.color = Color.RED
-            player.lives < 0.6f -> renderer.color = Color.ORANGE
-            player.lives < 0.8f -> renderer.color = Color.YELLOW
+            player.lives < GameConfig.LIVES_START * 0.25f -> renderer.color = Color.RED
+            player.lives < GameConfig.LIVES_START * 0.5f -> renderer.color = Color.ORANGE
+            player.lives < GameConfig.LIVES_START * 0.75f-> renderer.color = Color.YELLOW
             else -> renderer.color = Color.GREEN
         }
-        renderer.rect(0f, 0f, GameConfig.WORLD_WIDTH * player.lives, 0.2f)
+        renderer.rect(0f, 0f, GameConfig.WORLD_WIDTH * (player.lives / GameConfig.LIVES_START), 0.2f)
         renderer.color = oldColor
         renderer.end()
     }
