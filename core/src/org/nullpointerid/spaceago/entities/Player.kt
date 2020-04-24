@@ -31,7 +31,6 @@ class Player : EntityBase() {
         const val MAX_SPEED = 0.12f
         const val SHOOT_TIMER = 0.2f
 
-        const val START_X = GameConfig.WORLD_CENTER_X * 0.25f
         const val START_Y = 1f
     }
     var lives = GameConfig.LIVES_START
