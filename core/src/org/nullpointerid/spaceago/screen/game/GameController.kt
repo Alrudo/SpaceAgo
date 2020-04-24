@@ -9,11 +9,19 @@ import org.nullpointerid.spaceago.entities.Player
 import org.nullpointerid.spaceago.entities.SimpleEnemy
 import org.nullpointerid.spaceago.utils.GdxArray
 import org.nullpointerid.spaceago.utils.isKeyPressed
+<<<<<<< core/src/org/nullpointerid/spaceago/screen/game/GameController.kt
+import org.nullpointerid.spaceago.utils.logger
+import kotlin.math.round
+=======
+>>>>>>> core/src/org/nullpointerid/spaceago/screen/game/GameController.kt
 import kotlin.random.Random
 
 class GameController {
 
     companion object {
+        @JvmStatic
+        private val log = logger<GameController>()
+
         const val BULLET_X = Player.BOUNDS_VER_WIDTH / 2f
         const val BULLET_Y = Player.BOUNDS_VER_HEIGHT
 
@@ -45,6 +53,8 @@ class GameController {
 
         if (isPlayerCollidingWithEntity()) {
             player.lives -= 0.1f
+            player.lives = round(player.lives * 100) / 100  // to fix the floating point errors.
+            log.debug("PLayerHP: ${player.lives}")
         }
     }
 
