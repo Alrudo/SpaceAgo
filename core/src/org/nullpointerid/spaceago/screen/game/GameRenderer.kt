@@ -45,6 +45,7 @@ class GameRenderer(private val assetManager: AssetManager,
     private val font = BitmapFont(AssetPaths.SCORE_FONT.toInternalFile())
 
     private val player = controller.player
+    private val secondPlayer = controller.secondPlayer
     private val simpleEnemies = controller.simpleEnemies
     private val bullets = controller.bullets
     private val explosions = controller.explosions
@@ -71,8 +72,13 @@ class GameRenderer(private val assetManager: AssetManager,
         renderer.use {
             // Draw player hitboxes
             renderer.color = Color.GREEN
+            // player one
             renderer.rectangle(player.bounds.get(0), Player.BOUNDS_VER_WIDTH, Player.BOUNDS_VER_HEIGHT)
             renderer.rectangle(player.bounds.get(1), Player.BOUNDS_HOR_WIDTH, Player.BOUNDS_HOR_HEIGHT)
+
+            //player AI
+            renderer.rectangle(secondPlayer.bounds.get(0), Player.BOUNDS_VER_WIDTH, Player.BOUNDS_VER_HEIGHT)
+            renderer.rectangle(secondPlayer.bounds.get(1), Player.BOUNDS_HOR_WIDTH, Player.BOUNDS_HOR_HEIGHT)
 
             // Draw simpleEnemy hitboxes
             simpleEnemies.forEach {
@@ -110,8 +116,13 @@ class GameRenderer(private val assetManager: AssetManager,
             batch.draw(background, 0f, 0f, GameConfig.WORLD_WIDTH, GameConfig.WORLD_HEIGHT)
 
             // Draw player texture
+            // Player one.
             batch.color = Color.GREEN
             batch.draw(playerTexture, player.x, player.y, Player.TEXTURE_WIDTH, Player.TEXTURE_HEIGHT)
+
+            // Player AI.
+            batch.color = Color.RED
+            batch.draw(playerTexture, secondPlayer.x, secondPlayer.y, Player.TEXTURE_WIDTH, Player.TEXTURE_HEIGHT)
             batch.color = oldColor
 
             // Draw simpleEnemy texture
