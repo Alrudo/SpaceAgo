@@ -24,8 +24,14 @@ class GameOverScreen(assetManager: AssetManager,
                      private val game: SpaceShooter,
                      private val score: Int) : Screen {
 
+    companion object {
+        @JvmStatic
+        private val log = logger<GameOverScreen>()
+    }
+
     private val prefs = Gdx.app.getPreferences("spaceshooter")
     private val highscore = prefs.getInteger("highscore", 0)
+    private val currentCash = prefs.getInteger("money", 0)
     private val menuHitboxes = Rectangle(150f, 150f, 300f, 100f)
     private val retryHitboxes = Rectangle(600f, 150f, 200f, 100f)
     private var changeToMenu = false
@@ -51,11 +57,12 @@ class GameOverScreen(assetManager: AssetManager,
             })
 
     override fun show() {
-
         if (score > highscore) {
             prefs.putInteger("highscore", score)
-            prefs.flush()
         }
+        prefs.putInteger("money", currentCash + score / 100)
+        prefs.flush()
+        log.debug("${prefs.getInteger("money")}")
     }
 
     override fun render(delta: Float) {
@@ -108,7 +115,12 @@ class GameOverScreen(assetManager: AssetManager,
 
             // Draw highscore text
             layout.setText(scoreFont, "Highscore: $highscore")
-            scoreFont.draw(batch, layout, (GameConfig.HUD_WIDTH - layout.width) / 2f, 400f)
+            scoreFont.draw(batch, layout, (GameConfig.HUD_WIDTH - layout.width) / 2f, 420f)
+
+            // Draw money earned on screen
+            layout.setText(scoreFont, "Earned: ${score / 100} scrap")
+            scoreFont.draw(batch, layout, (GameConfig.HUD_WIDTH - layout.width) / 2f, 350f)
+
 
             val oldColor = scoreFont.color.cpy()
             // Draw buttons text on screen.
