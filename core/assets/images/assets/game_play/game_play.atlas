@@ -11,9 +11,23 @@ bullet
   orig: 16, 16
   offset: 0, 0
   index: -1
+civilian_ship_left
+  rotate: false
+  xy: 504, 271
+  size: 626, 171
+  orig: 626, 171
+  offset: 0, 0
+  index: -1
+civilian_ship_right
+  rotate: false
+  xy: 504, 98
+  size: 626, 171
+  orig: 626, 171
+  offset: 0, 0
+  index: -1
 explosion
   rotate: false
-  xy: 504, 410
+  xy: 1306, 1012
   size: 96, 32
   orig: 96, 32
   offset: 0, 0

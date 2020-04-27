@@ -33,7 +33,9 @@ class Player : EntityBase() {
 
         const val START_Y = 1f
     }
+
     var lives = GameConfig.LIVES_START
+
     private val bound1 = Rectangle(0f, 0f, BOUNDS_VER_WIDTH, BOUNDS_VER_HEIGHT)
     private val bound2 = Rectangle(0f, 0f, BOUNDS_HOR_WIDTH, BOUNDS_HOR_HEIGHT)
     override val bounds = GdxArray<Rectangle>().apply { add(bound1, bound2) }

@@ -19,7 +19,7 @@ fun main() {
     }
 
     TexturePacker.process(settings,
-            "${AssetPacker.RAW_ASSETS_PATH}/main_menu",
-            "${AssetPacker.ASSETS_PATH}/main_menu",
-            "main_menu")
+            "${AssetPacker.RAW_ASSETS_PATH}/game_play",
+            "${AssetPacker.ASSETS_PATH}/game_play",
+            "game_play")
 }

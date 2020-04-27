@@ -3,10 +3,7 @@ package org.nullpointerid.spaceago.screen.game
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.math.MathUtils
 import org.nullpointerid.spaceago.config.GameConfig
-import org.nullpointerid.spaceago.entities.Bullet
-import org.nullpointerid.spaceago.entities.Explosion
-import org.nullpointerid.spaceago.entities.Player
-import org.nullpointerid.spaceago.entities.SimpleEnemy
+import org.nullpointerid.spaceago.entities.*
 import org.nullpointerid.spaceago.utils.GdxArray
 import org.nullpointerid.spaceago.utils.isKeyPressed
 import org.nullpointerid.spaceago.utils.logger
@@ -27,6 +24,7 @@ class GameController {
     }
 
     private var simpleEnemyTimer = Random.nextFloat() * (GameConfig.MAX_ENEMY_SPAWN_TIME - GameConfig.MIN_ENEMY_SPAWN_TIME) + GameConfig.MIN_ENEMY_SPAWN_TIME
+    private var civilianShipTimer = 12 + Random.nextFloat() * (25 - 12)
     private var playerShootTimer = 0f
     val simpleEnemies = GdxArray<SimpleEnemy>()
     val bullets = GdxArray<Bullet>()
@@ -34,6 +32,7 @@ class GameController {
     val player = Player().apply { setPosition(2f, Player.START_Y) }
     val secondPlayer = Player().apply { setPosition(7f, Player.START_Y) }
     var score = 0
+    var civilianShips = GdxArray<CivilianShip>()
 
 
     fun update(delta: Float) {
@@ -43,15 +42,14 @@ class GameController {
         playerControl()
         blockPlayerFromLeavingTheWorld()
         spawnNewSimpleEnemy(delta)
-        updateEnemies()
-        updateBullets()
-        isBulletCollidingWithEntity()
-        destroyEntitiesOutside()
+        spawnNewCivilianShip(delta)
+        updateEntities()
+        checkForRemoval()
 
         if (isPlayerCollidingWithEntity()) {
-            player.lives -= 0.1f
+            player.lives -= 0.2f
             player.lives = round(player.lives * 100) / 100  // to fix the floating point errors.
-            log.debug("PLayerHP: ${player.lives}")
+            log.debug("PlayerHP: ${player.lives}")
         }
     }
 
@@ -79,6 +77,22 @@ class GameController {
         player.y += ySpeed
     }
 
+    private fun spawnNewCivilianShip(delta: Float) {
+        civilianShipTimer -= delta
+
+        if (civilianShipTimer <= 0) {
+            log.debug("Spawned new civilian ship.")
+            civilianShipTimer = 12 + Random.nextFloat() * (25 - 12)
+            val coinToss = Random.nextInt(0, 100)
+            val shipY = 1 + Random.nextFloat() * (6 - 1)
+
+            val civilianShip = if (coinToss > 50) CivilianShip(true).apply { setPosition(11f, shipY) }
+            else CivilianShip(false).apply { setPosition(-2.5f, shipY) }
+
+            civilianShips.add(civilianShip)
+        }
+    }
+
     private fun spawnNewSimpleEnemy(delta: Float) {
         simpleEnemyTimer -= delta
 
@@ -96,36 +110,64 @@ class GameController {
                 explosions.add(Explosion().apply { setPosition(it.bounds[0].x + EXPLOSION_X, it.bounds[0].y + EXPLOSION_Y) })
                 score += 100
                 return true
+            } else if (it.y < -SimpleEnemy.BOUNDS_HEIGHT) { // remove enemy if outside the world bounds
+                simpleEnemies.removeValue(it, true)
+            }
+        }
+
+        civilianShips.forEach {
+            if (it.isCollidingWith(player)) {
+                civilianShips.removeValue(it, true)
+                if (it.toLeft) explosions.add(Explosion().apply { setPosition(it.bounds[1].x + it.bounds[1].width / 2f, it.bounds[1].y - 0.05f) })
+                else explosions.add(Explosion().apply { setPosition(it.bounds[0].x + it.bounds[1].width / 2f, it.bounds[0].y) })
+                score -= 500
+                return true
             }
         }
         return false
     }
 
-    private fun isBulletCollidingWithEntity() {
+    private fun checkForRemoval() {
         bullets.forEach { bullet ->
+            if (bullet.y > GameConfig.WORLD_HEIGHT + Bullet.BOUNDS_HEIGHT) {  // remove bullet if outside the world bounds
+                bullets.removeValue(bullet, true)
+            }
             simpleEnemies.forEach { enemy ->
-                if (bullet.isCollidingWith(enemy)) {
+                if (bullet.isCollidingWith(enemy)) {  // remove bullet and enemy if they collide.
                     bullets.removeValue(bullet, true)
                     simpleEnemies.removeValue(enemy, true)
                     explosions.add(Explosion().apply { setPosition(enemy.bounds[0].x + EXPLOSION_X, enemy.bounds[0].y + EXPLOSION_Y) })
                     score += 100
                 }
             }
+            civilianShips.forEach { civil ->
+                if (bullet.isCollidingWith(civil)) {
+                    bullets.removeValue(bullet, true)
+                    civil.lives -= 0.1f
+                    if (civil.lives <= 0f) {
+                        civilianShips.removeValue(civil, true)
+                        if (civil.toLeft) explosions.add(Explosion().apply { setPosition(civil.bounds[1].x + civil.bounds[1].width / 2f, civil.bounds[1].y - 0.05f) })
+                        else explosions.add(Explosion().apply { setPosition(civil.bounds[0].x + civil.bounds[1].width / 2f, civil.bounds[0].y) })
+                        score -= 500
+                    }
+                }
+            }
+        }
+
+        civilianShips.forEach {
+            if (it.toLeft && it.x < -3f) {
+                civilianShips.removeValue(it, true)
+                log.debug("destroyed civilian ship at ${it.x} while it was moving to the left.")
+            } else if (!it.toLeft && it.x > 13f) {
+                civilianShips.removeValue(it, true)
+                log.debug("destroyed civilian ship at ${it.x} while it was moving to the right.")
+            }
         }
     }
 
-    private fun destroyEntitiesOutside() {
-        // Can be united with "isPlayerCollidingWithEntity()"
-        simpleEnemies.forEach {
-            if (it.y < -SimpleEnemy.BOUNDS_HEIGHT) simpleEnemies.removeValue(it, true)
-        }
-
-        // Can be united with "isBulletCollidingWithEntity()"
-        bullets.forEach {
-            if (it.y > GameConfig.WORLD_HEIGHT + Bullet.BOUNDS_HEIGHT) bullets.removeValue(it, true)
-        }
+    private fun updateEntities() {
+        simpleEnemies.forEach { it.update() }
+        bullets.forEach { it.update() }
+        civilianShips.forEach { it.update() }
     }
-
-    private fun updateEnemies() = simpleEnemies.forEach { it.update() }
-    private fun updateBullets() = bullets.forEach { it.update() }
 }
