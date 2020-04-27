@@ -3,7 +3,6 @@ package org.nullpointerid.spaceago.screen.game
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.*
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.Disposable
@@ -13,11 +12,7 @@ import org.nullpointerid.spaceago.assets.AssetDescriptors
 import org.nullpointerid.spaceago.assets.AssetPaths
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
-import org.nullpointerid.spaceago.entities.Bullet
-import org.nullpointerid.spaceago.entities.Explosion
-import org.nullpointerid.spaceago.entities.Player
-import org.nullpointerid.spaceago.entities.SimpleEnemy
-import org.nullpointerid.spaceago.screen.gameover.GameOverScreen
+import org.nullpointerid.spaceago.entities.*
 import org.nullpointerid.spaceago.utils.*
 
 class GameRenderer(private val assetManager: AssetManager,
@@ -42,14 +37,16 @@ class GameRenderer(private val assetManager: AssetManager,
     private val playerTexture = gameAtlas[RegionNames.PLAYER]
     private val simpleEnemyTexture = gameAtlas[RegionNames.SIMPLE_ENEMY]?.apply { flip(true, true) }
     private val bulletTexture = gameAtlas[RegionNames.BULLET]
-    private val font = BitmapFont(AssetPaths.SCORE_FONT.toInternalFile())
+    private val explosions = controller.explosions
+    private val civilianShipToRight = gameAtlas[RegionNames.CIVILIAN_SHIP_RIGHT]
+    private val civilianShipToLeft = gameAtlas[RegionNames.CIVILIAN_SHIP_LEFT]
 
+    private val font = BitmapFont(AssetPaths.SCORE_FONT.toInternalFile())
     private val player = controller.player
     private val secondPlayer = controller.secondPlayer
     private val simpleEnemies = controller.simpleEnemies
     private val bullets = controller.bullets
-    private val explosions = controller.explosions
-
+    private val civilianShips = controller.civilianShips
 
     fun render(delta: Float) {
         clearScreen()
@@ -72,22 +69,32 @@ class GameRenderer(private val assetManager: AssetManager,
         renderer.use {
             // Draw player hitboxes
             renderer.color = Color.GREEN
+
             // player one
-            renderer.rectangle(player.bounds.get(0), Player.BOUNDS_VER_WIDTH, Player.BOUNDS_VER_HEIGHT)
-            renderer.rectangle(player.bounds.get(1), Player.BOUNDS_HOR_WIDTH, Player.BOUNDS_HOR_HEIGHT)
+            player.bounds.forEach {
+                renderer.rectangle(it)
+            }
 
             //player AI
-            renderer.rectangle(secondPlayer.bounds.get(0), Player.BOUNDS_VER_WIDTH, Player.BOUNDS_VER_HEIGHT)
-            renderer.rectangle(secondPlayer.bounds.get(1), Player.BOUNDS_HOR_WIDTH, Player.BOUNDS_HOR_HEIGHT)
+            secondPlayer.bounds.forEach {
+                renderer.rectangle(it)
+            }
 
             // Draw simpleEnemy hitboxes
             simpleEnemies.forEach {
-                renderer.rectangle(it.bounds[0], SimpleEnemy.BOUNDS_WIDTH, SimpleEnemy.BOUNDS_HEIGHT)
+                renderer.rectangle(it.bounds[0])
+            }
+
+            // Draw civilian ship hitboxes
+            civilianShips.forEach {
+                it.bounds.forEach {bound ->
+                    renderer.rectangle(bound)
+                }
             }
 
             // Draw bullet hitboxes
             bullets.forEach {
-                renderer.rectangle(it.bounds[0], Bullet.BOUNDS_WIDTH, Bullet.BOUNDS_HEIGHT)
+                renderer.rectangle(it.bounds[0])
             }
             renderer.color = oldColor
 
@@ -128,6 +135,15 @@ class GameRenderer(private val assetManager: AssetManager,
             // Draw simpleEnemy texture
             simpleEnemies.forEach {
                 batch.draw(simpleEnemyTexture, it.x, it.y, SimpleEnemy.TEXTURE_WIDTH, SimpleEnemy.TEXTURE_HEIGHT)
+            }
+
+            // Draw civilian ship texture.
+            civilianShips.forEach {
+                if (it.toLeft) {
+                    batch.draw(civilianShipToLeft, it.x, it.y, CivilianShip.TEXTURE_WIDTH, CivilianShip.TEXTURE_HEIGH)
+                } else {
+                    batch.draw(civilianShipToRight, it.x, it.y, CivilianShip.TEXTURE_WIDTH, CivilianShip.TEXTURE_HEIGH)
+                }
             }
 
             // Draw bullet texture

@@ -10,9 +10,6 @@ class Bullet : EntityBase() {
         const val TEXTURE_WIDTH = 0.25f
         const val TEXTURE_HEIGHT = 0.25f
 
-        const val BOUNDS_X_OFFSET = 0.07f
-        const val BOUNDS_Y_OFFSET = 0.04f
-
         const val BOUNDS_WIDTH = 0.1f
         const val BOUNDS_HEIGHT = 0.2f
 
