@@ -3,8 +3,9 @@ package org.nullpointerid.spaceago.screen.game
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.*
+import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.GlyphLayout
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.FitViewport
@@ -17,7 +18,6 @@ import org.nullpointerid.spaceago.entities.Bullet
 import org.nullpointerid.spaceago.entities.Explosion
 import org.nullpointerid.spaceago.entities.Player
 import org.nullpointerid.spaceago.entities.SimpleEnemy
-import org.nullpointerid.spaceago.screen.gameover.GameOverScreen
 import org.nullpointerid.spaceago.utils.*
 
 class GameRenderer(private val assetManager: AssetManager,
@@ -149,7 +149,7 @@ class GameRenderer(private val assetManager: AssetManager,
         when {
             player.lives < GameConfig.LIVES_START * 0.25f -> renderer.color = Color.RED
             player.lives < GameConfig.LIVES_START * 0.5f -> renderer.color = Color.ORANGE
-            player.lives < GameConfig.LIVES_START * 0.75f-> renderer.color = Color.YELLOW
+            player.lives < GameConfig.LIVES_START * 0.75f -> renderer.color = Color.YELLOW
             else -> renderer.color = Color.GREEN
         }
         renderer.rect(0f, 0f, GameConfig.WORLD_WIDTH * (player.lives / GameConfig.LIVES_START), 0.2f)

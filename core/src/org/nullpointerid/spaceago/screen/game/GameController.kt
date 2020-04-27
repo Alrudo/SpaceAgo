@@ -9,11 +9,8 @@ import org.nullpointerid.spaceago.entities.Player
 import org.nullpointerid.spaceago.entities.SimpleEnemy
 import org.nullpointerid.spaceago.utils.GdxArray
 import org.nullpointerid.spaceago.utils.isKeyPressed
-<<<<<<< core/src/org/nullpointerid/spaceago/screen/game/GameController.kt
 import org.nullpointerid.spaceago.utils.logger
 import kotlin.math.round
-=======
->>>>>>> core/src/org/nullpointerid/spaceago/screen/game/GameController.kt
 import kotlin.random.Random
 
 class GameController {
