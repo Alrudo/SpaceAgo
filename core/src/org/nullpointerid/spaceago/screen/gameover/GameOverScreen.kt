@@ -28,6 +28,7 @@ class GameOverScreen(assetManager: AssetManager,
     private val highscore = prefs.getInteger("highscore", 0)
     private val menuHitboxes = Rectangle(150f, 150f, 300f, 100f)
     private val retryHitboxes = Rectangle(600f, 150f, 200f, 100f)
+    private val exitHitboxes = Rectangle(460f, 50f, 130f, 75f)
     private var changeToMenu = false
     private var retry = false
 
@@ -82,6 +83,7 @@ class GameOverScreen(assetManager: AssetManager,
             renderer.color = Color.RED
             renderer.rect(menuHitboxes.x, menuHitboxes.y, menuHitboxes.width, menuHitboxes.height)
             renderer.rect(retryHitboxes.x, retryHitboxes.y, retryHitboxes.width, retryHitboxes.height)
+            renderer.rect(exitHitboxes.x, exitHitboxes.y, exitHitboxes.width, exitHitboxes.height)
             renderer.color = oldColor
         }
     }
@@ -130,7 +132,18 @@ class GameOverScreen(assetManager: AssetManager,
             layout.setText(scoreFont, "Retry")
             scoreFont.draw(batch, layout, (GameConfig.HUD_WIDTH - layout.width) / 2f + 200f, 215f)
 
+
+            if (inRectangle(exitHitboxes, mouseVector.x, mouseVector.y)) {
+                scoreFont.color = Color.YELLOW
+                if (Gdx.input.justTouched()) {  // if exit button is pressed - exit the app.
+                    Gdx.app.exit()
+                }
+            } else scoreFont.color = oldColor
+            layout.setText(scoreFont, "Exit")
+            scoreFont.draw(batch, layout, (GameConfig.HUD_WIDTH - layout.width) / 2f + 25f, 100f)
+
             scoreFont.color = oldColor
+
         }
     }
 

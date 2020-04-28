@@ -38,11 +38,13 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
     // save rectangle coordinates.
     private val singlePlayerRect = Rectangle(350f, 550f, 300f, 100f)
     private val multiPlayerRect = Rectangle(350f, 400f, 300f, 100f)
-    private val upgradesRect = Rectangle(380f, 250f, 240f, 100f)
-    private val exitRect = Rectangle(450f, 100f, 100f, 100f)
+    private val upgradesRect = Rectangle(380f, 280f, 240f, 100f)
+    private val exitRect = Rectangle(450f, 50f, 100f, 100f)
+    private val settingsRect = Rectangle(400f, 160f, 210f, 100f)
 
     private var changeToGame = false
     private var changeToShop = false
+    private var changeToSettings = false
 
     // assets variables.
     private val menuAtlas = game.assetManager[AssetDescriptors.MAIN_MENU_ATLAS]
@@ -75,6 +77,7 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
         when {
             changeToGame -> game.screen = GameScreen(game)
             changeToShop -> game.screen = UpgradeShopScreen(game)
+            changeToSettings -> game.screen = SettingsScreen(game)
         }
     }
 
@@ -120,25 +123,38 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
             // Upgrade button
             if (inRectangle(upgradesRect, mouseVector.x, mouseVector.y)) {
                 layout.setText(menuFontYellow, "Upgrades")
-                menuFontYellow.draw(batch, layout, CENTER - 10f, 300f + layout.height / 2f)
+                menuFontYellow.draw(batch, layout, CENTER - 10f, 330f + layout.height / 2f)
                 if (Gdx.input.justTouched()) {
                     changeToShop = true
                 }
             } else {
                 layout.setText(menuFont, "Upgrades")
-                menuFont.draw(batch, layout, CENTER - 10f, 300f + layout.height / 2f)
+                menuFont.draw(batch, layout, CENTER - 10f, 330f + layout.height / 2f)
             }
+
+            // Settings button
+            if (inRectangle(settingsRect, mouseVector.x, mouseVector.y)) {
+                layout.setText(menuFontYellow, "Settings")
+                menuFontYellow.draw(batch, layout, CENTER + 10f, 220f + layout.height / 2f)
+                if (Gdx.input.justTouched()) {
+                    changeToSettings = true
+                }
+            } else {
+                layout.setText(menuFont, "Settings")
+                menuFont.draw(batch, layout, CENTER + 10f, 220f + layout.height / 2f)
+            }
+
 
             // Exit button
             if (inRectangle(exitRect, mouseVector.x, mouseVector.y)) {
                 layout.setText(menuFontYellow, "Exit")
-                menuFontYellow.draw(batch, layout, CENTER + layout.width - 15f, 150f + layout.height / 2f)  // draw active button if mouse is inside button hitbox.
+                menuFontYellow.draw(batch, layout, CENTER + layout.width - 15f, 100f + layout.height / 2f)  // draw active button if mouse is inside button hitbox.
                 if (Gdx.input.justTouched()) {  // if exit button is pressed - exit the app.
                     Gdx.app.exit()
                 }
             } else { // draw inactive button.
                 layout.setText(menuFont, "Exit")
-                menuFont.draw(batch, layout, CENTER + layout.width - 15f, 150f + layout.height / 2f)
+                menuFont.draw(batch, layout, CENTER + layout.width - 15f, 100f + layout.height / 2f)
             }
         }
     }
@@ -156,6 +172,7 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
             renderer.rect(multiPlayerRect.x, multiPlayerRect.y, multiPlayerRect.width, multiPlayerRect.height)
             renderer.rect(upgradesRect.x, upgradesRect.y, upgradesRect.width, upgradesRect.height)
             renderer.rect(exitRect.x, exitRect.y, exitRect.width, exitRect.height)
+            renderer.rect(settingsRect.x, settingsRect.y, settingsRect.width, settingsRect.height)
 
             renderer.color = oldColor
         }

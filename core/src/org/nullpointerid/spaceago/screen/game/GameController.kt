@@ -1,5 +1,6 @@
 package org.nullpointerid.spaceago.screen.game
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.math.MathUtils
 import org.nullpointerid.spaceago.config.GameConfig
@@ -9,11 +10,8 @@ import org.nullpointerid.spaceago.entities.Player
 import org.nullpointerid.spaceago.entities.SimpleEnemy
 import org.nullpointerid.spaceago.utils.GdxArray
 import org.nullpointerid.spaceago.utils.isKeyPressed
-<<<<<<< core/src/org/nullpointerid/spaceago/screen/game/GameController.kt
 import org.nullpointerid.spaceago.utils.logger
 import kotlin.math.round
-=======
->>>>>>> core/src/org/nullpointerid/spaceago/screen/game/GameController.kt
 import kotlin.random.Random
 
 class GameController {
@@ -21,6 +19,12 @@ class GameController {
     companion object {
         @JvmStatic
         private val log = logger<GameController>()
+
+        var moveRight  = "D"
+        var moveLeft = "A"
+        var moveUp = "W"
+        var moveDown = "S"
+        var shoot = "Space"
 
         const val BULLET_X = Player.BOUNDS_VER_WIDTH / 2f
         const val BULLET_Y = Player.BOUNDS_VER_HEIGHT
@@ -67,11 +71,13 @@ class GameController {
         var xSpeed = 0f
         var ySpeed = 0f
 
-        if (Input.Keys.D.isKeyPressed()) xSpeed = Player.MAX_SPEED
-        if (Input.Keys.A.isKeyPressed()) xSpeed = -Player.MAX_SPEED
-        if (Input.Keys.W.isKeyPressed()) ySpeed = Player.MAX_SPEED
-        if (Input.Keys.S.isKeyPressed()) ySpeed = -Player.MAX_SPEED
-        if (Input.Keys.SPACE.isKeyPressed() && playerShootTimer > Player.SHOOT_TIMER) {
+        //var x = Input.Keys.toString(149) // let's us use keycode
+
+        if (Input.Keys.valueOf(moveRight).isKeyPressed()) xSpeed = Player.MAX_SPEED
+        if (Input.Keys.valueOf(moveLeft).isKeyPressed()) xSpeed = -Player.MAX_SPEED
+        if (Input.Keys.valueOf(moveUp).isKeyPressed()) ySpeed = Player.MAX_SPEED
+        if (Input.Keys.valueOf(moveDown).isKeyPressed()) ySpeed = -Player.MAX_SPEED
+        if (Input.Keys.valueOf(shoot).isKeyPressed() && playerShootTimer > Player.SHOOT_TIMER) {
             playerShootTimer = 0f
             bullets.add(Bullet().apply {
                 setPosition(player.bounds[0].x + BULLET_X, player.bounds[0].y + BULLET_Y)
