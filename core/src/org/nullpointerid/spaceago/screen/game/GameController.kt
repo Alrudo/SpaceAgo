@@ -41,7 +41,7 @@ class GameController {
 
         playerControl()
         blockPlayerFromLeavingTheWorld()
-        spawnNewSimpleEnemy(delta)
+//        spawnNewSimpleEnemy(delta)
         spawnNewCivilianShip(delta)
         updateEntities()
         checkForRemoval()

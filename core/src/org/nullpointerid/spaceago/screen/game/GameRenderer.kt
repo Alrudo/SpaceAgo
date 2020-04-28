@@ -3,7 +3,7 @@ package org.nullpointerid.spaceago.screen.game
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.*
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -47,6 +47,10 @@ class GameRenderer(private val assetManager: AssetManager,
     private val explosions = controller.explosions
     private val civilianShipToRight = gameAtlas[RegionNames.CIVILIAN_SHIP_RIGHT]
     private val civilianShipToLeft = gameAtlas[RegionNames.CIVILIAN_SHIP_LEFT]
+    private val healthPack = Texture("images/raw/game_play/heathpack.png".toInternalFile())
+    private val bulletCrate = Texture("images/raw/game_play/bullet_crate.png".toInternalFile())
+    private val laserBeam = Texture("images/raw/game_play/laser_beam.png".toInternalFile())
+    private val treasureChest = Texture("images/raw/game_play/treasure_chest.png".toInternalFile())
 
     private val font = BitmapFont(AssetPaths.SCORE_FONT.toInternalFile())
     private val player = controller.player
@@ -103,10 +107,12 @@ class GameRenderer(private val assetManager: AssetManager,
             bullets.forEach {
                 renderer.rectangle(it.bounds[0])
             }
-            renderer.color = oldColor
+
+            renderer.rect(5f, 5f, 0.3f, 0.3f)
+            renderer.rect(3f, 3f, 0.4f, GameConfig.WORLD_HEIGHT)
 
         }
-
+        renderer.color = oldColor
     }
 
     private fun renderUi() {
@@ -143,6 +149,18 @@ class GameRenderer(private val assetManager: AssetManager,
             simpleEnemies.forEach {
                 batch.draw(simpleEnemyTexture, it.x, it.y, SimpleEnemy.TEXTURE_WIDTH, SimpleEnemy.TEXTURE_HEIGHT)
             }
+
+            // draw health pack
+            batch.draw(healthPack, 5f, 5f, 0.3f, 0.3f)
+
+            // draw bullet crate
+            batch.draw(bulletCrate, 4f, 4f, 0.35f, 0.35f)
+
+            // draw laser beam
+            batch.draw(laserBeam, 3f, 3f, 0.4f, GameConfig.WORLD_HEIGHT)
+
+            // draw treasure chest
+            batch.draw(treasureChest, 2f, 2f, 0.35f, 0.35f)
 
             // Draw civilian ship texture.
             civilianShips.forEach {
@@ -185,6 +203,5 @@ class GameRenderer(private val assetManager: AssetManager,
         uiViewport.update(width, height, true)
     }
 
-    override fun dispose() {
-    }
+    override fun dispose() {}
 }
