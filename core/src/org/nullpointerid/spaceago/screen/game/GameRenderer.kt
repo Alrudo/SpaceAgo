@@ -110,6 +110,8 @@ class GameRenderer(private val assetManager: AssetManager,
 
             renderer.rect(5f, 5f, 0.3f, 0.3f)
             renderer.rect(3f, 3f, 0.4f, GameConfig.WORLD_HEIGHT)
+            renderer.rect(4f, 4f, 0.35f, 0.35f)
+            renderer.rect(2f, 2f, 0.35f, 0.35f)
 
         }
         renderer.color = oldColor

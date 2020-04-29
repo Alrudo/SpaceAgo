@@ -7,7 +7,13 @@ import org.nullpointerid.spaceago.utils.GdxArray
 
 class UltimateWeapon : Collectible, EntityBase() {
 
-    private val bound = Rectangle(0f, 0f, 0.35f, 0.35f)
+    companion object {
+
+        const val TEXTURE_WIDTH = 0.35f
+        const val TEXTURE_HEIGHT = 0.35f
+    }
+
+    private val bound = Rectangle(0f, 0f, TEXTURE_WIDTH, TEXTURE_HEIGHT)
 
     override val bounds = GdxArray<Rectangle>().apply { add(bound) }
     override var lived = 0f

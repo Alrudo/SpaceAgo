@@ -9,14 +9,18 @@ class MoneyCrate : Collectible, EntityBase() {
 
     companion object {
         const val SCORE_VALUE = 500
+
+        const val TEXTURE_WIDTH = 0.35f
+        const val TEXTURE_HEIGHT = 0.35f
     }
 
-    private val bound = Rectangle(0f, 0f, 0f, 0f)
+    private val bound = Rectangle(0f, 0f, TEXTURE_WIDTH, TEXTURE_HEIGHT)
 
-    override val bounds = GdxArray<Rectangle>()
+    override val bounds = GdxArray<Rectangle>().apply { add(bound) }
     override var lived = 0f
 
     override fun updateBounds() {
+        bound.setPosition(x, y)
     }
 
     override fun action(player: Player): Boolean {

@@ -8,7 +8,12 @@ import org.nullpointerid.spaceago.utils.GdxArray
 
 class HealthPack : Collectible, EntityBase() {
 
-    private val bound = Rectangle(0f, 0f, 0.3f, 0.3f)
+    companion object {
+        const val TEXTURE_WIDTH = 0.3f
+        const val TEXTURE_HEIGHT = 0.3f
+    }
+
+    private val bound = Rectangle(0f, 0f, TEXTURE_WIDTH, TEXTURE_HEIGHT)
     private val healAmount = 0.2f
 
     override var lived = 0f
