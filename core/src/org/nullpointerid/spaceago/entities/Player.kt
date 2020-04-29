@@ -38,7 +38,7 @@ class Player : EntityBase() {
 
     var lives = GameConfig.LIVES_START
     var score = 0
-    var ultimateWeapon = 0
+    var ultimateWeapon = 2
 
     private val bound1 = Rectangle(0f, 0f, BOUNDS_VER_WIDTH, BOUNDS_VER_HEIGHT)
     private val bound2 = Rectangle(0f, 0f, BOUNDS_HOR_WIDTH, BOUNDS_HOR_HEIGHT)

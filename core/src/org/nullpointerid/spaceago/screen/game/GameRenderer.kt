@@ -3,14 +3,12 @@ package org.nullpointerid.spaceago.screen.game
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.FitViewport
-import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.assets.AssetDescriptors
 import org.nullpointerid.spaceago.assets.AssetPaths
 import org.nullpointerid.spaceago.assets.RegionNames
@@ -19,15 +17,10 @@ import org.nullpointerid.spaceago.collectables.MoneyCrate
 import org.nullpointerid.spaceago.collectables.UltimateWeapon
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.entities.*
-import org.nullpointerid.spaceago.entities.Bullet
-import org.nullpointerid.spaceago.entities.Explosion
-import org.nullpointerid.spaceago.entities.Player
-import org.nullpointerid.spaceago.entities.SimpleEnemy
 import org.nullpointerid.spaceago.utils.*
 
-class GameRenderer(private val assetManager: AssetManager,
-                   private val game: SpaceShooter,
-                   private val controller: GameController) : Disposable {
+class GameRenderer(assetManager: AssetManager,
+                   controller: GameController) : Disposable {
 
     companion object {
         const val BULLET_OFFSET_X = -0.08f
@@ -53,14 +46,18 @@ class GameRenderer(private val assetManager: AssetManager,
     private val healthPack = gameAtlas[RegionNames.HEALTH_PACK]
     private val bulletCrate = gameAtlas[RegionNames.AMMO_CRATE]
     private val treasureChest = gameAtlas[RegionNames.TREASURE_CHEST]
-
+    private val laserBeamTexture = gameAtlas[RegionNames.LASER_BEAM]
     private val font = BitmapFont(AssetPaths.SCORE_FONT.toInternalFile())
+    private val gameFont = BitmapFont("core/assets/fonts/gameFont.fnt".toInternalFile())
+
     private val player = controller.player
     private val secondPlayer = controller.secondPlayer
     private val simpleEnemies = controller.simpleEnemies
     private val bullets = controller.bullets
     private val civilianShips = controller.civilianShips
     private val collectibles = controller.collectibles
+    private val laserBeam = controller.laserBeam
+
 
     fun render(delta: Float) {
         clearScreen()
@@ -84,12 +81,12 @@ class GameRenderer(private val assetManager: AssetManager,
             // Draw player hitboxes
             renderer.color = Color.GREEN
 
-            // player one
+            // player one hitboxes
             player.bounds.forEach {
                 renderer.rectangle(it)
             }
 
-            //player AI
+            //player AI hitboxes
             secondPlayer.bounds.forEach {
                 renderer.rectangle(it)
             }
@@ -111,10 +108,13 @@ class GameRenderer(private val assetManager: AssetManager,
                 renderer.rectangle(it.bounds[0])
             }
 
+            // Draw collectibles hitboxes
             collectibles.forEach {
                 renderer.rectangle(it.bounds[0])
             }
 
+            // Draw Laser Beam hitboxes.
+            renderer.rectangle(laserBeam.bounds[0])
         }
         renderer.color = oldColor
     }
@@ -124,9 +124,13 @@ class GameRenderer(private val assetManager: AssetManager,
         batch.projectionMatrix = uiCamera.combined
 
         batch.use {
+            // Draw score text
             layout.setText(font, player.score.toString())
-
             font.draw(batch, layout, GameConfig.HUD_WIDTH / 2f - layout.width, GameConfig.HUD_HEIGHT - layout.height)
+
+            // Draw Ultimate weapon text
+            layout.setText(gameFont, "Ultimate weapon: ${player.ultimateWeapon}")
+            gameFont.draw(batch, layout, 15f, 55f)
         }
     }
 
@@ -139,12 +143,11 @@ class GameRenderer(private val assetManager: AssetManager,
             // Draw background texture
             batch.draw(background, 0f, 0f, GameConfig.WORLD_WIDTH, GameConfig.WORLD_HEIGHT)
 
-            // Draw player texture
-            // Player one.
+            // Player one texture
             batch.color = Color.GREEN
             batch.draw(playerTexture, player.x, player.y, Player.TEXTURE_WIDTH, Player.TEXTURE_HEIGHT)
 
-            // Player AI.
+            // Player AI texture
             batch.color = Color.RED
             batch.draw(playerTexture, secondPlayer.x, secondPlayer.y, Player.TEXTURE_WIDTH, Player.TEXTURE_HEIGHT)
             batch.color = oldColor
@@ -154,6 +157,7 @@ class GameRenderer(private val assetManager: AssetManager,
                 batch.draw(simpleEnemyTexture, it.x, it.y, SimpleEnemy.TEXTURE_WIDTH, SimpleEnemy.TEXTURE_HEIGHT)
             }
 
+            // Draw collectibles
             collectibles.forEach {
                 when(it) {
                     is MoneyCrate -> batch.draw(treasureChest, it.x, it.y, MoneyCrate.TEXTURE_WIDTH, MoneyCrate.TEXTURE_HEIGHT)
@@ -181,6 +185,13 @@ class GameRenderer(private val assetManager: AssetManager,
                 it.stateTime += delta
                 batch.draw(it.animation.getKeyFrame(it.stateTime), it.x, it.y, Explosion.TEXTURE_WIDTH, Explosion.TEXTURE_HEIGHT)
                 if (it.animation.isAnimationFinished(it.stateTime)) explosions.removeValue(it, true)
+            }
+
+            // Draw laser beam texture
+            if (laserBeam.used) {
+                batch.draw(laserBeamTexture, player.bounds[0].x - player.bounds[0].width / 2f + 0.01f,
+                        player.bounds[0].y + player.bounds[0].height + 0.05f,
+                        LaserBeam.TEXTURE_WIDTH, LaserBeam.TEXTURE_HEIGHT)
             }
         }
 

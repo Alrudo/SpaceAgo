@@ -16,6 +16,8 @@ class CivilianShip(val toLeft: Boolean) : EntityBase() {
         const val NOSE_WIDTH = 1f
 
         const val MAX_SPEED = 0.02f
+
+        const val SCORE_VALUE = -500
     }
 
     var lives = 0.2f

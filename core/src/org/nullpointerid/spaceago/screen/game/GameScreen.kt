@@ -12,7 +12,7 @@ class GameScreen(private val game: SpaceShooter) : Screen {
 
     override fun show() {
         controller = GameController()
-        renderer = GameRenderer(assetManager, game, controller)
+        renderer = GameRenderer(assetManager, controller)
     }
 
     override fun render(delta: Float) {
