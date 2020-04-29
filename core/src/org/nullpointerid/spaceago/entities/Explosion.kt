@@ -19,7 +19,7 @@ class Explosion : EntityBase() {
         const val TEXTURE_HEIGHT = 0.8f
     }
 
-    val texture = Texture(AssetPaths.EXPLOSION.toInternalFile())
+    private val texture = Texture(AssetPaths.EXPLOSION.toInternalFile())
 
     var stateTime = 0f
     val animation = Animation(0.2f, *TextureRegion.split(texture, TILE_WIDTH, TILE_HEIGHT)[0])

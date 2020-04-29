@@ -34,6 +34,7 @@ class GameController {
     val secondPlayer = Player().apply { setPosition(7f, Player.START_Y) }
     var civilianShips = GdxArray<CivilianShip>()
     val collectibles = GdxArray<EntityBase>()
+    val laserBeam = LaserBeam(player)
 
 
     fun update(delta: Float) {
@@ -51,6 +52,12 @@ class GameController {
             player.lives -= 0.2f
             player.lives = round(player.lives * 100) / 100  // to fix the floating point errors.
             log.debug("PlayerHP: ${player.lives}")
+        }
+
+        if (laserBeam.used) {
+            laserBeam.lived += delta
+            if (laserBeam.lived >= LaserBeam.LIVE_TIME) laserBeam.used = false
+            collidesWithLaser()
         }
     }
 
@@ -72,6 +79,11 @@ class GameController {
             bullets.add(Bullet(player).apply {
                 setPosition(player.bounds[0].x + BULLET_X, player.bounds[0].y + BULLET_Y)
             })
+        }
+        if (Input.Keys.N.isKeyPressed() && player.ultimateWeapon > 0 && !laserBeam.used) {
+            player.ultimateWeapon--
+            laserBeam.lived = 0f
+            laserBeam.used = true
         }
 
         player.x += xSpeed
@@ -107,15 +119,7 @@ class GameController {
     private fun isPlayerCollidingWithEntity(delta: Float): Boolean {
         simpleEnemies.forEach {
             if (it.isCollidingWith(player)) {
-                simpleEnemies.removeValue(it, true)
-                explosions.add(Explosion().apply { setPosition(it.bounds[0].x + EXPLOSION_X, it.bounds[0].y + EXPLOSION_Y) })
-                if (it.containsDropable) {
-                    collectibles.add(Collectible.decideCollectible().apply {
-                        setPosition(it.bounds[0].x + it.bounds[0].width / 2f,
-                                it.bounds[0].y + it.bounds[0].height / 2f)
-                    })
-                }
-                player.score += 100
+                entityKilled(player, it)
                 return true
             } else if (it.y < -SimpleEnemy.BOUNDS_HEIGHT) { // remove enemy if outside the world bounds
                 simpleEnemies.removeValue(it, true)
@@ -124,11 +128,7 @@ class GameController {
 
         civilianShips.forEach {
             if (it.isCollidingWith(player)) { // || it.isCollidingWith(secondPlayer)) {
-                civilianShips.removeValue(it, true)
-                if (it.toLeft) explosions.add(Explosion().apply { setPosition(it.bounds[1].x + it.bounds[1].width / 2f, it.bounds[1].y - 0.05f) })
-                else explosions.add(Explosion().apply { setPosition(it.bounds[0].x + it.bounds[1].width / 2f, it.bounds[0].y) })
-                player.score -= 500 // if (it.isCollidingWith(player)) player.score -= 500
-//                else if (it.isCollidingWith(secondPlayer)) secondPlayer.score -= 500
+                entityKilled(player, it)
                 return true
             }
         }
@@ -152,16 +152,8 @@ class GameController {
             }
             simpleEnemies.forEach { enemy ->
                 if (bullet.isCollidingWith(enemy)) {  // remove bullet and enemy if they collide.
-                    simpleEnemies.removeValue(enemy, true)
-                    explosions.add(Explosion().apply { setPosition(enemy.bounds[0].x + EXPLOSION_X, enemy.bounds[0].y + EXPLOSION_Y) })
-                    if (bullet.owner is Player) bullet.owner.score += 100
                     bullets.removeValue(bullet, true)
-                    if (enemy.containsDropable) {
-                        collectibles.add(Collectible.decideCollectible().apply {
-                            setPosition(enemy.bounds[0].x + enemy.bounds[0].width / 2f,
-                                    enemy.bounds[0].y + enemy.bounds[0].height / 2f)
-                        })
-                    }
+                    entityKilled(bullet.owner as Player, enemy)
                 }
             }
             civilianShips.forEach { civil ->
@@ -169,10 +161,7 @@ class GameController {
                     bullets.removeValue(bullet, true)
                     civil.lives -= 0.1f
                     if (civil.lives <= 0f) {
-                        civilianShips.removeValue(civil, true)
-                        if (civil.toLeft) explosions.add(Explosion().apply { setPosition(civil.bounds[1].x + civil.bounds[1].width / 2f, civil.bounds[1].y - 0.05f) })
-                        else explosions.add(Explosion().apply { setPosition(civil.bounds[0].x + civil.bounds[1].width / 2f, civil.bounds[0].y) })
-                        if (bullet.owner is Player) bullet.owner.score -= 500
+                        entityKilled(bullet.owner as Player, civil)
                     }
                 }
             }
@@ -189,9 +178,45 @@ class GameController {
         }
     }
 
+    private fun collidesWithLaser() {
+        simpleEnemies.forEach {
+            if (it.isCollidingWith(laserBeam)) entityKilled(laserBeam.owner, it)
+        }
+
+        civilianShips.forEach {
+            if (it.isCollidingWith(laserBeam)) entityKilled(laserBeam.owner, it)
+        }
+    }
+
     private fun updateEntities() {
         simpleEnemies.forEach { it.update() }
         bullets.forEach { it.update() }
         civilianShips.forEach { it.update() }
+        laserBeam.updateBounds()
+    }
+
+    private fun entityKilled(player: Player, entity: EntityBase) {
+        if (entity is SimpleEnemy) {
+            player.score += SimpleEnemy.SCORE_VALUE
+            simpleEnemies.removeValue(entity, true)
+            explosions.add(Explosion().apply { setPosition(entity.bounds[0].x + EXPLOSION_X, entity.bounds[0].y + EXPLOSION_Y) })
+            dropCollectible(entity)
+        } else if (entity is CivilianShip) {
+            player.score += CivilianShip.SCORE_VALUE
+            civilianShips.removeValue(entity, true)
+            if (entity.toLeft) explosions.add(Explosion().apply { setPosition(entity.bounds[1].x + entity.bounds[1].width / 2f, entity.bounds[1].y - 0.05f) })
+            else explosions.add(Explosion().apply { setPosition(entity.bounds[0].x + entity.bounds[1].width / 2f, entity.bounds[0].y) })
+        }
+    }
+
+    private fun dropCollectible(entity: EntityBase) {
+        if (entity is SimpleEnemy) {
+            if (entity.containsDropable) {
+                collectibles.add(Collectible.decideCollectible().apply {
+                    setPosition(entity.bounds[0].x + entity.bounds[0].width / 2f,
+                            entity.bounds[0].y + entity.bounds[0].height / 2f)
+                })
+            }
+        }
     }
 }
