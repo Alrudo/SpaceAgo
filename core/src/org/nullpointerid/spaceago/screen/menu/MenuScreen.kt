@@ -2,104 +2,163 @@ package org.nullpointerid.spaceago.screen.menu
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.viewport.FitViewport
 import org.nullpointerid.spaceago.SpaceShooter
+import org.nullpointerid.spaceago.assets.AssetDescriptors
+import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.screen.game.GameScreen
 import org.nullpointerid.spaceago.utils.*
 
-
 class MenuScreen(private val game: SpaceShooter) : Screen {
 
-    private var batch: SpriteBatch = SpriteBatch()
-    private val renderer = ShapeRenderer()
+    companion object {
+
+        private const val BUTTON_WIDTH = 200f
+        const val CENTER = (GameConfig.HUD_WIDTH - BUTTON_WIDTH) / 2f  // center of the screen
+    }
+
+    private lateinit var batch: SpriteBatch
+//    private lateinit var movingBackground: MovingBackground
+
     private val camera = OrthographicCamera()
+    private val renderer = ShapeRenderer()
+    private val layout = GlyphLayout()
     private val viewport = FitViewport(GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT, camera)
 
-    private val menuStage: Stage = Stage()
+    // save rectangle coordinates.
+    private val singlePlayerRect = Rectangle(350f, 550f, 300f, 100f)
+    private val multiPlayerRect = Rectangle(350f, 400f, 300f, 100f)
+    private val upgradesRect = Rectangle(380f, 250f, 240f, 100f)
+    private val exitRect = Rectangle(450f, 100f, 100f, 100f)
 
-    private val start: Float = 550f
-    private val step: Float = 50f
-    private val spaceAgo: Label
-    private val singleplayerBtn: TextButton
-    private val multiplayerBtn: TextButton
-    private val upgradeMenuBtn: TextButton
-    private val exitBtn: TextButton
+    private var changeToGame = false
+    private var changeToShop = false
 
-    init {
-        Gdx.input.inputProcessor = this.menuStage
+    // assets variables.
+    private val menuAtlas = game.assetManager[AssetDescriptors.MAIN_MENU_ATLAS]
+    private val background = menuAtlas[RegionNames.MENU_BACKGROUND]
+    private val menuFont = BitmapFont("fonts/MenuFont.fnt".toInternalFile())
+    private val menuFontYellow = BitmapFont("fonts/MenuFontYellow.fnt".toInternalFile())
+    private val haloFont = FreeTypeFontGenerator("fonts/Halo3.ttf".toInternalFile()).generateFont(
+            FreeTypeFontGenerator.FreeTypeFontParameter().apply {
+                size = 75
+                borderWidth = 5f
+                borderColor = Color.BLACK
+                color = Color.GRAY
+            })
 
-        spaceAgo = Label("SpaceAgo", game.skin).apply {
-            setPosition(20f, menuStage.height - height - 27f)
-        }.bind(menuStage)
 
-        singleplayerBtn = TextButton("Singleplayer", game.skin)
-                .extend(20f, 10f)
-                .apply {
-                    setPosition(menuStage.width / 2 - width / 2, start)
-                }
-                .bind(menuStage)
-                .onClick {
-                    game.screen = GameScreen(game)
-                }
-
-        multiplayerBtn = TextButton("Multiplayer", game.skin)
-                .extend(20f, 10f)
-                .apply {
-                    setPosition(menuStage.width / 2 - width / 2, singleplayerBtn.y - singleplayerBtn.height - step)
-                }
-                .bind(menuStage)
-                .onClick {
-                    // TODO: add multiplayer menu
-                }
-
-        upgradeMenuBtn = TextButton("Upgrades", game.skin)
-                .extend(20f, 10f)
-                .apply {
-                    setPosition(menuStage.width / 2 - width / 2, multiplayerBtn.y - multiplayerBtn.height - step)
-                }
-                .bind(menuStage)
-                .onClick {
-                    game.screen = UpgradeShopScreen(game)
-                }
-
-        exitBtn = TextButton("Exit", game.skin)
-                .extend(20f, 10f)
-                .apply {
-                    setPosition(menuStage.width / 2 - width / 2, upgradeMenuBtn.y - upgradeMenuBtn.height - step - 3f)
-                }
-                .bind(menuStage)
-                .onClick {
-                    Gdx.app.exit()
-                }
+    override fun show() {
+        batch = SpriteBatch()
     }
 
     override fun render(delta: Float) {
         clearScreen()
 
-        batch.use {
-            batch.draw(game.background, 0f, 0f)
-            game.movingBackground.updateRender(delta, batch)
+        renderMenu(delta)
+
+        if (GameConfig.DEBUG_MODE) {  // draw grid and other debug lines if set to true
+            viewport.drawGrid(renderer, 100f)
+            renderDebug()
         }
 
-        menuStage.act(delta)
-        menuStage.draw()
+        when {
+            changeToGame -> game.screen = GameScreen(game)
+            changeToShop -> game.screen = UpgradeShopScreen(game)
+        }
+    }
 
-        if (GameConfig.DEBUG_MODE) {
-            viewport.drawGrid(renderer, 100f)
-            renderer.use {
-                menuStage.actors.forEach {
-                    renderer.rect(it)
+    private fun renderMenu(delta: Float) {
+        viewport.apply()
+        batch.projectionMatrix = camera.combined
+
+        batch.use {
+            // Draw background
+            batch.draw(background, 0f, 0f)
+            game.movingBackground.updateRender(delta, batch)
+
+            // Draw logo
+            layout.setText(haloFont, "SpaceAgo")
+            haloFont.draw(batch, layout, 20f, GameConfig.HUD_HEIGHT - layout.height)
+
+            // Draw buttons
+            // Fix coordinates of the mouse using Vector and unproject and save them to Vector.
+            val mouseVector = Vector3().set(camera.unproject(Vector3(Gdx.input.x.toFloat(), Gdx.input.y.toFloat(), 0f)))
+
+
+            // play button
+            if (inRectangle(singlePlayerRect, mouseVector.x, mouseVector.y)) {
+                layout.setText(menuFontYellow, "Singleplayer")
+                menuFontYellow.draw(batch, layout, CENTER - 45f, 600f + layout.height / 2f)  // draw active button if mouse is inside button hitbox.
+                if (Gdx.input.justTouched()) {  // if play button is pressed - set change screen variable to true.
+                    changeToGame = true
                 }
+            } else {  // draw inactive button.
+                layout.setText(menuFont, "Singleplayer")
+                menuFont.draw(batch, layout, CENTER - 45f, 600f + layout.height / 2f)
+            }
+
+            // Multiplayer button
+            if (inRectangle(multiPlayerRect, mouseVector.x, mouseVector.y)) {
+                layout.setText(menuFontYellow, "Multiplayer")
+                menuFontYellow.draw(batch, layout, CENTER - 20f, 450f + layout.height / 2f)
+            } else {
+                layout.setText(menuFont, "Multiplayer")
+                menuFont.draw(batch, layout, CENTER - 20f, 450f + layout.height / 2f)
+            }
+
+            // Upgrade button
+            if (inRectangle(upgradesRect, mouseVector.x, mouseVector.y)) {
+                layout.setText(menuFontYellow, "Upgrades")
+                menuFontYellow.draw(batch, layout, CENTER - 10f, 300f + layout.height / 2f)
+                if (Gdx.input.justTouched()) {
+                    changeToShop = true
+                }
+            } else {
+                layout.setText(menuFont, "Upgrades")
+                menuFont.draw(batch, layout, CENTER - 10f, 300f + layout.height / 2f)
+            }
+
+            // Exit button
+            if (inRectangle(exitRect, mouseVector.x, mouseVector.y)) {
+                layout.setText(menuFontYellow, "Exit")
+                menuFontYellow.draw(batch, layout, CENTER + layout.width - 15f, 150f + layout.height / 2f)  // draw active button if mouse is inside button hitbox.
+                if (Gdx.input.justTouched()) {  // if exit button is pressed - exit the app.
+                    Gdx.app.exit()
+                }
+            } else { // draw inactive button.
+                layout.setText(menuFont, "Exit")
+                menuFont.draw(batch, layout, CENTER + layout.width - 15f, 150f + layout.height / 2f)
             }
         }
+    }
 
+    private fun renderDebug() {
+        viewport.apply()
+        renderer.projectionMatrix = camera.combined
+
+        renderer.use {
+            val oldColor = renderer.color.cpy()
+            renderer.color = Color.RED
+
+            // Buttons hitboxes.
+            renderer.rect(singlePlayerRect.x, singlePlayerRect.y, singlePlayerRect.width, singlePlayerRect.height)
+            renderer.rect(multiPlayerRect.x, multiPlayerRect.y, multiPlayerRect.width, multiPlayerRect.height)
+            renderer.rect(upgradesRect.x, upgradesRect.y, upgradesRect.width, upgradesRect.height)
+            renderer.rect(exitRect.x, exitRect.y, exitRect.width, exitRect.height)
+
+            renderer.color = oldColor
+        }
     }
 
     override fun resize(width: Int, height: Int) {
@@ -109,13 +168,17 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
     override fun dispose() {
         batch.dispose()
         renderer.dispose()
+        haloFont.dispose()
+        menuFont.dispose()
+        menuFontYellow.dispose()
     }
 
     override fun hide() {
+        // WARNING: Screens are not disposed automatically!
+        // without dispose() call screen will be not disposed.
         dispose()
     }
 
-    override fun show() {}
     override fun pause() {}
     override fun resume() {}
 
