@@ -1,26 +1,23 @@
 package org.nullpointerid.spaceago.screen.loading
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.assets.AssetDescriptors
-import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.screen.menu.MenuScreen
-import org.nullpointerid.spaceago.utils.Fonts
 import org.nullpointerid.spaceago.utils.clearScreen
-import org.nullpointerid.spaceago.utils.get
 
 class LoadingScreen(private val game: SpaceShooter) : ScreenAdapter() {
 
     companion object {
+
         private const val PROGRESS_BAR_WIDTH = GameConfig.HUD_WIDTH / 2f // world units
         private const val PROGRESS_BAR_HEIGHT = 120f // world units
+
     }
 
     private val assetManager = game.assetManager
@@ -45,11 +42,6 @@ class LoadingScreen(private val game: SpaceShooter) : ScreenAdapter() {
 
         // blocks until all resources/assets are loaded
         assetManager.finishLoading()
-        game.skin.apply {
-            add("halo", Fonts.HALO, BitmapFont::class.java)
-            load(Gdx.files.internal("items/menu.json"))
-        }
-        game.background = assetManager[AssetDescriptors.MAIN_MENU_ATLAS][RegionNames.MENU_BACKGROUND]!!
     }
 
     override fun render(delta: Float) {
@@ -72,6 +64,8 @@ class LoadingScreen(private val game: SpaceShooter) : ScreenAdapter() {
     }
 
     override fun hide() {
+        // WARNING: Screens are not disposed automatically!
+        // without dispose() call screen will be not disposed.
         dispose()
     }
 
