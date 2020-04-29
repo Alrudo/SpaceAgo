@@ -19,7 +19,7 @@ class SimpleEnemy : EntityBase() {
         const val MIN_X = -0.12f
         const val MAX_X = GameConfig.WORLD_WIDTH - 0.42f
 
-        const val MAX_SPEED = 0.1f
+        const val MAX_SPEED = 0.07f
     }
 
     val bound = Rectangle(0f, 0f, BOUNDS_WIDTH, BOUNDS_HEIGHT)

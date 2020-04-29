@@ -23,8 +23,8 @@ class GameController {
         const val EXPLOSION_Y = (SimpleEnemy.BOUNDS_HEIGHT - Explosion.TEXTURE_HEIGHT) / 2f
     }
 
-    private var simpleEnemyTimer = Random.nextFloat() * (GameConfig.MAX_ENEMY_SPAWN_TIME - GameConfig.MIN_ENEMY_SPAWN_TIME) + GameConfig.MIN_ENEMY_SPAWN_TIME
-    private var civilianShipTimer = 12 + Random.nextFloat() * (25 - 12)
+    private var simpleEnemyTimer = 0.15f + Random.nextFloat() * (0.50f - 0.15f)
+    private var civilianShipTimer = 12f + Random.nextFloat() * (20f - 12f)
     private var playerShootTimer = 0f
     val simpleEnemies = GdxArray<SimpleEnemy>()
     val bullets = GdxArray<Bullet>()
@@ -82,7 +82,7 @@ class GameController {
 
         if (civilianShipTimer <= 0) {
             log.debug("Spawned new civilian ship.")
-            civilianShipTimer = 12 + Random.nextFloat() * (25 - 12)
+            civilianShipTimer = 12f + Random.nextFloat() * (20f - 12f)
             val coinToss = Random.nextInt(0, 100)
             val shipY = 1 + Random.nextFloat() * (6 - 1)
 
@@ -97,7 +97,7 @@ class GameController {
         simpleEnemyTimer -= delta
 
         if (simpleEnemyTimer <= 0) {
-            simpleEnemyTimer = Random.nextFloat() * (GameConfig.MAX_ENEMY_SPAWN_TIME - GameConfig.MIN_ENEMY_SPAWN_TIME) + GameConfig.MIN_ENEMY_SPAWN_TIME
+            simpleEnemyTimer = 0.15f + Random.nextFloat() * (0.50f - 0.15f)
             val enemyX = MathUtils.random(SimpleEnemy.MIN_X, SimpleEnemy.MAX_X)
             simpleEnemies.add(SimpleEnemy().apply { setPosition(enemyX, GameConfig.WORLD_HEIGHT) })
         }
