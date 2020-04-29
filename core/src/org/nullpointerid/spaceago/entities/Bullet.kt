@@ -3,7 +3,7 @@ package org.nullpointerid.spaceago.entities
 import com.badlogic.gdx.math.Rectangle
 import org.nullpointerid.spaceago.utils.GdxArray
 
-class Bullet : EntityBase() {
+class Bullet(val owner: EntityBase) : EntityBase() {
 
     companion object {
 
