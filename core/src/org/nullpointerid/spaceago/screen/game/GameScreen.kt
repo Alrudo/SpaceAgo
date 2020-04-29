@@ -17,7 +17,7 @@ class GameScreen(private val game: SpaceShooter) : Screen {
 
     override fun render(delta: Float) {
         if (controller.player.lives <= 0f) {
-            game.screen = GameOverScreen(assetManager, game, controller.score)
+            game.screen = GameOverScreen(assetManager, game, controller.player.score)
         }
         controller.update(delta)
         renderer.render(delta)
