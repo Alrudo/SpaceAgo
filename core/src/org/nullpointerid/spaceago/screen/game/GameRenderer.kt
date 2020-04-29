@@ -50,10 +50,9 @@ class GameRenderer(private val assetManager: AssetManager,
     private val explosions = controller.explosions
     private val civilianShipToRight = gameAtlas[RegionNames.CIVILIAN_SHIP_RIGHT]
     private val civilianShipToLeft = gameAtlas[RegionNames.CIVILIAN_SHIP_LEFT]
-    private val healthPack = Texture("images/raw/game_play/heathpack.png".toInternalFile())
-    private val bulletCrate = Texture("images/raw/game_play/bullet_crate.png".toInternalFile())
-    private val laserBeam = Texture("images/raw/game_play/laser_beam.png".toInternalFile())
-    private val treasureChest = Texture("images/raw/game_play/treasure_chest.png".toInternalFile())
+    private val healthPack = gameAtlas[RegionNames.HEALTH_PACK]
+    private val bulletCrate = gameAtlas[RegionNames.AMMO_CRATE]
+    private val treasureChest = gameAtlas[RegionNames.TREASURE_CHEST]
 
     private val font = BitmapFont(AssetPaths.SCORE_FONT.toInternalFile())
     private val player = controller.player
