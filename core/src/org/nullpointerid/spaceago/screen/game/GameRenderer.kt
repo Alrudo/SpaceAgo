@@ -14,6 +14,9 @@ import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.assets.AssetDescriptors
 import org.nullpointerid.spaceago.assets.AssetPaths
 import org.nullpointerid.spaceago.assets.RegionNames
+import org.nullpointerid.spaceago.collectables.HealthPack
+import org.nullpointerid.spaceago.collectables.MoneyCrate
+import org.nullpointerid.spaceago.collectables.UltimateWeapon
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.entities.*
 import org.nullpointerid.spaceago.entities.Bullet
@@ -58,6 +61,7 @@ class GameRenderer(private val assetManager: AssetManager,
     private val simpleEnemies = controller.simpleEnemies
     private val bullets = controller.bullets
     private val civilianShips = controller.civilianShips
+    private val collectibles = controller.collectibles
 
     fun render(delta: Float) {
         clearScreen()
@@ -108,10 +112,9 @@ class GameRenderer(private val assetManager: AssetManager,
                 renderer.rectangle(it.bounds[0])
             }
 
-            renderer.rect(5f, 5f, 0.3f, 0.3f)
-            renderer.rect(3f, 3f, 0.4f, GameConfig.WORLD_HEIGHT)
-            renderer.rect(4f, 4f, 0.35f, 0.35f)
-            renderer.rect(2f, 2f, 0.35f, 0.35f)
+            collectibles.forEach {
+                renderer.rectangle(it.bounds[0])
+            }
 
         }
         renderer.color = oldColor
@@ -152,17 +155,13 @@ class GameRenderer(private val assetManager: AssetManager,
                 batch.draw(simpleEnemyTexture, it.x, it.y, SimpleEnemy.TEXTURE_WIDTH, SimpleEnemy.TEXTURE_HEIGHT)
             }
 
-            // draw health pack
-            batch.draw(healthPack, 5f, 5f, 0.3f, 0.3f)
-
-            // draw bullet crate
-            batch.draw(bulletCrate, 4f, 4f, 0.35f, 0.35f)
-
-            // draw laser beam
-            batch.draw(laserBeam, 3f, 3f, 0.4f, GameConfig.WORLD_HEIGHT)
-
-            // draw treasure chest
-            batch.draw(treasureChest, 2f, 2f, 0.35f, 0.35f)
+            collectibles.forEach {
+                when(it) {
+                    is MoneyCrate -> batch.draw(treasureChest, it.x, it.y, MoneyCrate.TEXTURE_WIDTH, MoneyCrate.TEXTURE_HEIGHT)
+                    is HealthPack -> batch.draw(healthPack, it.x, it.y, HealthPack.TEXTURE_WIDTH, HealthPack.TEXTURE_HEIGHT)
+                    is UltimateWeapon -> batch.draw(bulletCrate, it.x, it.y, UltimateWeapon.TEXTURE_WIDTH, UltimateWeapon.TEXTURE_HEIGHT)
+                }
+            }
 
             // Draw civilian ship texture.
             civilianShips.forEach {

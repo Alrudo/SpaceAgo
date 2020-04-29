@@ -24,7 +24,7 @@ class MoneyCrate : Collectible, EntityBase() {
     }
 
     override fun action(player: Player): Boolean {
-        // TODO: Add SCORE_VALUE to player score after the Issue with moving score to Player class is done.
+        player.score += SCORE_VALUE
         return true
     }
 }

@@ -23,6 +23,10 @@ class UltimateWeapon : Collectible, EntityBase() {
     }
 
     override fun action(player: Player): Boolean {
-        TODO("Not yet implemented")
+        if (player.ultimateWeapon < Player.MAX_ULTIMATE_WEAPON_COUNT) {
+            player.ultimateWeapon += 1
+            return true
+        }
+        return false
     }
 }

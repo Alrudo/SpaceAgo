@@ -20,10 +20,10 @@ class CivilianShip(val toLeft: Boolean) : EntityBase() {
 
     var lives = 0.2f
 
-    private val NoseBound = Rectangle(0f, 0f, NOSE_WIDTH, NOSE_HEIGHT)
-    private val BodyBound = Rectangle(0f, 0f, BODY_WIDTH, BODY_HEIGHT)
+    private val noseBound = Rectangle(0f, 0f, NOSE_WIDTH, NOSE_HEIGHT)
+    private val bodyBound = Rectangle(0f, 0f, BODY_WIDTH, BODY_HEIGHT)
 
-    override val bounds = GdxArray<Rectangle>().apply { add(BodyBound, NoseBound) }
+    override val bounds = GdxArray<Rectangle>().apply { add(bodyBound, noseBound) }
 
     fun update() {
         if (toLeft) x -= MAX_SPEED
@@ -32,11 +32,11 @@ class CivilianShip(val toLeft: Boolean) : EntityBase() {
 
     override fun updateBounds() {
         if (toLeft) {
-            NoseBound.setPosition(x, y + 0.2f)
-            BodyBound.setPosition(x + NoseBound.width, y)
+            noseBound.setPosition(x, y + 0.2f)
+            bodyBound.setPosition(x + noseBound.width, y)
         } else {
-            BodyBound.setPosition(x, y)
-            NoseBound.setPosition(x + BodyBound.width, y + 0.2f)
+            bodyBound.setPosition(x, y)
+            noseBound.setPosition(x + bodyBound.width, y + 0.2f)
         }
     }
 }

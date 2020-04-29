@@ -2,6 +2,7 @@ package org.nullpointerid.spaceago.screen.game
 
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.math.MathUtils
+import org.nullpointerid.spaceago.collectables.Collectible
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.entities.*
 import org.nullpointerid.spaceago.utils.GdxArray
@@ -32,6 +33,7 @@ class GameController {
     val player = Player().apply { setPosition(2f, Player.START_Y) }
     val secondPlayer = Player().apply { setPosition(7f, Player.START_Y) }
     var civilianShips = GdxArray<CivilianShip>()
+    val collectibles = GdxArray<EntityBase>()
 
 
     fun update(delta: Float) {
@@ -40,12 +42,12 @@ class GameController {
 
         playerControl()
         blockPlayerFromLeavingTheWorld()
-//        spawnNewSimpleEnemy(delta)
+        spawnNewSimpleEnemy(delta)
         spawnNewCivilianShip(delta)
         updateEntities()
         checkForRemoval()
 
-        if (isPlayerCollidingWithEntity()) {
+        if (isPlayerCollidingWithEntity(delta)) {
             player.lives -= 0.2f
             player.lives = round(player.lives * 100) / 100  // to fix the floating point errors.
             log.debug("PlayerHP: ${player.lives}")
@@ -82,7 +84,7 @@ class GameController {
         if (civilianShipTimer <= 0) {
             log.debug("Spawned new civilian ship.")
             civilianShipTimer = 12f + Random.nextFloat() * (20f - 12f)
-            val coinToss = Random.nextInt(0, 100)
+            val coinToss = Random.nextInt(1, 101)
             val shipY = 1 + Random.nextFloat() * (6 - 1)
 
             val civilianShip = if (coinToss > 50) CivilianShip(true).apply { setPosition(11f, shipY) }
@@ -102,11 +104,17 @@ class GameController {
         }
     }
 
-    private fun isPlayerCollidingWithEntity(): Boolean {
+    private fun isPlayerCollidingWithEntity(delta: Float): Boolean {
         simpleEnemies.forEach {
             if (it.isCollidingWith(player)) {
                 simpleEnemies.removeValue(it, true)
                 explosions.add(Explosion().apply { setPosition(it.bounds[0].x + EXPLOSION_X, it.bounds[0].y + EXPLOSION_Y) })
+                if (it.containsDropable) {
+                    collectibles.add(Collectible.decideCollectible().apply {
+                        setPosition(it.bounds[0].x + it.bounds[0].width / 2f,
+                                it.bounds[0].y + it.bounds[0].height / 2f)
+                    })
+                }
                 player.score += 100
                 return true
             } else if (it.y < -SimpleEnemy.BOUNDS_HEIGHT) { // remove enemy if outside the world bounds
@@ -124,6 +132,16 @@ class GameController {
                 return true
             }
         }
+
+        collectibles.forEach {
+            if (it is Collectible) {
+                it.lived += delta
+                if (it.lived >= Collectible.MAX_LIFE_TIME) collectibles.removeValue(it, true)
+                else if (player.isCollidingWith(it)) {
+                    if (it.action(player)) collectibles.removeValue(it, true)
+                }
+            }
+        }
         return false
     }
 
@@ -138,6 +156,12 @@ class GameController {
                     explosions.add(Explosion().apply { setPosition(enemy.bounds[0].x + EXPLOSION_X, enemy.bounds[0].y + EXPLOSION_Y) })
                     if (bullet.owner is Player) bullet.owner.score += 100
                     bullets.removeValue(bullet, true)
+                    if (enemy.containsDropable) {
+                        collectibles.add(Collectible.decideCollectible().apply {
+                            setPosition(enemy.bounds[0].x + enemy.bounds[0].width / 2f,
+                                    enemy.bounds[0].y + enemy.bounds[0].height / 2f)
+                        })
+                    }
                 }
             }
             civilianShips.forEach { civil ->
@@ -152,15 +176,15 @@ class GameController {
                     }
                 }
             }
-        }
 
-        civilianShips.forEach {
-            if (it.toLeft && it.x < -3f) {
-                civilianShips.removeValue(it, true)
-                log.debug("destroyed civilian ship at ${it.x} while it was moving to the left.")
-            } else if (!it.toLeft && it.x > 13f) {
-                civilianShips.removeValue(it, true)
-                log.debug("destroyed civilian ship at ${it.x} while it was moving to the right.")
+            civilianShips.forEach {
+                if (it.toLeft && it.x < -3f) {
+                    civilianShips.removeValue(it, true)
+                    log.debug("destroyed civilian ship at ${it.x} while it was moving to the left.")
+                } else if (!it.toLeft && it.x > 13f) {
+                    civilianShips.removeValue(it, true)
+                    log.debug("destroyed civilian ship at ${it.x} while it was moving to the right.")
+                }
             }
         }
     }

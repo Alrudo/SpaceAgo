@@ -25,7 +25,7 @@ class HealthPack : Collectible, EntityBase() {
 
     override fun action(player: Player): Boolean {
         if (player.lives < GameConfig.LIVES_START) {
-            player.lives = Math.min(GameConfig.LIVES_START, player.lives + healAmount)
+            player.lives = (player.lives + healAmount).coerceAtMost(GameConfig.LIVES_START)
             return true
         }
         return false
