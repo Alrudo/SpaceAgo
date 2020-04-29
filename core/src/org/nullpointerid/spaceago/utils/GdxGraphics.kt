@@ -5,6 +5,10 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import java.awt.Color
 
 @JvmOverloads  // if you want to mix Java and Kotlin
@@ -32,6 +36,32 @@ inline fun ShapeRenderer.use(action: () -> Unit) {
 
 fun ShapeRenderer.rectangle(r: Rectangle) {
     rect(r.x, r.y, r.width, r.height)
+}
+
+fun ShapeRenderer.rect(lbl: Actor) {
+    this.rect(lbl.x, lbl.y, lbl.width, lbl.height)
+}
+
+fun <T : Actor> T.bind(stage: Stage): T {
+    stage.addActor(this)
+    return this
+}
+
+fun <T : Actor> T.extend(w: Float = 0f, h: Float = 0f): T {
+    this.apply {
+        width += w
+        height += h
+    }
+    return this
+}
+
+fun <T : Actor> T.onClick(action: () -> Unit): T {
+    addListener(object : ClickListener() {
+        override fun clicked(event: InputEvent?, x: Float, y: Float) {
+            action()
+        }
+    })
+    return this
 }
 
 fun inRectangle(r: Rectangle, x: Float, y: Float) = r.x <= x && r.x + r.width >= x && r.y <= y && r.y + r.height >= y
