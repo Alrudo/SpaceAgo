@@ -11,6 +11,13 @@ bullet
   orig: 16, 16
   offset: 0, 0
   index: -1
+bullet_crate
+  rotate: false
+  xy: 1306, 725
+  size: 319, 319
+  orig: 319, 319
+  offset: 0, 0
+  index: -1
 civilian_ship_left
   rotate: false
   xy: 504, 271
@@ -27,7 +34,7 @@ civilian_ship_right
   index: -1
 explosion
   rotate: false
-  xy: 1306, 1012
+  xy: 1781, 1213
   size: 96, 32
   orig: 96, 32
   offset: 0, 0
@@ -39,6 +46,20 @@ gameplay_background
   orig: 1777, 1000
   offset: 0, 0
   index: -1
+heathpack
+  rotate: false
+  xy: 1306, 440
+  size: 284, 283
+  orig: 284, 283
+  offset: 0, 0
+  index: -1
+laser_beam
+  rotate: false
+  xy: 1781, 1247
+  size: 98, 799
+  orig: 98, 799
+  offset: 0, 0
+  index: -1
 moving_background
   rotate: false
   xy: 504, 444
@@ -48,7 +69,7 @@ moving_background
   index: -1
 player
   rotate: false
-  xy: 1781, 1918
+  xy: 1627, 916
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
@@ -58,5 +79,12 @@ simple_enemy
   xy: 2, 20
   size: 500, 1024
   orig: 500, 1024
+  offset: 0, 0
+  index: -1
+treasure_chest
+  rotate: false
+  xy: 1881, 1877
+  size: 162, 169
+  orig: 162, 169
   offset: 0, 0
   index: -1

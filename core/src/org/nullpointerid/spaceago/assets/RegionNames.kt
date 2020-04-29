@@ -14,4 +14,8 @@ object RegionNames {
 
     const val CIVILIAN_SHIP_RIGHT = "civilian_ship_right"
     const val CIVILIAN_SHIP_LEFT = "civilian_ship_left"
+
+    const val HEALTH_PACK = "heathpack"
+    const val AMMO_CRATE = "bullet_crate"
+    const val TREASURE_CHEST = "treasure_chest"
 }

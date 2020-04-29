@@ -32,10 +32,13 @@ class Player : EntityBase() {
         const val SHOOT_TIMER = 0.2f
 
         const val START_Y = 1f
+
+        const val MAX_ULTIMATE_WEAPON_COUNT = 3
     }
 
     var lives = GameConfig.LIVES_START
     var score = 0
+    var ultimateWeapon = 0
 
     private val bound1 = Rectangle(0f, 0f, BOUNDS_VER_WIDTH, BOUNDS_VER_HEIGHT)
     private val bound2 = Rectangle(0f, 0f, BOUNDS_HOR_WIDTH, BOUNDS_HOR_HEIGHT)

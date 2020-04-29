@@ -1,6 +1,7 @@
 package org.nullpointerid.spaceago.entities
 
 import com.badlogic.gdx.math.Rectangle
+import org.nullpointerid.spaceago.collectables.Collectible
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.utils.GdxArray
 
@@ -23,6 +24,7 @@ class SimpleEnemy : EntityBase() {
     }
 
     val bound = Rectangle(0f, 0f, BOUNDS_WIDTH, BOUNDS_HEIGHT)
+    val containsDropable = Collectible.collectibleChance()
     override val bounds = GdxArray<Rectangle>().apply { add(bound) }
 
     fun update() {

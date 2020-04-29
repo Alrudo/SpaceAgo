@@ -3,7 +3,7 @@ package org.nullpointerid.spaceago.screen.game
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.*
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -14,6 +14,9 @@ import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.assets.AssetDescriptors
 import org.nullpointerid.spaceago.assets.AssetPaths
 import org.nullpointerid.spaceago.assets.RegionNames
+import org.nullpointerid.spaceago.collectables.HealthPack
+import org.nullpointerid.spaceago.collectables.MoneyCrate
+import org.nullpointerid.spaceago.collectables.UltimateWeapon
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.entities.*
 import org.nullpointerid.spaceago.entities.Bullet
@@ -47,6 +50,9 @@ class GameRenderer(private val assetManager: AssetManager,
     private val explosions = controller.explosions
     private val civilianShipToRight = gameAtlas[RegionNames.CIVILIAN_SHIP_RIGHT]
     private val civilianShipToLeft = gameAtlas[RegionNames.CIVILIAN_SHIP_LEFT]
+    private val healthPack = gameAtlas[RegionNames.HEALTH_PACK]
+    private val bulletCrate = gameAtlas[RegionNames.AMMO_CRATE]
+    private val treasureChest = gameAtlas[RegionNames.TREASURE_CHEST]
 
     private val font = BitmapFont(AssetPaths.SCORE_FONT.toInternalFile())
     private val player = controller.player
@@ -54,6 +60,7 @@ class GameRenderer(private val assetManager: AssetManager,
     private val simpleEnemies = controller.simpleEnemies
     private val bullets = controller.bullets
     private val civilianShips = controller.civilianShips
+    private val collectibles = controller.collectibles
 
     fun render(delta: Float) {
         clearScreen()
@@ -103,10 +110,13 @@ class GameRenderer(private val assetManager: AssetManager,
             bullets.forEach {
                 renderer.rectangle(it.bounds[0])
             }
-            renderer.color = oldColor
+
+            collectibles.forEach {
+                renderer.rectangle(it.bounds[0])
+            }
 
         }
-
+        renderer.color = oldColor
     }
 
     private fun renderUi() {
@@ -142,6 +152,14 @@ class GameRenderer(private val assetManager: AssetManager,
             // Draw simpleEnemy texture
             simpleEnemies.forEach {
                 batch.draw(simpleEnemyTexture, it.x, it.y, SimpleEnemy.TEXTURE_WIDTH, SimpleEnemy.TEXTURE_HEIGHT)
+            }
+
+            collectibles.forEach {
+                when(it) {
+                    is MoneyCrate -> batch.draw(treasureChest, it.x, it.y, MoneyCrate.TEXTURE_WIDTH, MoneyCrate.TEXTURE_HEIGHT)
+                    is HealthPack -> batch.draw(healthPack, it.x, it.y, HealthPack.TEXTURE_WIDTH, HealthPack.TEXTURE_HEIGHT)
+                    is UltimateWeapon -> batch.draw(bulletCrate, it.x, it.y, UltimateWeapon.TEXTURE_WIDTH, UltimateWeapon.TEXTURE_HEIGHT)
+                }
             }
 
             // Draw civilian ship texture.
@@ -185,6 +203,5 @@ class GameRenderer(private val assetManager: AssetManager,
         uiViewport.update(width, height, true)
     }
 
-    override fun dispose() {
-    }
+    override fun dispose() {}
 }
