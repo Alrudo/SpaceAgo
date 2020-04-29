@@ -23,15 +23,14 @@ class GameController {
         const val EXPLOSION_Y = (SimpleEnemy.BOUNDS_HEIGHT - Explosion.TEXTURE_HEIGHT) / 2f
     }
 
-    private var simpleEnemyTimer = Random.nextFloat() * (GameConfig.MAX_ENEMY_SPAWN_TIME - GameConfig.MIN_ENEMY_SPAWN_TIME) + GameConfig.MIN_ENEMY_SPAWN_TIME
-    private var civilianShipTimer = 12 + Random.nextFloat() * (25 - 12)
+    private var simpleEnemyTimer = 0.15f + Random.nextFloat() * (0.50f - 0.15f)
+    private var civilianShipTimer = 12f + Random.nextFloat() * (20f - 12f)
     private var playerShootTimer = 0f
     val simpleEnemies = GdxArray<SimpleEnemy>()
     val bullets = GdxArray<Bullet>()
     val explosions = GdxArray<Explosion>()
     val player = Player().apply { setPosition(2f, Player.START_Y) }
     val secondPlayer = Player().apply { setPosition(7f, Player.START_Y) }
-    var score = 0
     var civilianShips = GdxArray<CivilianShip>()
 
 
@@ -68,7 +67,7 @@ class GameController {
         if (Input.Keys.S.isKeyPressed()) ySpeed = -Player.MAX_SPEED
         if (Input.Keys.SPACE.isKeyPressed() && playerShootTimer > Player.SHOOT_TIMER) {
             playerShootTimer = 0f
-            bullets.add(Bullet().apply {
+            bullets.add(Bullet(player).apply {
                 setPosition(player.bounds[0].x + BULLET_X, player.bounds[0].y + BULLET_Y)
             })
         }
@@ -82,7 +81,7 @@ class GameController {
 
         if (civilianShipTimer <= 0) {
             log.debug("Spawned new civilian ship.")
-            civilianShipTimer = 12 + Random.nextFloat() * (25 - 12)
+            civilianShipTimer = 12f + Random.nextFloat() * (20f - 12f)
             val coinToss = Random.nextInt(0, 100)
             val shipY = 1 + Random.nextFloat() * (6 - 1)
 
@@ -97,7 +96,7 @@ class GameController {
         simpleEnemyTimer -= delta
 
         if (simpleEnemyTimer <= 0) {
-            simpleEnemyTimer = Random.nextFloat() * (GameConfig.MAX_ENEMY_SPAWN_TIME - GameConfig.MIN_ENEMY_SPAWN_TIME) + GameConfig.MIN_ENEMY_SPAWN_TIME
+            simpleEnemyTimer = 0.15f + Random.nextFloat() * (0.50f - 0.15f)
             val enemyX = MathUtils.random(SimpleEnemy.MIN_X, SimpleEnemy.MAX_X)
             simpleEnemies.add(SimpleEnemy().apply { setPosition(enemyX, GameConfig.WORLD_HEIGHT) })
         }
@@ -108,7 +107,7 @@ class GameController {
             if (it.isCollidingWith(player)) {
                 simpleEnemies.removeValue(it, true)
                 explosions.add(Explosion().apply { setPosition(it.bounds[0].x + EXPLOSION_X, it.bounds[0].y + EXPLOSION_Y) })
-                score += 100
+                player.score += 100
                 return true
             } else if (it.y < -SimpleEnemy.BOUNDS_HEIGHT) { // remove enemy if outside the world bounds
                 simpleEnemies.removeValue(it, true)
@@ -116,11 +115,12 @@ class GameController {
         }
 
         civilianShips.forEach {
-            if (it.isCollidingWith(player)) {
+            if (it.isCollidingWith(player)) { // || it.isCollidingWith(secondPlayer)) {
                 civilianShips.removeValue(it, true)
                 if (it.toLeft) explosions.add(Explosion().apply { setPosition(it.bounds[1].x + it.bounds[1].width / 2f, it.bounds[1].y - 0.05f) })
                 else explosions.add(Explosion().apply { setPosition(it.bounds[0].x + it.bounds[1].width / 2f, it.bounds[0].y) })
-                score -= 500
+                player.score -= 500 // if (it.isCollidingWith(player)) player.score -= 500
+//                else if (it.isCollidingWith(secondPlayer)) secondPlayer.score -= 500
                 return true
             }
         }
@@ -134,10 +134,10 @@ class GameController {
             }
             simpleEnemies.forEach { enemy ->
                 if (bullet.isCollidingWith(enemy)) {  // remove bullet and enemy if they collide.
-                    bullets.removeValue(bullet, true)
                     simpleEnemies.removeValue(enemy, true)
                     explosions.add(Explosion().apply { setPosition(enemy.bounds[0].x + EXPLOSION_X, enemy.bounds[0].y + EXPLOSION_Y) })
-                    score += 100
+                    if (bullet.owner is Player) bullet.owner.score += 100
+                    bullets.removeValue(bullet, true)
                 }
             }
             civilianShips.forEach { civil ->
@@ -148,7 +148,7 @@ class GameController {
                         civilianShips.removeValue(civil, true)
                         if (civil.toLeft) explosions.add(Explosion().apply { setPosition(civil.bounds[1].x + civil.bounds[1].width / 2f, civil.bounds[1].y - 0.05f) })
                         else explosions.add(Explosion().apply { setPosition(civil.bounds[0].x + civil.bounds[1].width / 2f, civil.bounds[0].y) })
-                        score -= 500
+                        if (bullet.owner is Player) bullet.owner.score -= 500
                     }
                 }
             }

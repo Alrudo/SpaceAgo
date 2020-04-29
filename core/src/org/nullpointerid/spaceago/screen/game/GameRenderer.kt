@@ -122,7 +122,7 @@ class GameRenderer(private val assetManager: AssetManager,
         batch.projectionMatrix = uiCamera.combined
 
         batch.use {
-            layout.setText(font, controller.score.toString())
+            layout.setText(font, player.score.toString())
 
             font.draw(batch, layout, GameConfig.HUD_WIDTH / 2f - layout.width, GameConfig.HUD_HEIGHT - layout.height)
         }

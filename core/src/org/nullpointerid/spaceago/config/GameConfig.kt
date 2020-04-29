@@ -14,8 +14,5 @@ object GameConfig {
     const val WORLD_WIDTH = 10f // world units
     const val WORLD_HEIGHT = 8f // world units
 
-    const val MAX_ENEMY_SPAWN_TIME = 0.45f
-    const val MIN_ENEMY_SPAWN_TIME = 0.2f
-
     const val LIVES_START = 1f
 }
