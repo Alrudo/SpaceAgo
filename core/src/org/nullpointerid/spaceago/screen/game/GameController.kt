@@ -1,5 +1,6 @@
 package org.nullpointerid.spaceago.screen.game
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.math.MathUtils
 import org.nullpointerid.spaceago.collectables.Collectible
@@ -8,6 +9,7 @@ import org.nullpointerid.spaceago.entities.*
 import org.nullpointerid.spaceago.utils.GdxArray
 import org.nullpointerid.spaceago.utils.isKeyPressed
 import org.nullpointerid.spaceago.utils.logger
+import org.nullpointerid.spaceago.utils.toInternalFile
 import kotlin.math.round
 import kotlin.random.Random
 
@@ -16,6 +18,12 @@ class GameController {
     companion object {
         @JvmStatic
         private val log = logger<GameController>()
+
+        var moveRight  = "D"
+        var moveLeft = "A"
+        var moveUp = "W"
+        var moveDown = "S"
+        var shoot = "Space"
 
         const val BULLET_X = Player.BOUNDS_VER_WIDTH / 2f
         const val BULLET_Y = Player.BOUNDS_VER_HEIGHT
@@ -35,6 +43,9 @@ class GameController {
     var civilianShips = GdxArray<CivilianShip>()
     val collectibles = GdxArray<EntityBase>()
     val laserBeam = LaserBeam(player)
+
+    private val explosionSound = Gdx.audio.newSound("audio/enemyExplosionSound.mp3".toInternalFile())
+    private val shootSound = Gdx.audio.newSound("audio/shotSound.mp3".toInternalFile())
 
 
     fun update(delta: Float) {
@@ -78,6 +89,7 @@ class GameController {
             playerShootTimer = 0f
             bullets.add(Bullet(player).apply {
                 setPosition(player.bounds[0].x + BULLET_X, player.bounds[0].y + BULLET_Y)
+                shootSound.play(0.3f)
             })
         }
         if (Input.Keys.N.isKeyPressed() && player.ultimateWeapon > 0 && !laserBeam.used) {
@@ -120,6 +132,7 @@ class GameController {
         simpleEnemies.forEach {
             if (it.isCollidingWith(player)) {
                 entityKilled(player, it)
+                explosionSound.play(0.8f)
                 return true
             } else if (it.y < -SimpleEnemy.BOUNDS_HEIGHT) { // remove enemy if outside the world bounds
                 simpleEnemies.removeValue(it, true)
@@ -200,12 +213,14 @@ class GameController {
             player.score += SimpleEnemy.SCORE_VALUE
             simpleEnemies.removeValue(entity, true)
             explosions.add(Explosion().apply { setPosition(entity.bounds[0].x + EXPLOSION_X, entity.bounds[0].y + EXPLOSION_Y) })
+            explosionSound.play(0.8f)
             dropCollectible(entity)
         } else if (entity is CivilianShip) {
             player.score += CivilianShip.SCORE_VALUE
             civilianShips.removeValue(entity, true)
             if (entity.toLeft) explosions.add(Explosion().apply { setPosition(entity.bounds[1].x + entity.bounds[1].width / 2f, entity.bounds[1].y - 0.05f) })
             else explosions.add(Explosion().apply { setPosition(entity.bounds[0].x + entity.bounds[1].width / 2f, entity.bounds[0].y) })
+            explosionSound.play(0.8f)
         }
     }
 

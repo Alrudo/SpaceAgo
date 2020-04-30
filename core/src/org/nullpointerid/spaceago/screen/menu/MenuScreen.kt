@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.screen.game.GameScreen
+import org.nullpointerid.spaceago.screen.menu.settings.SettingsScreen
 import org.nullpointerid.spaceago.utils.*
 
 
@@ -25,11 +26,12 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
     private val menuStage: Stage = Stage()
 
     private val start: Float = 550f
-    private val step: Float = 50f
+    private val step: Float = 30f
     private val spaceAgo: Label
     private val singleplayerBtn: TextButton
     private val multiplayerBtn: TextButton
     private val upgradeMenuBtn: TextButton
+    private val settingsBtn: TextButton
     private val exitBtn: TextButton
 
     init {
@@ -69,10 +71,20 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
                     game.screen = UpgradeShopScreen(game)
                 }
 
+        settingsBtn = TextButton("Settings", game.skin)
+                .extend(20f, 10f)
+                .apply {
+                    setPosition(menuStage.width / 2 - width / 2, upgradeMenuBtn.y - upgradeMenuBtn.height - step)
+                }
+                .bind(menuStage)
+                .onClick {
+                    game.screen = SettingsScreen(game)
+                }
+
         exitBtn = TextButton("Exit", game.skin)
                 .extend(20f, 10f)
                 .apply {
-                    setPosition(menuStage.width / 2 - width / 2, upgradeMenuBtn.y - upgradeMenuBtn.height - step - 3f)
+                    setPosition(menuStage.width / 2 - width / 2, settingsBtn.y - settingsBtn.height - step )
                 }
                 .bind(menuStage)
                 .onClick {
