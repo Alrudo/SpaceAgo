@@ -15,6 +15,7 @@ import org.nullpointerid.spaceago.views.menu.MenuScreen
 import org.nullpointerid.spaceago.utils.Fonts
 import org.nullpointerid.spaceago.utils.clearScreen
 import org.nullpointerid.spaceago.utils.get
+import java.awt.Font
 
 class LoadingScreen(private val game: SpaceShooter) : ScreenAdapter() {
 
@@ -49,6 +50,9 @@ class LoadingScreen(private val game: SpaceShooter) : ScreenAdapter() {
         game.COMMON_SKIN.apply {
             add("halo", Fonts.HALO, BitmapFont::class.java)
             load(Gdx.files.internal("items/menu.json"))
+        }
+        game.skin2.apply {
+            load(Gdx.files.internal("items/keybind.json"))
         }
         game.background = assetManager[AssetDescriptors.MAIN_MENU_ATLAS][RegionNames.MENU_BACKGROUND]!!
     }
