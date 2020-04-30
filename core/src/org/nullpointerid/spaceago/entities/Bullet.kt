@@ -3,15 +3,12 @@ package org.nullpointerid.spaceago.entities
 import com.badlogic.gdx.math.Rectangle
 import org.nullpointerid.spaceago.utils.GdxArray
 
-class Bullet : EntityBase() {
+class Bullet(val owner: EntityBase) : EntityBase() {
 
     companion object {
 
         const val TEXTURE_WIDTH = 0.25f
         const val TEXTURE_HEIGHT = 0.25f
-
-        const val BOUNDS_X_OFFSET = 0.07f
-        const val BOUNDS_Y_OFFSET = 0.04f
 
         const val BOUNDS_WIDTH = 0.1f
         const val BOUNDS_HEIGHT = 0.2f

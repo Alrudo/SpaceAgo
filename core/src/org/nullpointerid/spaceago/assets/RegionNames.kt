@@ -12,6 +12,11 @@ object RegionNames {
 
     const val GAME_OVER = "game_over"
 
-    const val MENU_FONT = "MenuFont"
-    const val MENU_FONT_YELLOW = "MenuFontYellow"
+    const val CIVILIAN_SHIP_RIGHT = "civilian_ship_right"
+    const val CIVILIAN_SHIP_LEFT = "civilian_ship_left"
+
+    const val HEALTH_PACK = "heathpack"
+    const val AMMO_CRATE = "bullet_crate"
+    const val TREASURE_CHEST = "treasure_chest"
+    const val LASER_BEAM = "laser_beam"
 }

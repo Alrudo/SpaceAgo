@@ -1,6 +1,7 @@
 package org.nullpointerid.spaceago.entities
 
 import com.badlogic.gdx.math.Rectangle
+import org.nullpointerid.spaceago.collectables.Collectible
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.utils.GdxArray
 
@@ -19,10 +20,14 @@ class SimpleEnemy : EntityBase() {
         const val MIN_X = -0.12f
         const val MAX_X = GameConfig.WORLD_WIDTH - 0.42f
 
-        const val MAX_SPEED = 0.1f
+        const val MAX_SPEED = 0.07f
+
+        const val SCORE_VALUE = 100
     }
 
     val bound = Rectangle(0f, 0f, BOUNDS_WIDTH, BOUNDS_HEIGHT)
+    val containsDropable = Collectible.collectibleChance()
+
     override val bounds = GdxArray<Rectangle>().apply { add(bound) }
 
     fun update() {
