@@ -11,6 +11,7 @@ import org.nullpointerid.spaceago.entities.SimpleEnemy
 import org.nullpointerid.spaceago.utils.GdxArray
 import org.nullpointerid.spaceago.utils.isKeyPressed
 import org.nullpointerid.spaceago.utils.logger
+import org.nullpointerid.spaceago.utils.toInternalFile
 import kotlin.math.round
 import kotlin.random.Random
 
@@ -31,6 +32,7 @@ class GameController {
 
         const val EXPLOSION_X = (SimpleEnemy.BOUNDS_WIDTH - Explosion.TEXTURE_WIDTH) / 2f
         const val EXPLOSION_Y = (SimpleEnemy.BOUNDS_HEIGHT - Explosion.TEXTURE_HEIGHT) / 2f
+
     }
 
     private var simpleEnemyTimer = Random.nextFloat() * (GameConfig.MAX_ENEMY_SPAWN_TIME - GameConfig.MIN_ENEMY_SPAWN_TIME) + GameConfig.MIN_ENEMY_SPAWN_TIME
@@ -41,6 +43,9 @@ class GameController {
     val player = Player().apply { setPosition(2f, Player.START_Y) }
     val secondPlayer = Player().apply { setPosition(7f, Player.START_Y) }
     var score = 0
+
+    private val explosionSound = Gdx.audio.newSound("audio/enemyExplosionSound.mp3".toInternalFile())
+    private val shootSound = Gdx.audio.newSound("audio/shotSound.mp3".toInternalFile())
 
 
     fun update(delta: Float) {
@@ -81,6 +86,7 @@ class GameController {
             playerShootTimer = 0f
             bullets.add(Bullet().apply {
                 setPosition(player.bounds[0].x + BULLET_X, player.bounds[0].y + BULLET_Y)
+                shootSound.play(0.3f)
             })
         }
 
@@ -103,6 +109,7 @@ class GameController {
             if (it.isCollidingWith(player)) {
                 simpleEnemies.removeValue(it, true)
                 explosions.add(Explosion().apply { setPosition(it.bounds[0].x + EXPLOSION_X, it.bounds[0].y + EXPLOSION_Y) })
+                explosionSound.play(0.8f)
                 score += 100
                 return true
             }
@@ -117,6 +124,7 @@ class GameController {
                     bullets.removeValue(bullet, true)
                     simpleEnemies.removeValue(enemy, true)
                     explosions.add(Explosion().apply { setPosition(enemy.bounds[0].x + EXPLOSION_X, enemy.bounds[0].y + EXPLOSION_Y) })
+                    explosionSound.play(0.8f)
                     score += 100
                 }
             }
