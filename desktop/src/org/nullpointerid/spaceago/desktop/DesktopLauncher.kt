@@ -13,6 +13,6 @@ object DesktopLauncher {
         config.height = GameConfig.HEIGHT
         config.title = GameConfig.TITLE
         config.resizable = false
-        LwjglApplication(SpaceShooter(), config)
+        LwjglApplication(SpaceShooter, config)
     }
 }

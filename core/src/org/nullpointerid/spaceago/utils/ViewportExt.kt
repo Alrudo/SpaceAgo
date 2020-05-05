@@ -5,14 +5,14 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.viewport.Viewport
 
 @JvmOverloads
-fun Viewport.drawGrid(renderer: ShapeRenderer, cellSize: Float = 1f) {
+fun Viewport.drawGrid(renderer: ShapeRenderer, cellSize: Float = 1f, color: Color = Color(0x505050ff)) {
     val oldColor = renderer.color.cpy() // copy the previous color.
     val doubleWorldWidth = worldWidth * 2
     val doubleWorldHeight = worldHeight * 2
 
     apply()
     renderer.use {
-        renderer.color = Color.WHITE
+        renderer.color = color
 
         // draw vertical lines
         var x = -doubleWorldWidth

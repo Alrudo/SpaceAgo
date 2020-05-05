@@ -56,7 +56,6 @@ project(":desktop") {
 project(":core") {
     apply plugin: "kotlin"
 
-
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
@@ -64,5 +63,7 @@ project(":core") {
         api "com.badlogicgames.ashley:ashley:$ashleyVersion"
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+        api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.5"
+        api group: 'kryonet', name: 'kryonet-all', version: '2.21'
     }
 }
