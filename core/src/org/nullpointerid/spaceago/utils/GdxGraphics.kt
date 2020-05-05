@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import java.awt.Color
 
@@ -55,9 +57,26 @@ fun <T : Actor> T.extend(w: Float = 0f, h: Float = 0f): T {
     return this
 }
 
+fun <T : Actor> T.onInput(action: (event: InputEvent, keycode: Char) -> Boolean): T {
+    addListener(object : InputListener() {
+
+        override fun keyTyped(event: InputEvent, keycode: Char): Boolean {
+            return action(event, keycode)
+        }
+    })
+    return this
+}
+
+fun <T : TextField> T.filterInput(action: (textField: TextField, keycode: Char) -> Boolean): T {
+    setTextFieldFilter { textField, c ->
+        action(textField, c)
+    }
+    return this
+}
+
 fun <T : Actor> T.onClick(action: () -> Unit): T {
     addListener(object : ClickListener() {
-        override fun clicked(event: InputEvent?, x: Float, y: Float) {
+        override fun clicked(event: InputEvent, x: Float, y: Float) {
             action()
         }
     })
