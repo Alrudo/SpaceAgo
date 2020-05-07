@@ -4,9 +4,11 @@ import com.badlogic.gdx.Application
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.Logger
+import org.nullpointerid.spaceago.assets.AssetDescriptors
 import org.nullpointerid.spaceago.views.loading.LoadingScreen
 import org.nullpointerid.spaceago.tools.MovingBackground
 import org.nullpointerid.spaceago.utils.Fonts
@@ -14,6 +16,7 @@ import org.nullpointerid.spaceago.utils.Fonts
 object SpaceShooter : Game() {
 
     val assetManager = AssetManager()
+    lateinit var gameAtlas: TextureAtlas
     lateinit var background: TextureRegion
     lateinit var movingBackground: MovingBackground
 

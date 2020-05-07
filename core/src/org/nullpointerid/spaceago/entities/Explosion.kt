@@ -27,4 +27,25 @@ class Explosion : EntityBase() {
     override val bounds = GdxArray<Rectangle>()
 
     override fun updateBounds() {}
+
+    override fun update(delta: Float) {
+        stateTime += delta
+        if (animation.isAnimationFinished(stateTime)) toRemove = true
+    }
+
+    override fun canCollideWith(entity: EntityBase): Boolean {
+        return false
+    }
+
+    override fun texture(): TextureRegion {
+        return animation.getKeyFrame(stateTime)
+    }
+
+    override fun textureWidth(): Float {
+        return TEXTURE_WIDTH
+    }
+
+    override fun textureHeight(): Float {
+        return TEXTURE_HEIGHT
+    }
 }

@@ -10,11 +10,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.viewport.FitViewport
 import org.nullpointerid.spaceago.SpaceShooter
+import org.nullpointerid.spaceago.SpaceShooter.COMMON_SKIN
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.utils.*
 import org.nullpointerid.spaceago.views.menu.MenuScreen
 
-class UpgradeShopScreen(private val game: SpaceShooter) : Screen {
+class UpgradeShopScreen() : Screen {
 
     private val batch = SpriteBatch()
     private val renderer = ShapeRenderer()
@@ -29,15 +30,15 @@ class UpgradeShopScreen(private val game: SpaceShooter) : Screen {
     init {
         Gdx.input.inputProcessor = this.menuStage
 
-        spaceAgo = Label("SpaceAgo", game.COMMON_SKIN).apply {
+        spaceAgo = Label("SpaceAgo", COMMON_SKIN).apply {
             setPosition(20f, menuStage.height - height - 27f)
         }.bind(menuStage)
 
 
-        exitBtn = TextButton("Menu", game.COMMON_SKIN).extend(20f, 10f).apply {
+        exitBtn = TextButton("Menu", COMMON_SKIN).extend(20f, 10f).apply {
             setPosition(menuStage.width / 2 - width / 2, 100f)
         }.bind(menuStage).onClick {
-            game.screen = MenuScreen(game)
+            SpaceShooter.screen = MenuScreen()
         }
     }
 
@@ -45,8 +46,8 @@ class UpgradeShopScreen(private val game: SpaceShooter) : Screen {
         clearScreen(255, 255, 255, 255)
 
         batch.use {
-            batch.draw(game.background, 0f, 0f)
-            game.movingBackground.updateRender(delta, batch)
+            batch.draw(SpaceShooter.background, 0f, 0f)
+            SpaceShooter.movingBackground.updateRender(delta, batch)
         }
 
         menuStage.act(delta)

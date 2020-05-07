@@ -3,22 +3,19 @@ package org.nullpointerid.spaceago.views.game
 import com.badlogic.gdx.Screen
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.views.gameover.GameOverScreen
+import org.nullpointerid.spaceago.views.multiplayer.MultiplayerController
 
-class GameScreen(private val game: SpaceShooter) : Screen {
+class GameScreen(val mpController: MultiplayerController? = null) : Screen {
 
-    private val assetManager = game.assetManager
     private lateinit var controller: GameController
     private lateinit var renderer: GameRenderer
 
     override fun show() {
-        controller = GameController()
-        renderer = GameRenderer(assetManager, controller)
+        controller = GameController(mpController)
+        renderer = GameRenderer(SpaceShooter.assetManager, controller)
     }
 
     override fun render(delta: Float) {
-        if (controller.player.lives <= 0f) {
-            game.screen = GameOverScreen(assetManager, game, controller.player.score)
-        }
         controller.update(delta)
         renderer.render(delta)
     }
@@ -32,8 +29,6 @@ class GameScreen(private val game: SpaceShooter) : Screen {
     }
 
     override fun hide() {
-        // WARNING : screens are not disposed automatically!
-        // without dispose() call screen will be not disposed.
         dispose()
     }
 

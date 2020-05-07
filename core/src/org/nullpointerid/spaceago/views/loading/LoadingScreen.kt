@@ -51,6 +51,7 @@ class LoadingScreen(private val game: SpaceShooter) : ScreenAdapter() {
             load(Gdx.files.internal("items/menu.json"))
         }
         game.background = assetManager[AssetDescriptors.MAIN_MENU_ATLAS][RegionNames.MENU_BACKGROUND]!!
+        game.gameAtlas = SpaceShooter.assetManager[AssetDescriptors.GAME_PLAY_ATLAS]
     }
 
     override fun render(delta: Float) {
@@ -65,7 +66,7 @@ class LoadingScreen(private val game: SpaceShooter) : ScreenAdapter() {
         draw()
         renderer.end()
 
-        if (changeScreen) game.screen = MenuScreen(game) // change screen when done.
+        if (changeScreen) game.screen = MenuScreen() // change screen when done.
     }
 
     override fun resize(width: Int, height: Int) {

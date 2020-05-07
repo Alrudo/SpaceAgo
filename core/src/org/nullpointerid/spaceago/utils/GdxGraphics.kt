@@ -84,3 +84,21 @@ fun <T : Actor> T.onClick(action: () -> Unit): T {
 }
 
 fun inRectangle(r: Rectangle, x: Float, y: Float) = r.x <= x && r.x + r.width >= x && r.y <= y && r.y + r.height >= y
+
+
+private var diff: Long = 0
+private var start: Long = System.currentTimeMillis()
+
+fun maintainFPS(fps: Int) {
+    if (fps > 0) {
+        diff = System.currentTimeMillis() - start
+        val targetDelay = 1000 / fps.toLong()
+        if (diff < targetDelay) {
+            try {
+                Thread.sleep(targetDelay - diff)
+            } catch (e: InterruptedException) {
+            }
+        }
+        start = System.currentTimeMillis()
+    }
+}

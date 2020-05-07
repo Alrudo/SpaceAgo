@@ -10,14 +10,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.viewport.FitViewport
 import org.nullpointerid.spaceago.SpaceShooter
+import org.nullpointerid.spaceago.SpaceShooter.COMMON_SKIN
+import org.nullpointerid.spaceago.SpaceShooter.movingBackground
 import org.nullpointerid.spaceago.config.GameConfig
-import org.nullpointerid.spaceago.views.game.GameScreen
 import org.nullpointerid.spaceago.utils.*
+import org.nullpointerid.spaceago.views.game.GameScreen
 import org.nullpointerid.spaceago.views.multiplayer.MultiplayerScreen
 import org.nullpointerid.spaceago.views.upgrade.UpgradeShopScreen
 
 
-class MenuScreen(private val game: SpaceShooter) : Screen {
+class MenuScreen : Screen {
 
     private var batch: SpriteBatch = SpriteBatch()
     private val renderer = ShapeRenderer()
@@ -37,41 +39,41 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
     init {
         Gdx.input.inputProcessor = this.menuStage
 
-        spaceAgo = Label("SpaceAgo", game.COMMON_SKIN, "game-title").apply {
+        spaceAgo = Label("SpaceAgo", COMMON_SKIN, "game-title").apply {
             setPosition(20f, menuStage.height - height - 27f)
         }.bind(menuStage)
 
-        singleplayerBtn = TextButton("Singleplayer", game.COMMON_SKIN)
+        singleplayerBtn = TextButton("Singleplayer", COMMON_SKIN)
                 .extend(20f, 10f)
                 .apply {
                     setPosition(menuStage.width / 2 - width / 2, start)
                 }
                 .bind(menuStage)
                 .onClick {
-                    game.screen = GameScreen(game)
+                    SpaceShooter.screen = GameScreen()
                 }
 
-        multiplayerBtn = TextButton("Multiplayer", game.COMMON_SKIN)
+        multiplayerBtn = TextButton("Multiplayer", COMMON_SKIN)
                 .extend(20f, 10f)
                 .apply {
                     setPosition(menuStage.width / 2 - width / 2, singleplayerBtn.y - singleplayerBtn.height - step)
                 }
                 .bind(menuStage)
                 .onClick {
-                    game.screen = MultiplayerScreen()
+                    SpaceShooter.screen = MultiplayerScreen()
                 }
 
-        upgradeMenuBtn = TextButton("Upgrades", game.COMMON_SKIN)
+        upgradeMenuBtn = TextButton("Upgrades", COMMON_SKIN)
                 .extend(20f, 10f)
                 .apply {
                     setPosition(menuStage.width / 2 - width / 2, multiplayerBtn.y - multiplayerBtn.height - step)
                 }
                 .bind(menuStage)
                 .onClick {
-                    game.screen = UpgradeShopScreen(game)
+                    SpaceShooter.screen = UpgradeShopScreen()
                 }
 
-        exitBtn = TextButton("Exit", game.COMMON_SKIN)
+        exitBtn = TextButton("Exit", COMMON_SKIN)
                 .extend(20f, 10f)
                 .apply {
                     setPosition(menuStage.width / 2 - width / 2, upgradeMenuBtn.y - upgradeMenuBtn.height - step - 3f)
@@ -86,8 +88,8 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
         clearScreen()
 
         batch.use {
-            batch.draw(game.background, 0f, 0f)
-            game.movingBackground.updateRender(delta, batch)
+            batch.draw(SpaceShooter.background, 0f, 0f)
+            movingBackground.updateRender(delta, batch)
         }
 
         if (GameConfig.DEBUG_MODE) {

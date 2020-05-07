@@ -1,12 +1,20 @@
 package org.nullpointerid.spaceago.entities
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Rectangle
+import org.nullpointerid.spaceago.SpaceShooter.gameAtlas
+import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
+import org.nullpointerid.spaceago.entities.collectables.Collectible
 import org.nullpointerid.spaceago.utils.GdxArray
+import org.nullpointerid.spaceago.utils.get
+import org.nullpointerid.spaceago.views.game.GameController
+import kotlin.math.round
 
 class Player : EntityBase() {
 
     companion object {
+        val TEXTURE = gameAtlas[RegionNames.PLAYER]!!
         const val TEXTURE_WIDTH = 1f
         const val TEXTURE_HEIGHT = 1f
 
@@ -47,5 +55,51 @@ class Player : EntityBase() {
     override fun updateBounds() {
         bound1.setPosition(x + BOUNDS_VER_X_OFFSET, y + BOUNDS_VER_Y_OFFSET)
         bound2.setPosition(x + BOUNDS_HOR_X_OFFSET, y + BOUNDS_HOR_Y_OFFSET)
+    }
+
+    override fun canCollideWith(entity: EntityBase): Boolean {
+        return entity.run {
+            this is CivilianShip || this is SimpleEnemy || this is Collectible
+        }
+    }
+
+    override fun isCollidingWith(entity: EntityBase): Boolean {
+        if (!canCollideWith(entity)) {
+            return false
+        }
+        return super.isCollidingWith(entity)
+    }
+
+    override fun onCollide(entity: EntityBase) {
+        when (entity) {
+            is CivilianShip -> {
+                score += CivilianShip.SCORE_VALUE
+                entity.toRemove = true
+                damage(0.2f)
+            }
+            is SimpleEnemy -> {
+                score += SimpleEnemy.SCORE_VALUE
+                entity.toRemove = true
+                damage(0.2f)
+            }
+        }
+    }
+
+    fun damage(amount: Float) {
+        lives -= amount
+        lives = round(lives * 100) / 100
+        GameController.log.debug("PlayerHP: ${lives}")
+    }
+
+    override fun texture(): TextureRegion {
+        return TEXTURE
+    }
+
+    override fun textureWidth(): Float {
+        return TEXTURE_WIDTH
+    }
+
+    override fun textureHeight(): Float {
+        return TEXTURE_HEIGHT
     }
 }

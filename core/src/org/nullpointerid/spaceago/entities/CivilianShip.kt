@@ -1,13 +1,19 @@
 package org.nullpointerid.spaceago.entities
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Rectangle
+import org.nullpointerid.spaceago.SpaceShooter
+import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.utils.GdxArray
+import org.nullpointerid.spaceago.utils.get
 
-class CivilianShip(val toLeft: Boolean) : EntityBase() {
+class CivilianShip(val toLeft: Boolean) : EntityBase(), Destroyable {
 
     companion object {
+        val TEXTURE1 = SpaceShooter.gameAtlas[RegionNames.CIVILIAN_SHIP_LEFT]!!
+        val TEXTURE2 = SpaceShooter.gameAtlas[RegionNames.CIVILIAN_SHIP_RIGHT]!!
         const val TEXTURE_WIDTH = 2f
-        const val TEXTURE_HEIGH = 1f
+        const val TEXTURE_HEIGHT = 1f
 
         const val BODY_HEIGHT = 1f
         const val NOSE_HEIGHT = 0.6f
@@ -27,7 +33,7 @@ class CivilianShip(val toLeft: Boolean) : EntityBase() {
 
     override val bounds = GdxArray<Rectangle>().apply { add(bodyBound, noseBound) }
 
-    fun update() {
+    override fun update(delta: Float) {
         if (toLeft) x -= MAX_SPEED
         else x += MAX_SPEED
     }
@@ -40,5 +46,17 @@ class CivilianShip(val toLeft: Boolean) : EntityBase() {
             bodyBound.setPosition(x, y)
             noseBound.setPosition(x + bodyBound.width, y + 0.2f)
         }
+    }
+
+    override fun texture(): TextureRegion {
+        return if (toLeft) TEXTURE1 else TEXTURE2
+    }
+
+    override fun textureWidth(): Float {
+        return TEXTURE_WIDTH
+    }
+
+    override fun textureHeight(): Float {
+        return TEXTURE_HEIGHT
     }
 }

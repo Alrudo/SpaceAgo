@@ -21,7 +21,6 @@ import org.nullpointerid.spaceago.views.menu.MenuScreen
 import org.nullpointerid.spaceago.utils.*
 
 class GameOverScreen(assetManager: AssetManager,
-                     private val game: SpaceShooter,
                      private val score: Int) : Screen {
 
     companion object {
@@ -75,8 +74,8 @@ class GameOverScreen(assetManager: AssetManager,
             renderDebug()
         }
 
-        if (changeToMenu) game.screen = MenuScreen(game)
-        if (retry) game.screen = GameScreen(game)
+        if (changeToMenu) SpaceShooter.screen = MenuScreen()
+        if (retry) SpaceShooter.screen = GameScreen()
     }
 
     private fun renderDebug() {

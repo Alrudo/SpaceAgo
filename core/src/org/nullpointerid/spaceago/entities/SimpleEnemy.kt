@@ -1,13 +1,18 @@
 package org.nullpointerid.spaceago.entities
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Rectangle
-import org.nullpointerid.spaceago.collectables.Collectible
+import org.nullpointerid.spaceago.SpaceShooter.gameAtlas
+import org.nullpointerid.spaceago.assets.RegionNames
+import org.nullpointerid.spaceago.entities.collectables.Collectible
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.utils.GdxArray
+import org.nullpointerid.spaceago.utils.get
 
-class SimpleEnemy : EntityBase() {
+class SimpleEnemy : EntityBase(), Destroyable {
 
     companion object {
+        val TEXTURE = gameAtlas[RegionNames.SIMPLE_ENEMY]!!
         const val TEXTURE_WIDTH = 0.55f
         const val TEXTURE_HEIGHT = 1f
 
@@ -30,11 +35,23 @@ class SimpleEnemy : EntityBase() {
 
     override val bounds = GdxArray<Rectangle>().apply { add(bound) }
 
-    fun update() {
+    override fun update(delta: Float) {
         y -= MAX_SPEED
     }
 
     override fun updateBounds() {
         bound.setPosition(x + BOUNDS_X_OFFSET, y + BOUNDS_Y_OFFSET)
+    }
+
+    override fun texture(): TextureRegion {
+        return TEXTURE
+    }
+
+    override fun textureWidth(): Float {
+        return TEXTURE_WIDTH
+    }
+
+    override fun textureHeight(): Float {
+        return TEXTURE_HEIGHT
     }
 }

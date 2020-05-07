@@ -32,10 +32,12 @@ class MultiplayerScreen : Screen {
     val clientDiv: Table
     val waitingDiv: Table
     val connectingDiv: Table
+    val connectedDiv: Table
 
     private val portInput: TextField
     private val portClientInput: TextField
     private val openSocketBtn: TextButton
+    val startGame: TextButton
     private val exitBtn: TextButton
 
     init {
@@ -49,6 +51,7 @@ class MultiplayerScreen : Screen {
         clientDiv = Table().apply { defaults().left().pad(5f, 0f, 5f, 0f); setBounds(600f, 330f, 300f, 270f) }.bind(menuStage)
         waitingDiv = Table().apply { defaults().left().pad(5f, 0f, 5f, 0f); setBounds(300f, 330f, 400f, 270f); isVisible = false }.bind(menuStage)
         connectingDiv = Table().apply { defaults().left().pad(5f, 0f, 5f, 0f); setBounds(300f, 330f, 400f, 270f); isVisible = false }.bind(menuStage)
+        connectedDiv = Table().apply { defaults().left().pad(5f, 0f, 5f, 0f); setBounds(300f, 330f, 400f, 270f); isVisible = false }.bind(menuStage)
 
         // ### START HOST SECTION ###
         Label("Become game host:", COMMON_SKIN).apply { serverDiv.add(this).colspan(2).row() }
@@ -93,20 +96,35 @@ class MultiplayerScreen : Screen {
         }
         // ### END CLIENT SECTION ###
 
-        // ### START HOST SECTION ###
+        // ### START WAITING CLIENT SECTION ###
         Label("Waiting for client", COMMON_SKIN).apply {
             waitingDiv.add(this).colspan(2).row()
         }
+        // ### END WAITING CLIENT SECTION ###
 
-        Label("Port: ", COMMON_SKIN).apply { waitingDiv.add(this) }
-        // ### END CLIENT SECTION ###
+        // ### START WAITING SERVER SECTION ###
+        Label("Connecting to server", COMMON_SKIN).apply {
+            connectingDiv.add(this).colspan(2).row()
+        }
+        // ### END WAITING SERVER SECTION ###
+
+
+        // ### START WAITING SERVER SECTION ###
+        Label("Connected", COMMON_SKIN).apply {
+            connectedDiv.add(this).colspan(2).center().row()
+        }
+
+        startGame = TextButton("Start game", COMMON_SKIN, "fancy-h3").apply {
+            connectedDiv.add(this).colspan(2).center().row()
+        }
+        // ### END WAITING CLIENT SECTION ###
 
 
         exitBtn = TextButton("Menu", COMMON_SKIN, "fancy-h1").apply {
             setPosition(menuStage.width / 2 - width / 2, 100f)
         }.bind(menuStage).onClick {
-            MultiplayerController.closeServer()
-            SpaceShooter.screen = MenuScreen(SpaceShooter)
+            MultiplayerController.closeSocket()
+            SpaceShooter.screen = MenuScreen()
         }
 
         MultiplayerController.screen = this

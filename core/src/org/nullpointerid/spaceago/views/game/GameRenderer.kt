@@ -10,12 +10,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.FitViewport
-import org.nullpointerid.spaceago.assets.AssetDescriptors
+import org.nullpointerid.spaceago.SpaceShooter.gameAtlas
 import org.nullpointerid.spaceago.assets.AssetPaths
 import org.nullpointerid.spaceago.assets.RegionNames
-import org.nullpointerid.spaceago.collectables.HealthPack
-import org.nullpointerid.spaceago.collectables.MoneyCrate
-import org.nullpointerid.spaceago.collectables.UltimateWeapon
+import org.nullpointerid.spaceago.entities.collectables.HealthPack
+import org.nullpointerid.spaceago.entities.collectables.MoneyCrate
+import org.nullpointerid.spaceago.entities.collectables.UltimateWeapon
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.entities.*
 import org.nullpointerid.spaceago.utils.*
@@ -36,31 +36,21 @@ class GameRenderer(assetManager: AssetManager,
     private val batch = SpriteBatch()
     private val layout = GlyphLayout()
 
-    private val gameAtlas = assetManager[AssetDescriptors.GAME_PLAY_ATLAS]
     private val background = gameAtlas[RegionNames.GAMEPLAY_BACKGROUND]
     private val playerTexture = gameAtlas[RegionNames.PLAYER]
-    private val simpleEnemyTexture = gameAtlas[RegionNames.SIMPLE_ENEMY]?.apply { flip(true, true) }
-    private val bulletTexture = gameAtlas[RegionNames.BULLET]
-    private val explosions = controller.explosions
-    private val civilianShipToRight = gameAtlas[RegionNames.CIVILIAN_SHIP_RIGHT]
-    private val civilianShipToLeft = gameAtlas[RegionNames.CIVILIAN_SHIP_LEFT]
-    private val healthPack = gameAtlas[RegionNames.HEALTH_PACK]
-    private val bulletCrate = gameAtlas[RegionNames.AMMO_CRATE]
-    private val treasureChest = gameAtlas[RegionNames.TREASURE_CHEST]
     private val laserBeamTexture = gameAtlas[RegionNames.LASER_BEAM]
     private val font = BitmapFont(AssetPaths.SCORE_FONT.toInternalFile())
     private val gameFont = BitmapFont(Gdx.files.internal("fonts/gameFont.fnt"))
 
     private val player = controller.player
     private val secondPlayer = controller.secondPlayer
-    private val simpleEnemies = controller.simpleEnemies
-    private val bullets = controller.bullets
-    private val civilianShips = controller.civilianShips
-    private val collectibles = controller.collectibles
+    private val entities = controller.entities
     private val laserBeam = controller.laserBeam
 
 
     fun render(delta: Float) {
+        println(delta)
+        maintainFPS(30)
         clearScreen()
 
         renderGameplay(delta)
@@ -93,25 +83,10 @@ class GameRenderer(assetManager: AssetManager,
             }
 
             // Draw simpleEnemy hitboxes
-            simpleEnemies.forEach {
-                renderer.rectangle(it.bounds[0])
-            }
-
-            // Draw civilian ship hitboxes
-            civilianShips.forEach {
+            entities.forEach {
                 it.bounds.forEach {bound ->
                     renderer.rectangle(bound)
                 }
-            }
-
-            // Draw bullet hitboxes
-            bullets.forEach {
-                renderer.rectangle(it.bounds[0])
-            }
-
-            // Draw collectibles hitboxes
-            collectibles.forEach {
-                renderer.rectangle(it.bounds[0])
             }
 
             // Draw Laser Beam hitboxes.
@@ -154,38 +129,8 @@ class GameRenderer(assetManager: AssetManager,
             batch.color = oldColor
 
             // Draw simpleEnemy texture
-            simpleEnemies.forEach {
-                batch.draw(simpleEnemyTexture, it.x, it.y, SimpleEnemy.TEXTURE_WIDTH, SimpleEnemy.TEXTURE_HEIGHT)
-            }
-
-            // Draw collectibles
-            collectibles.forEach {
-                when(it) {
-                    is MoneyCrate -> batch.draw(treasureChest, it.x, it.y, MoneyCrate.TEXTURE_WIDTH, MoneyCrate.TEXTURE_HEIGHT)
-                    is HealthPack -> batch.draw(healthPack, it.x, it.y, HealthPack.TEXTURE_WIDTH, HealthPack.TEXTURE_HEIGHT)
-                    is UltimateWeapon -> batch.draw(bulletCrate, it.x, it.y, UltimateWeapon.TEXTURE_WIDTH, UltimateWeapon.TEXTURE_HEIGHT)
-                }
-            }
-
-            // Draw civilian ship texture.
-            civilianShips.forEach {
-                if (it.toLeft) {
-                    batch.draw(civilianShipToLeft, it.x, it.y, CivilianShip.TEXTURE_WIDTH, CivilianShip.TEXTURE_HEIGH)
-                } else {
-                    batch.draw(civilianShipToRight, it.x, it.y, CivilianShip.TEXTURE_WIDTH, CivilianShip.TEXTURE_HEIGH)
-                }
-            }
-
-            // Draw bullet texture
-            bullets.forEach {
-                batch.draw(bulletTexture, it.x + BULLET_OFFSET_X, it.y + BULLET_OFFSET_Y, Bullet.TEXTURE_WIDTH, Bullet.TEXTURE_HEIGHT)
-            }
-
-            // Draw explosion texture
-            explosions.forEach {
-                it.stateTime += delta
-                batch.draw(it.animation.getKeyFrame(it.stateTime), it.x, it.y, Explosion.TEXTURE_WIDTH, Explosion.TEXTURE_HEIGHT)
-                if (it.animation.isAnimationFinished(it.stateTime)) explosions.removeValue(it, true)
+            entities.forEach {
+                batch.draw(it.texture(), it.x, it.y, it.textureWidth(), it.textureHeight())
             }
 
             // Draw laser beam texture
