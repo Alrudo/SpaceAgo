@@ -81,11 +81,11 @@ class GameController {
         var xSpeed = 0f
         var ySpeed = 0f
 
-        if (Input.Keys.D.isKeyPressed()) xSpeed = Player.MAX_SPEED
-        if (Input.Keys.A.isKeyPressed()) xSpeed = -Player.MAX_SPEED
-        if (Input.Keys.W.isKeyPressed()) ySpeed = Player.MAX_SPEED
-        if (Input.Keys.S.isKeyPressed()) ySpeed = -Player.MAX_SPEED
-        if (Input.Keys.SPACE.isKeyPressed() && playerShootTimer > Player.SHOOT_TIMER) {
+        if (Input.Keys.valueOf(moveRight).isKeyPressed()) xSpeed = Player.MAX_SPEED
+        if (Input.Keys.valueOf(moveLeft).isKeyPressed()) xSpeed = -Player.MAX_SPEED
+        if (Input.Keys.valueOf(moveUp).isKeyPressed()) ySpeed = Player.MAX_SPEED
+        if (Input.Keys.valueOf(moveDown).isKeyPressed()) ySpeed = -Player.MAX_SPEED
+        if (Input.Keys.valueOf(shoot).isKeyPressed() && playerShootTimer > Player.SHOOT_TIMER) {
             playerShootTimer = 0f
             bullets.add(Bullet(player).apply {
                 setPosition(player.bounds[0].x + BULLET_X, player.bounds[0].y + BULLET_Y)
