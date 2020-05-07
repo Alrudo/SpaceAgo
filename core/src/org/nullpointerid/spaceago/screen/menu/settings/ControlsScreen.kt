@@ -29,10 +29,16 @@ import org.w3c.dom.Text
 import java.awt.SystemColor
 import java.awt.SystemColor.activeCaptionText
 import java.awt.SystemColor.text
+import kotlin.system.exitProcess
 
 
 class ControlsScreen(private val game: SpaceShooter) : Screen {
 
+    var leftClicked = 0
+    var rightClicked = 0
+    var upClicked = 0
+    var downClicked = 0
+    var shootClicked = 0
     var gc = GameController
     private val menuAtlas = game.assetManager[AssetDescriptors.MAIN_MENU_ATLAS]
     private val background = menuAtlas[RegionNames.MENU_BACKGROUND]
@@ -46,15 +52,6 @@ class ControlsScreen(private val game: SpaceShooter) : Screen {
                 color = Color.GRAY
             })
     private val scoreFont = BitmapFont("fonts/score.fnt".toInternalFile())
-
-    private val backRect = Rectangle(420f, 50f, 155f, 100f)
-    private val moveLeftRect = Rectangle(700f, 510f, 280f, 60f)
-    private val moveRightRect = Rectangle(700f, 440f, 280f, 60f)
-    private val moveUpRect = Rectangle(700f, 370f, 280f, 60f)
-    private val moveDownRect = Rectangle(700f, 300f, 280f, 60f)
-    private val shootRect = Rectangle(700f, 230f, 280f, 60f)
-
-    private var changeScreen = false
 
     private val batch = SpriteBatch()
     private val renderer = ShapeRenderer()
@@ -110,51 +107,45 @@ class ControlsScreen(private val game: SpaceShooter) : Screen {
         }.bind(controlsStage)
 
 
-        moveLeftBtn = TextButton(GameController.moveLeft, game.skin2)
+        moveLeftBtn = TextButton(gc.moveLeft, game.skin2)
                 .apply {
                     setSize(280f, 60f)
                     setPosition(controlsStage.width - width - 10f, start)
                 }
                 .bind(controlsStage)
-                .onClick {
-                    //text = "asd"
-                }
+                .onClick { leftClicked += 1}
 
-        moveRightBtn = TextButton("D", game.skin2)
+        moveRightBtn = TextButton(gc.moveRight, game.skin2)
                 .apply {
                     setSize(280f, 60f)
                     setPosition(controlsStage.width - width - 10f, moveLeftBtn.y - moveLeftBtn.height - step)
                 }
                 .bind(controlsStage)
-                .onClick {
-                }
+                .onClick {rightClicked = 1}
 
-        moveUpBtn = TextButton("W", game.skin2)
+        moveUpBtn = TextButton(gc.moveUp, game.skin2)
                 .apply {
                     setSize(280f, 60f)
                     setPosition(controlsStage.width - width - 10f, moveRightBtn.y - moveRightBtn.height - step)
                 }
                 .bind(controlsStage)
-                .onClick {
-                }
+                .onClick {upClicked = 1}
 
-        moveDownBtn = TextButton("S", game.skin2)
+        moveDownBtn = TextButton(gc.moveDown, game.skin2)
                 .apply {
                     setSize(280f, 60f)
                     setPosition(controlsStage.width - width - 10f, moveUpBtn.y - moveUpBtn.height - step)
                 }
                 .bind(controlsStage)
-                .onClick {
-                }
+                .onClick {downClicked = 1}
 
-        shootBtn = TextButton("Space", game.skin2)
+        shootBtn = TextButton(gc.shoot, game.skin2)
                 .apply {
                     setSize(280f, 60f)
                     setPosition(controlsStage.width - width - 10f, moveDownBtn.y - moveDownBtn.height - step)
                 }
                 .bind(controlsStage)
-                .onClick {
-                }
+                .onClick {shootClicked = 1}
 
         backBtn = TextButton("Back", game.skin)
                 .extend(20f, 10f)
@@ -165,6 +156,52 @@ class ControlsScreen(private val game: SpaceShooter) : Screen {
                 .onClick {
                     game.screen = SettingsScreen(game)
                 }
+
+    }
+
+    private fun bindChanger(txt : TextButton) {
+        //Gets user input for pressed key
+        if (leftClicked + rightClicked + upClicked+ downClicked + shootClicked > 0) {
+            input.inputProcessor = object : InputAdapter() {
+                override fun keyUp(keycode: Int): Boolean {
+                    var newKey = Input.Keys.toString(keycode)
+                    if (txt == moveLeftBtn && newKey != gc.moveRight && newKey != gc.moveUp && newKey != gc.moveDown && newKey != gc.shoot) {
+                        gc.moveLeft = newKey
+                        moveLeftBtn.setText(gc.moveLeft)
+                        leftClicked = 0
+                        input.inputProcessor = controlsStage
+                    } else if (txt == moveRightBtn && newKey != gc.moveLeft && newKey != gc.moveUp && newKey != gc.moveDown && newKey != gc.shoot) {
+                        gc.moveRight = newKey
+                        moveRightBtn.setText(gc.moveRight)
+                        rightClicked = 0
+                        input.inputProcessor = controlsStage
+                    } else if (txt == moveUpBtn && newKey != gc.moveLeft && newKey != gc.moveRight && newKey != gc.moveDown && newKey != gc.shoot) {
+                        gc.moveUp = newKey
+                        moveUpBtn.setText(gc.moveUp)
+                        upClicked = 0
+                        input.inputProcessor = controlsStage
+                    } else if (txt == moveDownBtn && newKey != gc.moveLeft && newKey != gc.moveRight && newKey != gc.moveUp && newKey != gc.shoot) {
+                        gc.moveDown = newKey
+                        moveDownBtn.setText(gc.moveDown)
+                        downClicked = 0
+                        input.inputProcessor = controlsStage
+                    } else if (txt == shootBtn && newKey != gc.moveLeft && newKey != gc.moveRight && newKey != gc.moveUp && newKey != gc.moveDown) {
+                        gc.shoot = newKey
+                        shootBtn.setText(gc.shoot)
+                        shootClicked = 0
+                        input.inputProcessor = controlsStage
+                    } else { //When user presses button that is already being used by other key
+                        leftClicked = 0
+                        rightClicked = 0
+                        upClicked = 0
+                        downClicked = 0
+                        shootClicked = 0
+                    }
+                    input.inputProcessor = controlsStage
+                    return true
+                }
+            }
+        }
     }
 
 
@@ -175,6 +212,17 @@ class ControlsScreen(private val game: SpaceShooter) : Screen {
         batch.use {
             batch.draw(game.background, 0f, 0f)
             game.movingBackground.updateRender(delta, batch)
+            if (leftClicked == 1) {
+                bindChanger(moveLeftBtn)
+            } else if (rightClicked == 1) {
+                bindChanger(moveRightBtn)
+            }  else if (upClicked == 1) {
+                bindChanger(moveUpBtn)
+            }  else if (downClicked == 1) {
+                bindChanger(moveDownBtn)
+            }  else if (shootClicked == 1) {
+                bindChanger(shootBtn)
+            }
         }
 
         controlsStage.act(delta)
@@ -190,126 +238,6 @@ class ControlsScreen(private val game: SpaceShooter) : Screen {
         }
 
     }
-
-    private fun drawButton(keyup : String, xCord : Float, yCord : Float) {
-        layout.setText(scoreFont, keyup)
-        scoreFont.draw(batch, layout, xCord, yCord)
-    }
-
-    private fun bindChanger(rect : Rectangle, mouseX : Float, mouseY : Float) {
-        if (inRectangle(rect, mouseX, mouseY)) {
-            var touched = 0
-            if (input.justTouched()) {
-                touched = 1
-
-                //Gets user input for pressed key
-                input.inputProcessor = object : InputAdapter() {
-                    override fun keyUp(keycode: Int): Boolean {
-                        if (touched == 1) {
-                            var newKey = Input.Keys.toString(keycode)
-                            if (rect == moveLeftBtn && newKey != gc.moveRight && newKey != gc.moveUp && newKey != gc.moveDown && newKey != gc.shoot) {
-                                gc.moveLeft = newKey
-                            } else if (rect == moveRightBtn && newKey != gc.moveLeft && newKey != gc.moveUp && newKey != gc.moveDown && newKey != gc.shoot) {
-                                gc.moveRight = newKey
-                            } else if (rect == moveUpBtn && newKey != gc.moveLeft && newKey != gc.moveRight && newKey != gc.moveDown && newKey != gc.shoot) {
-                                gc.moveUp = newKey
-                            } else if (rect == moveDownBtn && newKey != gc.moveLeft && newKey != gc.moveRight && newKey != gc.moveUp && newKey != gc.shoot) {
-                                gc.moveDown = newKey
-                            } else if (rect == shootBtn && newKey != gc.moveLeft && newKey != gc.moveRight && newKey != gc.moveUp && newKey != gc.moveDown) {
-                                gc.shoot = newKey
-                            }
-                            touched = 0
-                        }
-                        return true
-                    }
-                }
-            }
-        }
-    }
-
-    /*
-    private fun renderShop() {
-        viewport.apply()
-        batch.projectionMatrix = camera.combined
-
-        batch.use {
-            // draw bg
-            batch.draw(background, 0f, 0f)
-
-            // Draw logo
-            layout.setText(haloFont, "SpaceAgo")
-            haloFont.draw(batch, layout, 20f, GameConfig.HUD_HEIGHT - layout.height)
-
-            // Fix coordinates of the mouse using Vector and unproject and save them to Vector.
-            val mouseVector = Vector3().set(camera.unproject(Vector3(input.x.toFloat(), input.y.toFloat(), 0f)))
-
-            layout.setText(haloFont, "Controls:")
-            haloFont.draw(batch, layout, 400f - 100f, GameConfig.HUD_HEIGHT - layout.height - 100f)
-
-            layout.setText(scoreFont, "Move Left:")
-            scoreFont.draw(batch, layout, 220f, 550f)
-
-            layout.setText(scoreFont, "Move Right:")
-            scoreFont.draw(batch, layout, 220f, 480f)
-
-            layout.setText(scoreFont, "Move Up:")
-            scoreFont.draw(batch, layout, 220f, 410f)
-
-            layout.setText(scoreFont, "Move Down:")
-            scoreFont.draw(batch, layout, 220f, 340f)
-
-            layout.setText(scoreFont, "Shoot:")
-            scoreFont.draw(batch, layout, 220f, 270f)
-
-            bindChanger(moveLeftRect, mouseVector.x, mouseVector.y)
-            drawButton(GameController.moveLeft, 710f, 550f)
-
-            bindChanger(moveRightRect, mouseVector.x, mouseVector.y)
-            drawButton(GameController.moveRight,710f, 480f)
-
-            bindChanger(moveUpRect, mouseVector.x, mouseVector.y)
-            drawButton(GameController.moveUp,710f, 410f)
-
-            bindChanger(moveDownRect, mouseVector.x, mouseVector.y)
-            drawButton(GameController.moveDown,710f, 340f)
-
-            bindChanger(shootRect, mouseVector.x, mouseVector.y)
-            drawButton(GameController.shoot,710f, 270f)
-
-
-            if (inRectangle(backRect, mouseVector.x, mouseVector.y)) {
-                layout.setText(menuFontYellow, "Back")
-                // draw active button if mouse is inside button hitbox.
-                menuFontYellow.draw(batch, layout, 400f + layout.width / 2f - 20f, 100f + layout.height / 2f)
-                if (input.justTouched()) {  // if exit button is pressed - exit the app.
-                    changeScreen = true
-                }
-            } else { // draw inactive button.
-                layout.setText(menuFont, "Back")
-                menuFont.draw(batch, layout, 400f + layout.width / 2f - 20f, 100f + layout.height / 2f)
-            }
-        }
-    }
-
-    private fun renderDebug() {
-        viewport.apply()
-        renderer.projectionMatrix = camera.combined
-        val oldColor = renderer.color.cpy()
-
-        renderer.use {
-            renderer.color = Color.RED
-            renderer.rect(backRect.x, backRect.y, backRect.width, backRect.height)
-            renderer.rect(moveLeftRect.x, moveLeftRect.y, moveLeftRect.width, moveLeftRect.height)
-            renderer.rect(moveRightRect.x, moveRightRect.y, moveRightRect.width, moveRightRect.height)
-            renderer.rect(moveUpRect.x, moveUpRect.y, moveUpRect.width, moveUpRect.height)
-            renderer.rect(moveDownRect.x, moveDownRect.y, moveDownRect.width, moveDownRect.height)
-            renderer.rect(shootRect.x, shootRect.y, shootRect.width, shootRect.height)
-        }
-
-        renderer.color = oldColor
-    }
-
-     */
 
     override fun resize(width: Int, height: Int) {
         viewport.update(width, height, true)
