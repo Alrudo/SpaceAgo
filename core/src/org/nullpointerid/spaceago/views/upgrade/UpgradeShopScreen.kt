@@ -60,7 +60,6 @@ class UpgradeShopScreen(private val game: SpaceShooter) : Screen {
                 }
             }
         }
-
     }
 
     override fun resize(width: Int, height: Int) {
