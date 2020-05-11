@@ -32,24 +32,23 @@ class GameOverScreen(assetManager: AssetManager,
     private val prefs = Gdx.app.getPreferences("spaceshooter")
     private val highscore = prefs.getInteger("highscore", 0)
     private val currentCash = prefs.getInteger("money", 0)
+    private val background = assetManager[AssetDescriptors.GAME_PLAY_ATLAS][RegionNames.GAMEPLAY_BACKGROUND]
 
     private val batch = SpriteBatch()
     private val renderer = ShapeRenderer()
     private val camera = OrthographicCamera()
+
     private val viewport = FitViewport(GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT, camera)
 
     private val menuStage: Stage = Stage()
-
     private val spaceAgo: Label
     private val gameOver: Label
     private val currentScore: Label
     private val highScore: Label
     private val earnedCash: Label
     private val toMenuBtn: TextButton
-    private val retry: TextButton
 
-    private val gameAtlas = assetManager[AssetDescriptors.GAME_PLAY_ATLAS]
-    private val background = gameAtlas[RegionNames.GAMEPLAY_BACKGROUND]
+    private val retry: TextButton
 
     init {
         Gdx.input.inputProcessor = menuStage
