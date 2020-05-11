@@ -1,4 +1,4 @@
-package org.nullpointerid.spaceago.screen.menu.settings
+package org.nullpointerid.spaceago.views.settings
 
 import com.badlogic.gdx.*
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.viewport.FitViewport
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.config.GameConfig
-import org.nullpointerid.spaceago.screen.menu.MenuScreen
+import org.nullpointerid.spaceago.views.menu.MenuScreen
 import org.nullpointerid.spaceago.utils.*
 
 
@@ -35,12 +35,12 @@ class SettingsScreen(private val game: SpaceShooter) : Screen {
         Gdx.input.inputProcessor = this.settingsStage
 
 
-        settings = Label("Settings:", game.skin).apply {
+        settings = Label("Settings:", game.COMMON_SKIN).apply {
             setPosition(settingsStage.width / 2 - width / 2, settingsStage.height - height - 50f)
         }.bind(settingsStage)
 
 
-        controlsBtn = TextButton("Controls", game.skin)
+        controlsBtn = TextButton("Controls", game.COMMON_SKIN)
                 .extend(20f, 10f)
                 .apply {
                     setPosition(settingsStage.width / 2 - width / 2, start)
@@ -50,7 +50,7 @@ class SettingsScreen(private val game: SpaceShooter) : Screen {
                     game.screen = ControlsScreen(game)
                 }
 
-        audioBtn = TextButton("Audio", game.skin)
+        audioBtn = TextButton("Audio", game.COMMON_SKIN)
                 .extend(20f, 10f)
                 .apply {
                     setPosition(settingsStage.width / 2 - width / 2, controlsBtn.y - controlsBtn.height - step)
@@ -60,7 +60,7 @@ class SettingsScreen(private val game: SpaceShooter) : Screen {
                     game.screen = AudioScreen(game)
                 }
 
-        menuBtn = TextButton("Menu", game.skin)
+        menuBtn = TextButton("Menu", game.COMMON_SKIN)
                 .extend(20f, 10f)
                 .apply {
                     setPosition(settingsStage.width / 2 - width / 2, audioBtn.y - audioBtn.height - step * 5)

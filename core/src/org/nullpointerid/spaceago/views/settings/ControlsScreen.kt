@@ -1,4 +1,4 @@
-package org.nullpointerid.spaceago.screen.menu.settings
+package org.nullpointerid.spaceago.views.settings
 
 import com.badlogic.gdx.*
 import com.badlogic.gdx.Gdx.input
@@ -9,27 +9,18 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
-import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.utils.viewport.FitViewport
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.assets.AssetDescriptors
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
-import org.nullpointerid.spaceago.screen.game.GameController
-import org.nullpointerid.spaceago.screen.game.GameScreen
-import org.nullpointerid.spaceago.screen.menu.MenuScreen
-import org.nullpointerid.spaceago.screen.menu.UpgradeShopScreen
+import org.nullpointerid.spaceago.views.game.GameController
+import org.nullpointerid.spaceago.views.game.GameScreen
+import org.nullpointerid.spaceago.views.menu.MenuScreen
 import org.nullpointerid.spaceago.utils.*
-import org.w3c.dom.Text
-import java.awt.SystemColor
-import java.awt.SystemColor.activeCaptionText
-import java.awt.SystemColor.text
-import kotlin.system.exitProcess
 
 
 class ControlsScreen(private val game: SpaceShooter) : Screen {
@@ -82,72 +73,72 @@ class ControlsScreen(private val game: SpaceShooter) : Screen {
     init {
         input.inputProcessor = this.controlsStage
 
-        controlsLbl = Label("Controls:", game.skin).apply {
+        controlsLbl = Label("Controls:", game.COMMON_SKIN).apply {
             setPosition(controlsStage.width / 2 - width / 2, controlsStage.height - height - 50f)
         }.bind(controlsStage)
 
-        moveLeftLbl = Label("Move Left:", game.skin2).apply {
-            setPosition(controlsStage.width / 2 - width + 80f, 560f)
+        moveLeftLbl = Label("Move Left:", game.COMMON_SKIN2).apply {
+            setPosition(controlsStage.width / 2 - width + 30f, 560f)
         }.bind(controlsStage)
 
-        moveRightLbl = Label("Move Right:", game.skin2).apply {
-            setPosition(controlsStage.width / 2 - width + 120f, moveLeftLbl.y - moveLeftLbl.height - step2)
+        moveRightLbl = Label("Move Right:", game.COMMON_SKIN2).apply {
+            setPosition(controlsStage.width / 2 - width + 70f, moveLeftLbl.y - moveLeftLbl.height - step2)
         }.bind(controlsStage)
 
-        moveUpLbl = Label("Move Up:", game.skin2).apply {
-            setPosition(controlsStage.width / 2 - width , moveRightLbl.y - moveRightLbl.height - step2)
+        moveUpLbl = Label("Move Up:", game.COMMON_SKIN2).apply {
+            setPosition(controlsStage.width / 2 - width - 50, moveRightLbl.y - moveRightLbl.height - step2)
         }.bind(controlsStage)
 
-        moveDownLbl = Label("Move Down:", game.skin2).apply {
-            setPosition(controlsStage.width / 2 - width + 80f, moveUpLbl.y - moveUpLbl.height - step2)
+        moveDownLbl = Label("Move Down:", game.COMMON_SKIN2).apply {
+            setPosition(controlsStage.width / 2 - width + 30f, moveUpLbl.y - moveUpLbl.height - step2)
         }.bind(controlsStage)
 
-        shootLbl = Label("Shoot:", game.skin2).apply {
-            setPosition(controlsStage.width / 2 - width - 85f, moveDownLbl.y - moveDownLbl.height - step2)
+        shootLbl = Label("Shoot:", game.COMMON_SKIN2).apply {
+            setPosition(controlsStage.width / 2 - width - 135f, moveDownLbl.y - moveDownLbl.height - step2)
         }.bind(controlsStage)
 
 
-        moveLeftBtn = TextButton(gc.moveLeft, game.skin2)
+        moveLeftBtn = TextButton(gc.moveLeft, game.COMMON_SKIN2)
                 .apply {
-                    setSize(280f, 60f)
+                    setSize(320f, 60f)
                     setPosition(controlsStage.width - width - 10f, start)
                 }
                 .bind(controlsStage)
                 .onClick { leftClicked += 1}
 
-        moveRightBtn = TextButton(gc.moveRight, game.skin2)
+        moveRightBtn = TextButton(gc.moveRight, game.COMMON_SKIN2)
                 .apply {
-                    setSize(280f, 60f)
+                    setSize(320f, 60f)
                     setPosition(controlsStage.width - width - 10f, moveLeftBtn.y - moveLeftBtn.height - step)
                 }
                 .bind(controlsStage)
                 .onClick {rightClicked = 1}
 
-        moveUpBtn = TextButton(gc.moveUp, game.skin2)
+        moveUpBtn = TextButton(gc.moveUp, game.COMMON_SKIN2)
                 .apply {
-                    setSize(280f, 60f)
+                    setSize(320f, 60f)
                     setPosition(controlsStage.width - width - 10f, moveRightBtn.y - moveRightBtn.height - step)
                 }
                 .bind(controlsStage)
                 .onClick {upClicked = 1}
 
-        moveDownBtn = TextButton(gc.moveDown, game.skin2)
+        moveDownBtn = TextButton(gc.moveDown, game.COMMON_SKIN2)
                 .apply {
-                    setSize(280f, 60f)
+                    setSize(320f, 60f)
                     setPosition(controlsStage.width - width - 10f, moveUpBtn.y - moveUpBtn.height - step)
                 }
                 .bind(controlsStage)
                 .onClick {downClicked = 1}
 
-        shootBtn = TextButton(gc.shoot, game.skin2)
+        shootBtn = TextButton(gc.shoot, game.COMMON_SKIN2)
                 .apply {
-                    setSize(280f, 60f)
+                    setSize(320f, 60f)
                     setPosition(controlsStage.width - width - 10f, moveDownBtn.y - moveDownBtn.height - step)
                 }
                 .bind(controlsStage)
                 .onClick {shootClicked = 1}
 
-        backBtn = TextButton("Back", game.skin)
+        backBtn = TextButton("Back", game.COMMON_SKIN)
                 .extend(20f, 10f)
                 .apply {
                     setPosition(controlsStage.width / 2 - width / 2, 50f)

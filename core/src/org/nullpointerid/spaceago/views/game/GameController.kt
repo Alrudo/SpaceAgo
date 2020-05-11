@@ -1,6 +1,8 @@
 package org.nullpointerid.spaceago.views.game
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
+import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.math.MathUtils
 import org.nullpointerid.spaceago.collectables.Collectible
 import org.nullpointerid.spaceago.config.GameConfig
@@ -22,6 +24,12 @@ class GameController {
 
         const val EXPLOSION_X = (SimpleEnemy.BOUNDS_WIDTH - Explosion.TEXTURE_WIDTH) / 2f
         const val EXPLOSION_Y = (SimpleEnemy.BOUNDS_HEIGHT - Explosion.TEXTURE_HEIGHT) / 2f
+
+        var moveLeft = "A"
+        var moveRight = "D"
+        var moveUp = "W"
+        var moveDown = "S"
+        var shoot = "Space"
     }
 
     private var simpleEnemyTimer = 0.15f + Random.nextFloat() * (0.50f - 0.15f)
@@ -35,6 +43,8 @@ class GameController {
     var civilianShips = GdxArray<CivilianShip>()
     val collectibles = GdxArray<EntityBase>()
     val laserBeam = LaserBeam(player)
+    var shotSound = Gdx.audio.newSound(Gdx.files.internal("audio/shotSound.mp3"))
+    var explosionSound = Gdx.audio.newSound(Gdx.files.internal("audio/enemyExplosionSound.mp3"))
 
 
     fun update(delta: Float) {
@@ -70,14 +80,15 @@ class GameController {
         var xSpeed = 0f
         var ySpeed = 0f
 
-        if (Input.Keys.D.isKeyPressed()) xSpeed = Player.MAX_SPEED
-        if (Input.Keys.A.isKeyPressed()) xSpeed = -Player.MAX_SPEED
-        if (Input.Keys.W.isKeyPressed()) ySpeed = Player.MAX_SPEED
-        if (Input.Keys.S.isKeyPressed()) ySpeed = -Player.MAX_SPEED
-        if (Input.Keys.SPACE.isKeyPressed() && playerShootTimer > Player.SHOOT_TIMER) {
+        if (Input.Keys.valueOf(moveRight).isKeyPressed()) xSpeed = Player.MAX_SPEED
+        if (Input.Keys.valueOf(moveLeft).isKeyPressed()) xSpeed = -Player.MAX_SPEED
+        if (Input.Keys.valueOf(moveUp).isKeyPressed()) ySpeed = Player.MAX_SPEED
+        if (Input.Keys.valueOf(moveDown).isKeyPressed()) ySpeed = -Player.MAX_SPEED
+        if (Input.Keys.valueOf(shoot).isKeyPressed() && playerShootTimer > Player.SHOOT_TIMER) {
             playerShootTimer = 0f
             bullets.add(Bullet(player).apply {
                 setPosition(player.bounds[0].x + BULLET_X, player.bounds[0].y + BULLET_Y)
+                shotSound.play(0.1f)
             })
         }
         if (Input.Keys.N.isKeyPressed() && player.ultimateWeapon > 0 && !laserBeam.used) {
@@ -200,12 +211,14 @@ class GameController {
             player.score += SimpleEnemy.SCORE_VALUE
             simpleEnemies.removeValue(entity, true)
             explosions.add(Explosion().apply { setPosition(entity.bounds[0].x + EXPLOSION_X, entity.bounds[0].y + EXPLOSION_Y) })
+            explosionSound.play(0.3f)
             dropCollectible(entity)
         } else if (entity is CivilianShip) {
             player.score += CivilianShip.SCORE_VALUE
             civilianShips.removeValue(entity, true)
             if (entity.toLeft) explosions.add(Explosion().apply { setPosition(entity.bounds[1].x + entity.bounds[1].width / 2f, entity.bounds[1].y - 0.05f) })
             else explosions.add(Explosion().apply { setPosition(entity.bounds[0].x + entity.bounds[1].width / 2f, entity.bounds[0].y) })
+            explosionSound.play(0.3f)
         }
     }
 

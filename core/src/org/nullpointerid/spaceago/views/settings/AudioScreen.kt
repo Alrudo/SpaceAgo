@@ -1,4 +1,4 @@
-package org.nullpointerid.spaceago.screen.menu.settings
+package org.nullpointerid.spaceago.views.settings
 
 import com.badlogic.gdx.Gdx.input
 import com.badlogic.gdx.Screen
@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.viewport.FitViewport
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.config.GameConfig
-import org.nullpointerid.spaceago.screen.game.GameController
+import org.nullpointerid.spaceago.views.game.GameController
 import org.nullpointerid.spaceago.utils.*
 
 
@@ -36,11 +36,11 @@ class AudioScreen(private val game: SpaceShooter) : Screen {
     init {
         input.inputProcessor = this.audioStage
 
-        audio = Label("Audio:", game.skin).apply {
+        audio = Label("Audio:", game.COMMON_SKIN).apply {
             setPosition(audioStage.width / 2 - width / 2, audioStage.height - height - 50f)
         }.bind(audioStage)
 
-        backBtn = TextButton("Back", game.skin)
+        backBtn = TextButton("Back", game.COMMON_SKIN)
                 .extend(20f, 10f)
                 .apply {
                     setPosition(audioStage.width / 2 - width / 2, 50f)

@@ -18,6 +18,7 @@ object SpaceShooter : Game() {
     lateinit var movingBackground: MovingBackground
 
     val COMMON_SKIN = Skin()
+    val COMMON_SKIN2= Skin()
 
     override fun create() {
         Gdx.app.logLevel = Application.LOG_DEBUG
