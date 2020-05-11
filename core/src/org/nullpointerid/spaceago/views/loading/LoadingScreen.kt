@@ -39,7 +39,6 @@ class LoadingScreen(private val game: SpaceShooter) : ScreenAdapter() {
 
         // load necessary assets to AssetManager
         assetManager.load(AssetDescriptors.MAIN_MENU_ATLAS)
-        assetManager.load(AssetDescriptors.GAME_OVER_ATLAS)
         assetManager.load(AssetDescriptors.GAME_PLAY_ATLAS)
         assetManager.load(AssetDescriptors.SCORE_FONT)
 
