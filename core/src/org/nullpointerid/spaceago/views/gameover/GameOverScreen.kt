@@ -3,14 +3,9 @@ package org.nullpointerid.spaceago.views.gameover
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
@@ -19,11 +14,9 @@ import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.assets.AssetDescriptors
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
+import org.nullpointerid.spaceago.utils.*
 import org.nullpointerid.spaceago.views.game.GameScreen
 import org.nullpointerid.spaceago.views.menu.MenuScreen
-import org.nullpointerid.spaceago.utils.*
-import org.nullpointerid.spaceago.views.game.GameController
-import org.nullpointerid.spaceago.views.settings.SettingsScreen
 
 class GameOverScreen(assetManager: AssetManager,
                      private val game: SpaceShooter,
@@ -32,82 +25,68 @@ class GameOverScreen(assetManager: AssetManager,
     companion object {
         @JvmStatic
         private val log = logger<GameOverScreen>()
+
+        private const val STEP = 100f
     }
-
-    var gc = GameController
-    private var changeScreen = false
-    private val gameOverStage: Stage = Stage()
-
-    private val batch = SpriteBatch()
-    private val renderer = ShapeRenderer()
-    private val layout = GlyphLayout()
-    private val camera = OrthographicCamera()
-    private val viewport = FitViewport(GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT, camera)
 
     private val prefs = Gdx.app.getPreferences("spaceshooter")
     private val highscore = prefs.getInteger("highscore", 0)
     private val currentCash = prefs.getInteger("money", 0)
+    private val background = assetManager[AssetDescriptors.GAME_PLAY_ATLAS][RegionNames.GAMEPLAY_BACKGROUND]
 
-    private val start: Float = 550f
-    private val step: Float = 30f
-    private val gameOverLbl: Label
-    private val scoreLbl: Label
-    private val highScoreLbl : Label
-    private val currentCashLbl : Label
-    private val exitBtn: TextButton
-    private val retryBtn: TextButton
-    private val mainMenuBtn: TextButton
+    private val batch = SpriteBatch()
+    private val renderer = ShapeRenderer()
+    private val camera = OrthographicCamera()
 
+    private val viewport = FitViewport(GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT, camera)
+
+    private val menuStage: Stage = Stage()
+    private val spaceAgo: Label
+    private val gameOver: Label
+    private val currentScore: Label
+    private val highScore: Label
+    private val earnedCash: Label
+    private val toMenuBtn: TextButton
+
+    private val retry: TextButton
 
     init {
-        Gdx.input.inputProcessor = this.gameOverStage
+        Gdx.input.inputProcessor = menuStage
 
-        gameOverLbl = Label("Game Over:", game.COMMON_SKIN, "game-title").apply {
-            setPosition(gameOverStage.width / 2 - width / 2, gameOverStage.height - height - 50f)
-        }.bind(gameOverStage)
+        spaceAgo = Label("SpaceAgo", game.COMMON_SKIN, "game-title").apply {
+            setPosition(20f, menuStage.height - height - 27f)
+        }.bind(menuStage)
 
-        scoreLbl = Label("Score: $score", game.COMMON_SKIN).apply {
-            setPosition(gameOverStage.width / 2 - width / 2, gameOverStage.height - height - 200f)
-        }.bind(gameOverStage)
+        gameOver = Label("Game Over", game.COMMON_SKIN, "label-h1").apply {
+            setPosition(menuStage.width / 2f - width / 2f, 550f)
+        }.bind(menuStage)
 
-        highScoreLbl = Label("Highscore: $highscore", game.COMMON_SKIN).apply {
-            setPosition(gameOverStage.width / 2 - width / 2, gameOverStage.height - height - 300f)
-        }.bind(gameOverStage)
+        currentScore = Label("Score: $score", game.COMMON_SKIN).apply {
+            setPosition(menuStage.width / 2f - width / 2f, gameOver.y - STEP)
+        }.bind(menuStage)
 
-        currentCashLbl = Label("Earned: ${score / 100} scrap", game.COMMON_SKIN).apply {
-            setPosition(gameOverStage.width / 2 - width / 2, gameOverStage.height - height - 400f)
-        }.bind(gameOverStage)
+        highScore = Label("Highscore: $highscore", game.COMMON_SKIN).apply {
+            setPosition(menuStage.width / 2f - width / 2f, currentScore.y - STEP)
+        }.bind(menuStage)
 
-        exitBtn = TextButton("Exit", game.COMMON_SKIN)
-                .extend(20f, 10f)
-                .apply {
-                    setPosition(gameOverStage.width / 2 - width / 2, 50f)
-                }
-                .bind(gameOverStage)
-                .onClick {
-                    Gdx.app.exit()
-                }
+        earnedCash = Label("Earned: ${score / 100} scrap", game.COMMON_SKIN).apply {
+            setPosition(menuStage.width / 2f - width / 2f, highScore.y - STEP)
+        }.bind(menuStage)
 
-        retryBtn = TextButton("Retry", game.COMMON_SKIN)
-                .extend(20f, 10f)
-                .apply {
-                    setPosition(gameOverStage.width / 2 - width / 2 + 130f, 170f)
-                }
-                .bind(gameOverStage)
-                .onClick {
-                    game.screen = GameScreen(game)
-                }
+        toMenuBtn = TextButton("Menu", game.COMMON_SKIN, "fancy-hover-h3").extend(20f, 10f).apply {
+            setPosition(menuStage.width / 2f - width / 2f - 200f, 100f)
+        }.bind(menuStage).onClick {
+            game.screen = MenuScreen(game)
+        }
 
-        mainMenuBtn = TextButton("Main Menu", game.COMMON_SKIN)
-                .extend(20f, 10f)
-                .apply {
-                    setPosition(gameOverStage.width / 2 - 270f, 170f)
-                }
-                .bind(gameOverStage)
-                .onClick {
-                    game.screen = MenuScreen(game)
-                }
+        retry = TextButton("Retry", game.COMMON_SKIN, "fancy-hover-h3").extend(20f, 10f).apply {
+            setPosition(menuStage.width / 2f - width / 2f + 200f, 100f)
+        }.bind(menuStage).onClick {
+            game.screen = GameScreen(game)
+        }
+    }
 
+    override fun show() {
         if (score > highscore) {
             prefs.putInteger("highscore", score)
         }
@@ -118,25 +97,24 @@ class GameOverScreen(assetManager: AssetManager,
 
     override fun render(delta: Float) {
 
-        clearScreen()
+        clearScreen(255, 255, 255, 255)
 
         batch.use {
-            batch.draw(game.background, 0f, 0f)
+            batch.draw(background, 0f, 0f, GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT)
             game.movingBackground.updateRender(delta, batch)
         }
 
-        gameOverStage.act(delta)
-        gameOverStage.draw()
+        menuStage.act(delta)
+        menuStage.draw()
 
         if (GameConfig.DEBUG_MODE) {
             viewport.drawGrid(renderer, 100f)
             renderer.use {
-                gameOverStage.actors.forEach {
+                menuStage.actors.forEach {
                     renderer.rect(it)
                 }
             }
         }
-
     }
 
     override fun resize(width: Int, height: Int) {
@@ -144,15 +122,14 @@ class GameOverScreen(assetManager: AssetManager,
     }
 
     override fun dispose() {
-        batch.dispose()
         renderer.dispose()
+        batch.dispose()
     }
 
     override fun hide() {
         dispose()
     }
 
-    override fun show() {}
     override fun pause() {}
     override fun resume() {}
 }
