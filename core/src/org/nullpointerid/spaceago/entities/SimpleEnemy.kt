@@ -25,7 +25,7 @@ class SimpleEnemy : EntityBase() {
         const val SCORE_VALUE = 100
     }
 
-    val bound = Rectangle(0f, 0f, BOUNDS_WIDTH, BOUNDS_HEIGHT)
+    private val bound = Rectangle(0f, 0f, BOUNDS_WIDTH, BOUNDS_HEIGHT)
     val containsDropable = Collectible.collectibleChance()
 
     override val bounds = GdxArray<Rectangle>().apply { add(bound) }

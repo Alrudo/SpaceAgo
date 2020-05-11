@@ -26,16 +26,48 @@
   },
   "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
     "default": {
-      "font": "h1", "fontColor": "white", "overFontColor": "yellow"
+      "font": "h1",
+      "fontColor": "white",
+      "overFontColor": "yellow"
     },
     "fancy-h1": {
-      "font": "h1", "up": "default-fancy-up", "down": "default-fancy-down"
+      "font": "h1",
+      "up": "default-fancy-up",
+      "down": "default-fancy-down"
     },
     "fancy-h2": {
-      "font": "h2", "up": "default-fancy-up", "down": "default-fancy-down"
+      "font": "h2",
+      "up": "default-fancy-up",
+      "down": "default-fancy-down"
+    },
+    "fancy-hover-h2": {
+      "font": "h2",
+      "fontColor": "white",
+      "overFontColor": "yellow",
+      "up": "default-fancy-up",
+      "down": "default-fancy-down"
+    },
+    "button-h3": {
+      "font": "h3",
+      "fontColor": "white",
+      "overFontColor": "yellow"
+    },
+    "fancy-hover-h3": {
+      "font": "h3",
+      "fontColor": "white",
+      "overFontColor": "yellow",
+      "up": "default-fancy-up",
+      "down": "default-fancy-down"
     },
     "fancy-h3": {
-      "font": "h3", "up": "default-fancy-up", "down": "default-fancy-down"
+      "font": "h3",
+      "up": "default-fancy-up",
+      "down": "default-fancy-down"
+    },
+    "button-h4": {
+      "font": "h4",
+      "fontColor": "white",
+      "overFontColor": "yellow"
     }
   },
   "com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle": {
@@ -47,10 +79,20 @@
   },
   "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
     "default": {
-      "font": "h3", "fontColor": "white"
+      "font": "h3",
+      "fontColor": "white"
+    },
+    "label-h2": {
+      "font": "h2",
+      "fontColor": "white"
+    },
+    "label-h4": {
+      "font": "h4",
+      "fontColor": "white"
     },
     "game-title": {
-      "font": "halo", "fontColor": "white"
+      "font": "halo",
+      "fontColor": "white"
     }
   }
 }
