@@ -8,6 +8,5 @@ object AssetDescriptors {
 
     val SCORE_FONT = assetDescriptor<BitmapFont>(AssetPaths.SCORE_FONT)
     val MAIN_MENU_ATLAS = assetDescriptor<TextureAtlas>(AssetPaths.MAIN_MENU_ATLAS)
-    val GAME_OVER_ATLAS = assetDescriptor<TextureAtlas>(AssetPaths.GAME_OVER_ATLAS)
     val GAME_PLAY_ATLAS = assetDescriptor<TextureAtlas>(AssetPaths.GAME_PLAY_ATLAS)
 }
