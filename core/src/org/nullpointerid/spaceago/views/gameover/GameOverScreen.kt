@@ -11,6 +11,9 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector3
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.viewport.FitViewport
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.assets.AssetDescriptors
@@ -34,14 +37,18 @@ class GameOverScreen(assetManager: AssetManager,
     private val currentCash = prefs.getInteger("money", 0)
     private val menuHitboxes = Rectangle(150f, 150f, 300f, 100f)
     private val retryHitboxes = Rectangle(600f, 150f, 200f, 100f)
-    private var changeToMenu = false
-    private var retry = false
 
-    private val camera = OrthographicCamera()
-    private val viewport = FitViewport(GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT, camera)
     private val batch = SpriteBatch()
     private val renderer = ShapeRenderer()
+    private val camera = OrthographicCamera()
+    private val viewport = FitViewport(GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT, camera)
     private val layout = GlyphLayout()
+
+    private val menuStage: Stage = Stage()
+
+    private val spaceAgo: Label
+    private val toMenuBtn: TextButton
+    private val retry: TextButton
 
     private val gameAtlas = assetManager[AssetDescriptors.GAME_PLAY_ATLAS]
     private val gameOverAtlas = assetManager[AssetDescriptors.GAME_OVER_ATLAS]
@@ -56,27 +63,48 @@ class GameOverScreen(assetManager: AssetManager,
                 color = Color.GRAY
             })
 
-    override fun show() {
-        if (score > highscore) {
-            prefs.putInteger("highscore", score)
+    init {
+        Gdx.input.inputProcessor = menuStage
+
+        spaceAgo = Label("SpaceAgo", game.COMMON_SKIN).apply {
+            setPosition(20f, menuStage.height - height - 27f)
+        }.bind(menuStage)
+
+
+
+        toMenuBtn = TextButton("Menu", game.COMMON_SKIN).extend(20f, 10f).apply {
+            setPosition(menuStage.width / 2f - width / 2f - 200f, 150f)
+        }.bind(menuStage).onClick {
+            game.screen = MenuScreen(game)
         }
-        prefs.putInteger("money", currentCash + score / 100)
-        prefs.flush()
-        log.debug("${prefs.getInteger("money")}")
+
+        retry = TextButton("Retry", game.COMMON_SKIN).extend(20f, 10f).apply {
+            setPosition(menuStage.width / 2f - width/ 2f + 200f, 150f)
+        }.bind(menuStage).onClick {
+            game.screen = GameScreen(game)
+        }
     }
 
     override fun render(delta: Float) {
-        clearScreen()
 
-        renderMenu()
+        clearScreen(255, 255, 255, 255)
+
+        batch.use {
+            batch.draw(background, 0f, 0f, GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT)
+            game.movingBackground.updateRender(delta, batch)
+        }
+
+        menuStage.act(delta)
+        menuStage.draw()
 
         if (GameConfig.DEBUG_MODE) {
             viewport.drawGrid(renderer, 100f)
-            renderDebug()
+            renderer.use {
+                menuStage.actors.forEach {
+                    renderer.rect(it)
+                }
+            }
         }
-
-        if (changeToMenu) game.screen = MenuScreen(game)
-        if (retry) game.screen = GameScreen(game)
     }
 
     private fun renderDebug() {
@@ -124,23 +152,23 @@ class GameOverScreen(assetManager: AssetManager,
 
             val oldColor = scoreFont.color.cpy()
             // Draw buttons text on screen.
-            if (inRectangle(menuHitboxes, mouseVector.x, mouseVector.y)) {
-                scoreFont.color = Color.YELLOW
-                if (Gdx.input.justTouched()) {
-                    changeToMenu = true
-                }
-            }
+//            if (inRectangle(menuHitboxes, mouseVector.x, mouseVector.y)) {
+//                scoreFont.color = Color.YELLOW
+//                if (Gdx.input.justTouched()) {
+//                    changeToMenu = true
+//                }
+//            }
             layout.setText(scoreFont, "Main Menu")
             scoreFont.draw(batch, layout, (GameConfig.HUD_WIDTH - layout.width) / 2f - 200f, 215f)
 
-            if (inRectangle(retryHitboxes, mouseVector.x, mouseVector.y)) {
-                scoreFont.color = Color.YELLOW
-                if (Gdx.input.justTouched()) {
-                    retry = true
-                }
-            } else scoreFont.color = oldColor
-            layout.setText(scoreFont, "Retry")
-            scoreFont.draw(batch, layout, (GameConfig.HUD_WIDTH - layout.width) / 2f + 200f, 215f)
+//            if (inRectangle(retryHitboxes, mouseVector.x, mouseVector.y)) {
+//                scoreFont.color = Color.YELLOW
+//                if (Gdx.input.justTouched()) {
+//                    retry = true
+//                }
+//            } else scoreFont.color = oldColor
+//            layout.setText(scoreFont, "Retry")
+//            scoreFont.draw(batch, layout, (GameConfig.HUD_WIDTH - layout.width) / 2f + 200f, 215f)
 
             scoreFont.color = oldColor
         }
@@ -159,6 +187,15 @@ class GameOverScreen(assetManager: AssetManager,
 
     override fun hide() {
         dispose()
+    }
+
+    override fun show() {
+        if (score > highscore) {
+            prefs.putInteger("highscore", score)
+        }
+        prefs.putInteger("money", currentCash + score / 100)
+        prefs.flush()
+        log.debug("${prefs.getInteger("money")}")
     }
 
     override fun pause() {}
