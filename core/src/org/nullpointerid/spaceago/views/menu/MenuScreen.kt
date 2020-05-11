@@ -86,7 +86,7 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
         exitBtn = TextButton("Exit", game.COMMON_SKIN)
                 .extend(20f, 10f)
                 .apply {
-                    setPosition(menuStage.width / 2 - width / 2, settingsBtn.y - settingsBtn.height - step - 3f)
+                    setPosition(menuStage.width / 2 - width / 2, settingsBtn.y - settingsBtn.height - step)
                 }
                 .bind(menuStage)
                 .onClick {

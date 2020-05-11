@@ -3,33 +3,26 @@ package org.nullpointerid.spaceago.views.settings
 import com.badlogic.gdx.Gdx.input
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.*
+import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.viewport.FitViewport
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.config.GameConfig
-import org.nullpointerid.spaceago.views.game.GameController
 import org.nullpointerid.spaceago.utils.*
 
 
 class AudioScreen(private val game: SpaceShooter) : Screen {
 
-    var gc = GameController
-    private var changeScreen = false
-
     private val audioStage: Stage = Stage()
 
     private val batch = SpriteBatch()
     private val renderer = ShapeRenderer()
-    private val layout = GlyphLayout()
     private val camera = OrthographicCamera()
     private val viewport = FitViewport(GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT, camera)
 
-    private val start: Float = 550f
-    private val step: Float = 30f
     private val audio: Label
     private val backBtn: TextButton
 
@@ -50,6 +43,7 @@ class AudioScreen(private val game: SpaceShooter) : Screen {
                     game.screen = SettingsScreen(game)
                 }
     }
+
     override fun render(delta: Float) {
 
         clearScreen()

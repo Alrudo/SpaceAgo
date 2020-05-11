@@ -11,11 +11,10 @@ import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.assets.AssetDescriptors
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
-import org.nullpointerid.spaceago.views.menu.MenuScreen
 import org.nullpointerid.spaceago.utils.Fonts
 import org.nullpointerid.spaceago.utils.clearScreen
 import org.nullpointerid.spaceago.utils.get
-import java.awt.Font
+import org.nullpointerid.spaceago.views.menu.MenuScreen
 
 class LoadingScreen(private val game: SpaceShooter) : ScreenAdapter() {
 

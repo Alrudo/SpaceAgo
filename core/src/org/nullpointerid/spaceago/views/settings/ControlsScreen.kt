@@ -1,27 +1,20 @@
 package org.nullpointerid.spaceago.views.settings
 
-import com.badlogic.gdx.*
 import com.badlogic.gdx.Gdx.input
-import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.Input
+import com.badlogic.gdx.InputAdapter
+import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.viewport.FitViewport
 import org.nullpointerid.spaceago.SpaceShooter
-import org.nullpointerid.spaceago.assets.AssetDescriptors
-import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
-import org.nullpointerid.spaceago.views.game.GameController
-import org.nullpointerid.spaceago.views.game.GameScreen
-import org.nullpointerid.spaceago.views.menu.MenuScreen
 import org.nullpointerid.spaceago.utils.*
-
+import org.nullpointerid.spaceago.views.game.GameController
 
 class ControlsScreen(private val game: SpaceShooter) : Screen {
 
@@ -31,25 +24,11 @@ class ControlsScreen(private val game: SpaceShooter) : Screen {
     var downClicked = 0
     var shootClicked = 0
     var gc = GameController
-    private val menuAtlas = game.assetManager[AssetDescriptors.MAIN_MENU_ATLAS]
-    private val background = menuAtlas[RegionNames.MENU_BACKGROUND]
-    private val menuFont = BitmapFont("fonts/MenuFont.fnt".toInternalFile())
-    private val menuFontYellow = BitmapFont("fonts/MenuFontYellow.fnt".toInternalFile())
-    private val haloFont = FreeTypeFontGenerator("fonts/Halo3.ttf".toInternalFile()).generateFont(
-            FreeTypeFontGenerator.FreeTypeFontParameter().apply {
-                size = 75
-                borderWidth = 5f
-                borderColor = Color.BLACK
-                color = Color.GRAY
-            })
-    private val scoreFont = BitmapFont("fonts/score.fnt".toInternalFile())
 
     private val batch = SpriteBatch()
     private val renderer = ShapeRenderer()
-    private val layout = GlyphLayout()
     private val camera = OrthographicCamera()
     private val viewport = FitViewport(GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT, camera)
-
 
 
     private val controlsStage: Stage = Stage()
@@ -104,7 +83,7 @@ class ControlsScreen(private val game: SpaceShooter) : Screen {
                     setPosition(controlsStage.width - width - 10f, start)
                 }
                 .bind(controlsStage)
-                .onClick { leftClicked += 1}
+                .onClick { leftClicked += 1 }
 
         moveRightBtn = TextButton(gc.moveRight, game.COMMON_SKIN2)
                 .apply {
@@ -112,7 +91,7 @@ class ControlsScreen(private val game: SpaceShooter) : Screen {
                     setPosition(controlsStage.width - width - 10f, moveLeftBtn.y - moveLeftBtn.height - step)
                 }
                 .bind(controlsStage)
-                .onClick {rightClicked = 1}
+                .onClick { rightClicked = 1 }
 
         moveUpBtn = TextButton(gc.moveUp, game.COMMON_SKIN2)
                 .apply {
@@ -120,7 +99,7 @@ class ControlsScreen(private val game: SpaceShooter) : Screen {
                     setPosition(controlsStage.width - width - 10f, moveRightBtn.y - moveRightBtn.height - step)
                 }
                 .bind(controlsStage)
-                .onClick {upClicked = 1}
+                .onClick { upClicked = 1 }
 
         moveDownBtn = TextButton(gc.moveDown, game.COMMON_SKIN2)
                 .apply {
@@ -128,7 +107,7 @@ class ControlsScreen(private val game: SpaceShooter) : Screen {
                     setPosition(controlsStage.width - width - 10f, moveUpBtn.y - moveUpBtn.height - step)
                 }
                 .bind(controlsStage)
-                .onClick {downClicked = 1}
+                .onClick { downClicked = 1 }
 
         shootBtn = TextButton(gc.shoot, game.COMMON_SKIN2)
                 .apply {
@@ -136,7 +115,7 @@ class ControlsScreen(private val game: SpaceShooter) : Screen {
                     setPosition(controlsStage.width - width - 10f, moveDownBtn.y - moveDownBtn.height - step)
                 }
                 .bind(controlsStage)
-                .onClick {shootClicked = 1}
+                .onClick { shootClicked = 1 }
 
         backBtn = TextButton("Back", game.COMMON_SKIN)
                 .extend(20f, 10f)
@@ -150,12 +129,12 @@ class ControlsScreen(private val game: SpaceShooter) : Screen {
 
     }
 
-    private fun bindChanger(txt : TextButton) {
+    private fun bindChanger(txt: TextButton) {
         //Gets user input for pressed key
-        if (leftClicked + rightClicked + upClicked+ downClicked + shootClicked > 0) {
+        if (leftClicked + rightClicked + upClicked + downClicked + shootClicked > 0) {
             input.inputProcessor = object : InputAdapter() {
                 override fun keyUp(keycode: Int): Boolean {
-                    var newKey = Input.Keys.toString(keycode)
+                    val newKey = Input.Keys.toString(keycode)
                     if (txt == moveLeftBtn && newKey != gc.moveRight && newKey != gc.moveUp && newKey != gc.moveDown && newKey != gc.shoot) {
                         gc.moveLeft = newKey
                         moveLeftBtn.setText(gc.moveLeft)
@@ -207,11 +186,11 @@ class ControlsScreen(private val game: SpaceShooter) : Screen {
                 bindChanger(moveLeftBtn)
             } else if (rightClicked == 1) {
                 bindChanger(moveRightBtn)
-            }  else if (upClicked == 1) {
+            } else if (upClicked == 1) {
                 bindChanger(moveUpBtn)
-            }  else if (downClicked == 1) {
+            } else if (downClicked == 1) {
                 bindChanger(moveDownBtn)
-            }  else if (shootClicked == 1) {
+            } else if (shootClicked == 1) {
                 bindChanger(shootBtn)
             }
         }
@@ -237,9 +216,6 @@ class ControlsScreen(private val game: SpaceShooter) : Screen {
     override fun dispose() {
         renderer.dispose()
         batch.dispose()
-        haloFont.dispose()
-        menuFont.dispose()
-        menuFontYellow.dispose()
     }
 
     override fun hide() {
