@@ -1,27 +1,45 @@
 {
   "com.badlogic.gdx.graphics.Color": {
-    "white": { "r": 0.973, "g": 0.906, "b": 0.996, "a": 1 },
-    "yellow": { "r": 1, "g": 1, "b": 0, "a": 1 }
+    "white": {
+      "r": 0.973,
+      "g": 0.906,
+      "b": 0.996,
+      "a": 1
+    },
+    "yellow": {
+      "r": 1,
+      "g": 1,
+      "b": 0,
+      "a": 1
+    }
   },
   "com.badlogic.gdx.graphics.g2d.BitmapFont": {
-    "h1": { "file": "fonts/MenuFont.fnt" },
+    "h1": {
+      "file": "fonts/MenuFont.fnt"
+    },
     "h2": {
       "file": "fonts/MenuFont.fnt",
       "scaledSize": 48,
       "markupEnabled": false,
-      "flip" : false
+      "flip": false
     },
     "h3": {
       "file": "fonts/MenuFont.fnt",
       "scaledSize": 36,
       "markupEnabled": false,
-      "flip" : false
+      "flip": false
     },
     "h4": {
       "file": "fonts/MenuFont.fnt",
       "scaledSize": 24,
       "markupEnabled": false,
-      "flip" : false
+      "flip": false
+    },
+    "h5": {
+      "file": "fonts/MenuFont.fnt",
+      "scaledSize": 34,
+      "markupEnabled": false,
+      "flip": false
     }
   },
   "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
@@ -79,7 +97,9 @@
   },
   "com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle": {
     "default": {
-      "font": "h3", "fontColor": "white", "background": "default-fancy-input",
+      "font": "h3",
+      "fontColor": "white",
+      "background": "default-fancy-input",
       "cursor": "cursor",
       "selection": "selection"
     }
@@ -99,6 +119,10 @@
     },
     "label-h4": {
       "font": "h4",
+      "fontColor": "white"
+    },
+    "label-h5": {
+      "font": "h5",
       "fontColor": "white"
     },
     "game-title": {

@@ -1,19 +1,18 @@
 package org.nullpointerid.spaceago.views.loading
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.assets.AssetDescriptors
+import org.nullpointerid.spaceago.assets.AssetPaths
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
-import org.nullpointerid.spaceago.utils.Fonts
-import org.nullpointerid.spaceago.utils.clearScreen
-import org.nullpointerid.spaceago.utils.get
+import org.nullpointerid.spaceago.utils.*
 import org.nullpointerid.spaceago.views.menu.MenuScreen
 
 class LoadingScreen(private val game: SpaceShooter) : ScreenAdapter() {
@@ -47,10 +46,11 @@ class LoadingScreen(private val game: SpaceShooter) : ScreenAdapter() {
         game.COMMON_SKIN.addRegions(assetManager[AssetDescriptors.MAIN_MENU_ATLAS])
         game.COMMON_SKIN.apply {
             add("halo", Fonts.HALO, BitmapFont::class.java)
-            load(Gdx.files.internal("items/menu.json"))
+            load(AssetPaths.MENU_JSON.toInternalFile())
         }
-        game.COMMON_SKIN2.apply {
-            load(Gdx.files.internal("items/keybind.json"))
+        game.SETTINGS_SKIN.apply {
+            addRegions(TextureAtlas(AssetPaths.CRISPY_UI_ATLAS))
+            load(AssetPaths.CRISPY_UI_JSON.toInternalFile())
         }
         game.background = assetManager[AssetDescriptors.MAIN_MENU_ATLAS][RegionNames.MENU_BACKGROUND]!!
     }

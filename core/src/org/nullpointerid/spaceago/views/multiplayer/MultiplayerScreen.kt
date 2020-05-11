@@ -39,7 +39,7 @@ class MultiplayerScreen : Screen {
     private val exitBtn: TextButton
 
     init {
-        Gdx.input.inputProcessor = this.menuStage
+        Gdx.input.inputProcessor = menuStage
 
         spaceAgo = Label("SpaceAgo", COMMON_SKIN, "game-title").apply {
             setPosition(20f, menuStage.height - height - 27f)
@@ -66,7 +66,9 @@ class MultiplayerScreen : Screen {
             }
         }
 
-        openSocketBtn = TextButton("Host game", COMMON_SKIN, "fancy-h3").extend(20f).apply { serverDiv.add(this).colspan(2) }.onClick {
+        openSocketBtn = TextButton("Host game", COMMON_SKIN, "fancy-hover-h3").extend(20f).apply {
+            serverDiv.add(this).colspan(2)
+        }.onClick {
             MultiplayerController.startServer(portInput.text.toInt()-1, portInput.text.toInt())
         }
         // ### END HOST SECTION ###
@@ -77,7 +79,9 @@ class MultiplayerScreen : Screen {
 
         Label("Port: ", COMMON_SKIN).apply { clientDiv.add(this) }
 
-        portClientInput = TextField("4569", COMMON_SKIN).apply { maxLength = 5; clientDiv.add(this).left().row() }.apply {
+        portClientInput = TextField("4569", COMMON_SKIN).apply {
+            maxLength = 5; clientDiv.add(this).left().row()
+        }.apply {
             setTextFieldFilter { textField, c ->
                 if (Character.isDigit(c) && (textField.text + c).toInt() > 65535) {
                     text = "65535"
@@ -88,7 +92,9 @@ class MultiplayerScreen : Screen {
             }
         }
 
-        TextButton("Search", COMMON_SKIN, "fancy-h3").apply { setPosition(600f, 460f); clientDiv.add(this).colspan(2).row() }.onClick {
+        TextButton("Search", COMMON_SKIN, "fancy-hover-h3").apply {
+            setPosition(600f, 460f); clientDiv.add(this).colspan(2).row()
+        }.onClick {
             MultiplayerController.startClient(portInput.text.toInt()-1, portInput.text.toInt())
         }
         // ### END CLIENT SECTION ###
@@ -102,7 +108,7 @@ class MultiplayerScreen : Screen {
         // ### END CLIENT SECTION ###
 
 
-        exitBtn = TextButton("Menu", COMMON_SKIN, "fancy-h1").apply {
+        exitBtn = TextButton("Menu", COMMON_SKIN, "fancy-hover-h1").apply {
             setPosition(menuStage.width / 2 - width / 2, 100f)
         }.bind(menuStage).onClick {
             MultiplayerController.closeServer()
@@ -120,9 +126,6 @@ class MultiplayerScreen : Screen {
             SpaceShooter.movingBackground.updateRender(delta, batch)
         }
 
-        menuStage.act(delta)
-        menuStage.draw()
-
         if (GameConfig.DEBUG_MODE) {
             viewport.drawGrid(renderer, 100f)
             renderer.use {
@@ -132,6 +135,8 @@ class MultiplayerScreen : Screen {
             }
         }
 
+        menuStage.act(delta)
+        menuStage.draw()
     }
 
     override fun resize(width: Int, height: Int) {

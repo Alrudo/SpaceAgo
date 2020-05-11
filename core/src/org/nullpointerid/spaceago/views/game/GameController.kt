@@ -31,6 +31,8 @@ class GameController {
         var moveUp = "W"
         var moveDown = "S"
         var shoot = "Space"
+
+        var volume = 0.1f
     }
 
     private var simpleEnemyTimer = 0.15f + Random.nextFloat() * (0.50f - 0.15f)
@@ -89,7 +91,7 @@ class GameController {
             playerShootTimer = 0f
             bullets.add(Bullet(player).apply {
                 setPosition(player.bounds[0].x + BULLET_X, player.bounds[0].y + BULLET_Y)
-                shotSound.play(0.1f)
+                shotSound.play(volume * 0.3f)
             })
         }
         if (Input.Keys.N.isKeyPressed() && player.ultimateWeapon > 0 && !laserBeam.used) {
@@ -212,14 +214,14 @@ class GameController {
             player.score += SimpleEnemy.SCORE_VALUE
             simpleEnemies.removeValue(entity, true)
             explosions.add(Explosion().apply { setPosition(entity.bounds[0].x + EXPLOSION_X, entity.bounds[0].y + EXPLOSION_Y) })
-            explosionSound.play(0.3f)
+            explosionSound.play(volume)
             dropCollectible(entity)
         } else if (entity is CivilianShip) {
             player.score += CivilianShip.SCORE_VALUE
             civilianShips.removeValue(entity, true)
             if (entity.toLeft) explosions.add(Explosion().apply { setPosition(entity.bounds[1].x + entity.bounds[1].width / 2f, entity.bounds[1].y - 0.05f) })
             else explosions.add(Explosion().apply { setPosition(entity.bounds[0].x + entity.bounds[1].width / 2f, entity.bounds[0].y) })
-            explosionSound.play(0.3f)
+            explosionSound.play(volume)
         }
     }
 

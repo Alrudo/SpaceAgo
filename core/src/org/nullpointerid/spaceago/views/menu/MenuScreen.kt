@@ -11,8 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.viewport.FitViewport
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.config.GameConfig
-import org.nullpointerid.spaceago.views.game.GameScreen
 import org.nullpointerid.spaceago.utils.*
+import org.nullpointerid.spaceago.views.game.GameScreen
 import org.nullpointerid.spaceago.views.multiplayer.MultiplayerScreen
 import org.nullpointerid.spaceago.views.settings.SettingsScreen
 import org.nullpointerid.spaceago.views.upgrade.UpgradeShopScreen
@@ -43,55 +43,35 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
             setPosition(20f, menuStage.height - height - 27f)
         }.bind(menuStage)
 
-        singleplayerBtn = TextButton("Singleplayer", game.COMMON_SKIN)
-                .extend(20f, 10f)
-                .apply {
-                    setPosition(menuStage.width / 2 - width / 2, start)
-                }
-                .bind(menuStage)
-                .onClick {
-                    game.screen = GameScreen(game)
-                }
+        singleplayerBtn = TextButton("Singleplayer", game.COMMON_SKIN).extend(20f, 10f).apply {
+            setPosition(menuStage.width / 2 - width / 2, start)
+        }.bind(menuStage).onClick {
+            game.screen = GameScreen(game)
+        }
 
-        multiplayerBtn = TextButton("Multiplayer", game.COMMON_SKIN)
-                .extend(20f, 10f)
-                .apply {
-                    setPosition(menuStage.width / 2 - width / 2, singleplayerBtn.y - singleplayerBtn.height - step)
-                }
-                .bind(menuStage)
-                .onClick {
-                    game.screen = MultiplayerScreen()
-                }
+        multiplayerBtn = TextButton("Multiplayer", game.COMMON_SKIN).extend(20f, 10f).apply {
+            setPosition(menuStage.width / 2 - width / 2, singleplayerBtn.y - singleplayerBtn.height - step)
+        }.bind(menuStage).onClick {
+            game.screen = MultiplayerScreen()
+        }
 
-        upgradeMenuBtn = TextButton("Upgrades", game.COMMON_SKIN)
-                .extend(20f, 10f)
-                .apply {
-                    setPosition(menuStage.width / 2 - width / 2, multiplayerBtn.y - multiplayerBtn.height - step)
-                }
-                .bind(menuStage)
-                .onClick {
-                    game.screen = UpgradeShopScreen(game)
-                }
+        upgradeMenuBtn = TextButton("Upgrades", game.COMMON_SKIN).extend(20f, 10f).apply {
+            setPosition(menuStage.width / 2 - width / 2, multiplayerBtn.y - multiplayerBtn.height - step)
+        }.bind(menuStage).onClick {
+            game.screen = UpgradeShopScreen(game)
+        }
 
-        settingsBtn = TextButton("Settings", game.COMMON_SKIN)
-                .extend(20f, 10f)
-                .apply {
-                    setPosition(menuStage.width / 2 - width / 2, upgradeMenuBtn.y - upgradeMenuBtn.height - step)
-                }
-                .bind(menuStage)
-                .onClick {
-                    game.screen = SettingsScreen(game)
-                }
+        settingsBtn = TextButton("Settings", game.COMMON_SKIN).extend(20f, 10f).apply {
+            setPosition(menuStage.width / 2 - width / 2, upgradeMenuBtn.y - upgradeMenuBtn.height - step)
+        }.bind(menuStage).onClick {
+            game.screen = SettingsScreen(game)
+        }
 
-        exitBtn = TextButton("Exit", game.COMMON_SKIN)
-                .extend(20f, 10f)
-                .apply {
-                    setPosition(menuStage.width / 2 - width / 2, settingsBtn.y - settingsBtn.height - step)
-                }
-                .bind(menuStage)
-                .onClick {
-                    Gdx.app.exit()
-                }
+        exitBtn = TextButton("Exit", game.COMMON_SKIN).extend(20f, 10f).apply {
+            setPosition(menuStage.width / 2 - width / 2, settingsBtn.y - settingsBtn.height - step)
+        }.bind(menuStage).onClick {
+            Gdx.app.exit()
+        }
     }
 
     override fun render(delta: Float) {
@@ -113,8 +93,6 @@ class MenuScreen(private val game: SpaceShooter) : Screen {
 
         menuStage.act(delta)
         menuStage.draw()
-
-
     }
 
     override fun resize(width: Int, height: Int) {

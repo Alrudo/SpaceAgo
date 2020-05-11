@@ -73,7 +73,7 @@ class GameOverScreen(assetManager: AssetManager,
             setPosition(menuStage.width / 2f - width / 2f, highScore.y - STEP)
         }.bind(menuStage)
 
-        toMenuBtn = TextButton("Menu", game.COMMON_SKIN, "fancy-hover-h3").extend(20f, 10f).apply {
+        toMenuBtn = TextButton("Menu", game.COMMON_SKIN, "fancy-hover-h3").extend(25f, 10f).apply {
             setPosition(menuStage.width / 2f - width / 2f - 200f, 100f)
         }.bind(menuStage).onClick {
             game.screen = MenuScreen(game)
@@ -104,9 +104,6 @@ class GameOverScreen(assetManager: AssetManager,
             game.movingBackground.updateRender(delta, batch)
         }
 
-        menuStage.act(delta)
-        menuStage.draw()
-
         if (GameConfig.DEBUG_MODE) {
             viewport.drawGrid(renderer, 100f)
             renderer.use {
@@ -115,6 +112,9 @@ class GameOverScreen(assetManager: AssetManager,
                 }
             }
         }
+
+        menuStage.act(delta)
+        menuStage.draw()
     }
 
     override fun resize(width: Int, height: Int) {

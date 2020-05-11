@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 object Fonts {
     val MENU = BitmapFont("fonts/MenuFont.fnt".toInternalFile())
     val MENU_YELLOW = BitmapFont("fonts/MenuFontYellow.fnt".toInternalFile())
-    val HALO = FreeTypeFontGenerator("fonts/Halo3.ttf".toInternalFile()).generateFont(
+    val HALO: BitmapFont = FreeTypeFontGenerator("fonts/Halo3.ttf".toInternalFile()).generateFont(
             FreeTypeFontGenerator.FreeTypeFontParameter().apply {
                 size = 75
                 borderWidth = 5f
