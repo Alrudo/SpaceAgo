@@ -10,6 +10,7 @@ import org.nullpointerid.spaceago.entities.*
 import org.nullpointerid.spaceago.utils.GdxArray
 import org.nullpointerid.spaceago.utils.isKeyPressed
 import org.nullpointerid.spaceago.utils.logger
+import org.nullpointerid.spaceago.utils.toInternalFile
 import kotlin.math.round
 import kotlin.random.Random
 
@@ -35,6 +36,9 @@ class GameController {
     private var simpleEnemyTimer = 0.15f + Random.nextFloat() * (0.50f - 0.15f)
     private var civilianShipTimer = 12f + Random.nextFloat() * (20f - 12f)
     private var playerShootTimer = 0f
+    private var shotSound: Sound = Gdx.audio.newSound("audio/shotSound.mp3".toInternalFile())
+    private var explosionSound: Sound = Gdx.audio.newSound("audio/enemyExplosionSound.mp3".toInternalFile())
+
     val simpleEnemies = GdxArray<SimpleEnemy>()
     val bullets = GdxArray<Bullet>()
     val explosions = GdxArray<Explosion>()
@@ -43,9 +47,6 @@ class GameController {
     var civilianShips = GdxArray<CivilianShip>()
     val collectibles = GdxArray<EntityBase>()
     val laserBeam = LaserBeam(player)
-    var shotSound = Gdx.audio.newSound(Gdx.files.internal("audio/shotSound.mp3"))
-    var explosionSound = Gdx.audio.newSound(Gdx.files.internal("audio/enemyExplosionSound.mp3"))
-
 
     fun update(delta: Float) {
         if (player.lives <= 0f) return
