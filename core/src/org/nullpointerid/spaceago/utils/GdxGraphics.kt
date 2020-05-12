@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+import com.badlogic.gdx.scenes.scene2d.utils.DragListener
 import java.awt.Color
 
 @JvmOverloads  // if you want to mix Java and Kotlin
@@ -20,7 +21,7 @@ fun clearScreen(red: Int, green: Int, blue: Int, alpha: Int) {
     // clear screen
     // DRY - Don't repeat yourself
     // WET - Waste everyone`s time
-    Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
+    Gdx.gl.glClearColor(red.toFloat(), green.toFloat(), blue.toFloat(), alpha.toFloat())
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 }
 
@@ -59,7 +60,6 @@ fun <T : Actor> T.extend(w: Float = 0f, h: Float = 0f): T {
 
 fun <T : Actor> T.onInput(action: (event: InputEvent, keycode: Char) -> Boolean): T {
     addListener(object : InputListener() {
-
         override fun keyTyped(event: InputEvent, keycode: Char): Boolean {
             return action(event, keycode)
         }
@@ -83,4 +83,20 @@ fun <T : Actor> T.onClick(action: () -> Unit): T {
     return this
 }
 
-fun inRectangle(r: Rectangle, x: Float, y: Float) = r.x <= x && r.x + r.width >= x && r.y <= y && r.y + r.height >= y
+fun <T : Actor> T.onDrag(action: () -> Unit): T {
+    addListener(object : DragListener() {
+        override fun drag(event: InputEvent?, x: Float, y: Float, pointer: Int) {
+            action()
+        }
+    })
+    return this
+}
+
+fun <T: Actor> T.onDragStop(action: () -> Unit): T {
+    addListener(object: DragListener() {
+        override fun dragStop(event: InputEvent?, x: Float, y: Float, pointer: Int) {
+            action()
+        }
+    })
+    return this
+}

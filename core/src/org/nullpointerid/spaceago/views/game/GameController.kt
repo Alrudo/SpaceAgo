@@ -26,12 +26,17 @@ class GameController {
         const val EXPLOSION_X = (SimpleEnemy.BOUNDS_WIDTH - Explosion.TEXTURE_WIDTH) / 2f
         const val EXPLOSION_Y = (SimpleEnemy.BOUNDS_HEIGHT - Explosion.TEXTURE_HEIGHT) / 2f
 
-        var moveLeft = "A"
-        var moveRight = "D"
-        var moveUp = "W"
-        var moveDown = "S"
-        var shoot = "Space"
+        const val volumeSuppress = 0.5f
     }
+
+    private val prefs = Gdx.app.getPreferences("spaceshooter")
+    private val volume = prefs.getFloat("volume", 0.5f)
+    private val moveUp = prefs.getString("moveUp", "W")
+    private val moveDown = prefs.getString("moveDown", "S")
+    private val moveLeft = prefs.getString("moveLeft", "A")
+    private val moveRight = prefs.getString("moveRight", "D")
+    private val shoot = prefs.getString("shoot", "Space")
+    private val ultimateWeapon = prefs.getString("ultimate", "N")
 
     private var simpleEnemyTimer = 0.15f + Random.nextFloat() * (0.50f - 0.15f)
     private var civilianShipTimer = 12f + Random.nextFloat() * (20f - 12f)
@@ -89,10 +94,10 @@ class GameController {
             playerShootTimer = 0f
             bullets.add(Bullet(player).apply {
                 setPosition(player.bounds[0].x + BULLET_X, player.bounds[0].y + BULLET_Y)
-                shotSound.play(0.1f)
+                shotSound.play(volume * 0.3f * volumeSuppress)
             })
         }
-        if (Input.Keys.N.isKeyPressed() && player.ultimateWeapon > 0 && !laserBeam.used) {
+        if (Input.Keys.valueOf(ultimateWeapon).isKeyPressed() && player.ultimateWeapon > 0 && !laserBeam.used) {
             player.ultimateWeapon--
             laserBeam.lived = 0f
             laserBeam.used = true
@@ -212,14 +217,14 @@ class GameController {
             player.score += SimpleEnemy.SCORE_VALUE
             simpleEnemies.removeValue(entity, true)
             explosions.add(Explosion().apply { setPosition(entity.bounds[0].x + EXPLOSION_X, entity.bounds[0].y + EXPLOSION_Y) })
-            explosionSound.play(0.3f)
+            explosionSound.play(volume * volumeSuppress)
             dropCollectible(entity)
         } else if (entity is CivilianShip) {
             player.score += CivilianShip.SCORE_VALUE
             civilianShips.removeValue(entity, true)
             if (entity.toLeft) explosions.add(Explosion().apply { setPosition(entity.bounds[1].x + entity.bounds[1].width / 2f, entity.bounds[1].y - 0.05f) })
             else explosions.add(Explosion().apply { setPosition(entity.bounds[0].x + entity.bounds[1].width / 2f, entity.bounds[0].y) })
-            explosionSound.play(0.3f)
+            explosionSound.play(volume * volumeSuppress)
         }
     }
 
