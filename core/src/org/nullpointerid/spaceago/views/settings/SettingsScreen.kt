@@ -161,7 +161,7 @@ class SettingsScreen(private val game: SpaceShooter) : Screen {
         }.bind(settingsStage)
 
         slider = Slider(0f, 1f, 0.01f, false, game.SETTINGS_SKIN).apply {
-            setBounds(volume.x + volume.width + STEP_X, volume.y, CONTENT_WIDTH, 50f)
+            setBounds(volume.x + volume.width + STEP_X, volume.y, CONTENT_WIDTH, volume.height)
             value = prefs.getFloat("volume", 0.5f)
         }.bind(settingsStage)
 
