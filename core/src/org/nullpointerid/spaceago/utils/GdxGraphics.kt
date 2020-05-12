@@ -60,7 +60,6 @@ fun <T : Actor> T.extend(w: Float = 0f, h: Float = 0f): T {
 
 fun <T : Actor> T.onInput(action: (event: InputEvent, keycode: Char) -> Boolean): T {
     addListener(object : InputListener() {
-
         override fun keyTyped(event: InputEvent, keycode: Char): Boolean {
             return action(event, keycode)
         }
@@ -87,6 +86,15 @@ fun <T : Actor> T.onClick(action: () -> Unit): T {
 fun <T : Actor> T.onDrag(action: () -> Unit): T {
     addListener(object : DragListener() {
         override fun drag(event: InputEvent?, x: Float, y: Float, pointer: Int) {
+            action()
+        }
+    })
+    return this
+}
+
+fun <T: Actor> T.onDragStop(action: () -> Unit): T {
+    addListener(object: DragListener() {
+        override fun dragStop(event: InputEvent?, x: Float, y: Float, pointer: Int) {
             action()
         }
     })

@@ -93,6 +93,13 @@
       "font": "h4",
       "fontColor": "white",
       "overFontColor": "yellow"
+    },
+    "fancy-hover-h5": {
+      "font": "h5",
+      "fontColor": "white",
+      "overFontColor": "yellow",
+      "up": "default-fancy-up",
+      "down": "default-fancy-down"
     }
   },
   "com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle": {

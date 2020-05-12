@@ -2,7 +2,7 @@ package org.nullpointerid.spaceago.config
 
 object GameConfig {
 
-    const val DEBUG_MODE = false
+    const val DEBUG_MODE = true
 
     const val WIDTH = 1000  // pixels - desktop only
     const val HEIGHT = 800 // pixels - desktop only
