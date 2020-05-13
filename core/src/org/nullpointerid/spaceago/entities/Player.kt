@@ -7,6 +7,7 @@ import org.nullpointerid.spaceago.utils.GdxArray
 class Player : EntityBase() {
 
     companion object {
+
         const val TEXTURE_WIDTH = 1f
         const val TEXTURE_HEIGHT = 1f
 

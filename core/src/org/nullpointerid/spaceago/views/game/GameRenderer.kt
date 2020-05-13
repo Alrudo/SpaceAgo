@@ -19,6 +19,7 @@ import org.nullpointerid.spaceago.collectables.UltimateWeapon
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.entities.*
 import org.nullpointerid.spaceago.utils.*
+import org.nullpointerid.spaceago.views.upgrade.UpgradeShopScreen
 
 class GameRenderer(assetManager: AssetManager,
                    controller: GameController) : Disposable {
@@ -27,6 +28,9 @@ class GameRenderer(assetManager: AssetManager,
         const val BULLET_OFFSET_X = -0.08f
         const val BULLET_OFFSET_Y = -0.03f
     }
+
+    private val prefs = Gdx.app.getPreferences("spaceshooter")
+    private val durabilityUpgrade = prefs.getInteger(UpgradeShopScreen.Upgrades.DURABILITY.toString(), 0)
 
     private val camera = OrthographicCamera()
     private val uiCamera = OrthographicCamera()
@@ -99,7 +103,7 @@ class GameRenderer(assetManager: AssetManager,
 
             // Draw civilian ship hitboxes
             civilianShips.forEach {
-                it.bounds.forEach {bound ->
+                it.bounds.forEach { bound ->
                     renderer.rectangle(bound)
                 }
             }
@@ -160,7 +164,7 @@ class GameRenderer(assetManager: AssetManager,
 
             // Draw collectibles
             collectibles.forEach {
-                when(it) {
+                when (it) {
                     is MoneyCrate -> batch.draw(treasureChest, it.x, it.y, MoneyCrate.TEXTURE_WIDTH, MoneyCrate.TEXTURE_HEIGHT)
                     is HealthPack -> batch.draw(healthPack, it.x, it.y, HealthPack.TEXTURE_WIDTH, HealthPack.TEXTURE_HEIGHT)
                     is UltimateWeapon -> batch.draw(bulletCrate, it.x, it.y, UltimateWeapon.TEXTURE_WIDTH, UltimateWeapon.TEXTURE_HEIGHT)
@@ -205,7 +209,7 @@ class GameRenderer(assetManager: AssetManager,
             player.lives < GameConfig.LIVES_START * 0.75f -> renderer.color = Color.YELLOW
             else -> renderer.color = Color.GREEN
         }
-        renderer.rect(0f, 0f, GameConfig.WORLD_WIDTH * (player.lives / GameConfig.LIVES_START), 0.2f)
+        renderer.rect(0f, 0f, GameConfig.WORLD_WIDTH * (player.lives / (GameConfig.LIVES_START + durabilityUpgrade.toFloat() * 0.1f)), 0.2f)
         renderer.color = oldColor
         renderer.end()
     }

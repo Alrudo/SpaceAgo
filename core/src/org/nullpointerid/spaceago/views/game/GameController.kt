@@ -10,6 +10,7 @@ import org.nullpointerid.spaceago.entities.*
 import org.nullpointerid.spaceago.utils.GdxArray
 import org.nullpointerid.spaceago.utils.isKeyPressed
 import org.nullpointerid.spaceago.utils.logger
+import org.nullpointerid.spaceago.views.upgrade.UpgradeShopScreen
 import org.nullpointerid.spaceago.utils.toInternalFile
 import kotlin.math.round
 import kotlin.random.Random
@@ -30,6 +31,7 @@ class GameController {
     }
 
     private val prefs = Gdx.app.getPreferences("spaceshooter")
+
     private val volume = prefs.getFloat("volume", 0.5f)
     private val moveUp = prefs.getString("moveUp", "W")
     private val moveDown = prefs.getString("moveDown", "S")
@@ -37,6 +39,10 @@ class GameController {
     private val moveRight = prefs.getString("moveRight", "D")
     private val shoot = prefs.getString("shoot", "Space")
     private val ultimateWeapon = prefs.getString("ultimate", "N")
+
+    private val moveSpeedUpgrade = prefs.getInteger(UpgradeShopScreen.Upgrades.MOVE_SPEED.toString(), 0)
+    private val attackSpeedUpgrade = prefs.getInteger(UpgradeShopScreen.Upgrades.ATTACK_SPEED.toString(), 0)
+    private val durabilityUpgrade = prefs.getInteger(UpgradeShopScreen.Upgrades.DURABILITY.toString(), 0)
 
     private var simpleEnemyTimer = 0.15f + Random.nextFloat() * (0.50f - 0.15f)
     private var civilianShipTimer = 12f + Random.nextFloat() * (20f - 12f)
@@ -47,7 +53,7 @@ class GameController {
     val simpleEnemies = GdxArray<SimpleEnemy>()
     val bullets = GdxArray<Bullet>()
     val explosions = GdxArray<Explosion>()
-    val player = Player().apply { setPosition(2f, Player.START_Y) }
+    val player = Player().apply { setPosition(2f, Player.START_Y); lives += durabilityUpgrade * 0.1f }
     val secondPlayer = Player().apply { setPosition(7f, Player.START_Y) }
     var civilianShips = GdxArray<CivilianShip>()
     val collectibles = GdxArray<EntityBase>()
@@ -86,11 +92,11 @@ class GameController {
         var xSpeed = 0f
         var ySpeed = 0f
 
-        if (Input.Keys.valueOf(moveRight).isKeyPressed()) xSpeed = Player.MAX_SPEED
-        if (Input.Keys.valueOf(moveLeft).isKeyPressed()) xSpeed = -Player.MAX_SPEED
-        if (Input.Keys.valueOf(moveUp).isKeyPressed()) ySpeed = Player.MAX_SPEED
-        if (Input.Keys.valueOf(moveDown).isKeyPressed()) ySpeed = -Player.MAX_SPEED
-        if (Input.Keys.valueOf(shoot).isKeyPressed() && playerShootTimer > Player.SHOOT_TIMER) {
+        if (Input.Keys.valueOf(moveRight).isKeyPressed()) xSpeed = Player.MAX_SPEED  + moveSpeedUpgrade.toFloat() * 0.02f
+        if (Input.Keys.valueOf(moveLeft).isKeyPressed()) xSpeed = -Player.MAX_SPEED  - moveSpeedUpgrade.toFloat() * 0.02f
+        if (Input.Keys.valueOf(moveUp).isKeyPressed()) ySpeed = Player.MAX_SPEED  + moveSpeedUpgrade.toFloat() * 0.02f
+        if (Input.Keys.valueOf(moveDown).isKeyPressed()) ySpeed = -Player.MAX_SPEED  - moveSpeedUpgrade.toFloat() * 0.02f
+        if (Input.Keys.valueOf(shoot).isKeyPressed() && playerShootTimer > (Player.SHOOT_TIMER - attackSpeedUpgrade.toFloat() * 0.02f)) {
             playerShootTimer = 0f
             bullets.add(Bullet(player).apply {
                 setPosition(player.bounds[0].x + BULLET_X, player.bounds[0].y + BULLET_Y)
@@ -176,7 +182,6 @@ class GameController {
             civilianShips.forEach { civil ->
                 if (bullet.isCollidingWith(civil)) {
                     bullets.removeValue(bullet, true)
-                    civil.lives -= 0.1f
                     if (civil.lives <= 0f) {
                         entityKilled(bullet.owner as Player, civil)
                     }
