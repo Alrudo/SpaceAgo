@@ -1,5 +1,6 @@
 package org.nullpointerid.spaceago.views.game
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.math.MathUtils
 import org.nullpointerid.spaceago.collectables.Collectible
@@ -8,6 +9,7 @@ import org.nullpointerid.spaceago.entities.*
 import org.nullpointerid.spaceago.utils.GdxArray
 import org.nullpointerid.spaceago.utils.isKeyPressed
 import org.nullpointerid.spaceago.utils.logger
+import org.nullpointerid.spaceago.views.upgrade.UpgradeShopScreen
 import kotlin.math.round
 import kotlin.random.Random
 
@@ -23,14 +25,17 @@ class GameController {
         const val EXPLOSION_X = (SimpleEnemy.BOUNDS_WIDTH - Explosion.TEXTURE_WIDTH) / 2f
         const val EXPLOSION_Y = (SimpleEnemy.BOUNDS_HEIGHT - Explosion.TEXTURE_HEIGHT) / 2f
     }
-
+    private val prefs = Gdx.app.getPreferences("spaceshooter")
+    private val moveSpeedUpgrade = prefs.getInteger(UpgradeShopScreen.Upgrades.MOVE_SPEED.toString(), 0)
+    private val attackSpeedUpgrade = prefs.getInteger(UpgradeShopScreen.Upgrades.ATTACK_SPEED.toString(), 0)
+    private val durabilityUpgrade = prefs.getInteger(UpgradeShopScreen.Upgrades.DURABILITY.toString(), 0)
     private var simpleEnemyTimer = 0.15f + Random.nextFloat() * (0.50f - 0.15f)
     private var civilianShipTimer = 12f + Random.nextFloat() * (20f - 12f)
     private var playerShootTimer = 0f
     val simpleEnemies = GdxArray<SimpleEnemy>()
     val bullets = GdxArray<Bullet>()
     val explosions = GdxArray<Explosion>()
-    val player = Player().apply { setPosition(2f, Player.START_Y) }
+    val player = Player().apply { setPosition(2f, Player.START_Y); lives += durabilityUpgrade * 0.1f }
     val secondPlayer = Player().apply { setPosition(7f, Player.START_Y) }
     var civilianShips = GdxArray<CivilianShip>()
     val collectibles = GdxArray<EntityBase>()
@@ -70,11 +75,11 @@ class GameController {
         var xSpeed = 0f
         var ySpeed = 0f
 
-        if (Input.Keys.D.isKeyPressed()) xSpeed = Player.MAX_SPEED
-        if (Input.Keys.A.isKeyPressed()) xSpeed = -Player.MAX_SPEED
-        if (Input.Keys.W.isKeyPressed()) ySpeed = Player.MAX_SPEED
-        if (Input.Keys.S.isKeyPressed()) ySpeed = -Player.MAX_SPEED
-        if (Input.Keys.SPACE.isKeyPressed() && playerShootTimer > Player.SHOOT_TIMER) {
+        if (Input.Keys.D.isKeyPressed()) xSpeed = Player.MAX_SPEED + moveSpeedUpgrade.toFloat() * 0.02f
+        if (Input.Keys.A.isKeyPressed()) xSpeed = -Player.MAX_SPEED - moveSpeedUpgrade.toFloat() * 0.02f
+        if (Input.Keys.W.isKeyPressed()) ySpeed = Player.MAX_SPEED + moveSpeedUpgrade.toFloat() * 0.02f
+        if (Input.Keys.S.isKeyPressed()) ySpeed = -Player.MAX_SPEED - + moveSpeedUpgrade.toFloat() * 0.02f
+        if (Input.Keys.SPACE.isKeyPressed() && playerShootTimer > (Player.SHOOT_TIMER - attackSpeedUpgrade.toFloat() * 0.02f)) {
             playerShootTimer = 0f
             bullets.add(Bullet(player).apply {
                 setPosition(player.bounds[0].x + BULLET_X, player.bounds[0].y + BULLET_Y)

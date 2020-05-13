@@ -72,10 +72,10 @@ class UpgradeShopScreen(private val game: SpaceShooter) : Screen {
         }.bind(menuStage).onClick {
             game.screen = MenuScreen(game)
         }
-        prefs.putInteger(Upgrades.ATTACK_DAMAGE.toString(), 0)
-        prefs.putInteger(Upgrades.ATTACK_SPEED.toString(), 0)
-        prefs.putInteger(Upgrades.DURABILITY.toString(), 0)
-        prefs.putInteger(Upgrades.MOVE_SPEED.toString(), 0)
+        prefs.putInteger(Upgrades.ATTACK_DAMAGE.toString(), 5)
+        prefs.putInteger(Upgrades.ATTACK_SPEED.toString(), 5)
+        prefs.putInteger(Upgrades.DURABILITY.toString(), 5)
+        prefs.putInteger(Upgrades.MOVE_SPEED.toString(), 5)
     }
 
     override fun render(delta: Float) {
