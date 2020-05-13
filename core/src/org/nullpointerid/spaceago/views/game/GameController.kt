@@ -31,6 +31,7 @@ class GameController {
     }
 
     private val prefs = Gdx.app.getPreferences("spaceshooter")
+
     private val volume = prefs.getFloat("volume", 0.5f)
     private val moveUp = prefs.getString("moveUp", "W")
     private val moveDown = prefs.getString("moveDown", "S")
@@ -42,6 +43,7 @@ class GameController {
     private val moveSpeedUpgrade = prefs.getInteger(UpgradeShopScreen.Upgrades.MOVE_SPEED.toString(), 0)
     private val attackSpeedUpgrade = prefs.getInteger(UpgradeShopScreen.Upgrades.ATTACK_SPEED.toString(), 0)
     private val durabilityUpgrade = prefs.getInteger(UpgradeShopScreen.Upgrades.DURABILITY.toString(), 0)
+
     private var simpleEnemyTimer = 0.15f + Random.nextFloat() * (0.50f - 0.15f)
     private var civilianShipTimer = 12f + Random.nextFloat() * (20f - 12f)
     private var playerShootTimer = 0f
@@ -180,7 +182,6 @@ class GameController {
             civilianShips.forEach { civil ->
                 if (bullet.isCollidingWith(civil)) {
                     bullets.removeValue(bullet, true)
-                    civil.lives -= 0.1f
                     if (civil.lives <= 0f) {
                         entityKilled(bullet.owner as Player, civil)
                     }

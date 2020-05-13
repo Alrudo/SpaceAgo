@@ -40,7 +40,7 @@ class UpgradeShopScreen(private val game: SpaceShooter) : Screen {
     private val exitBtn: TextButton
 
     init {
-        Gdx.input.inputProcessor = this.menuStage
+        Gdx.input.inputProcessor = menuStage
 
         spaceAgo = Label("SpaceAgo", game.COMMON_SKIN, "game-title").apply {
             setPosition(20f, menuStage.height - height - 27f)
@@ -72,10 +72,6 @@ class UpgradeShopScreen(private val game: SpaceShooter) : Screen {
         }.bind(menuStage).onClick {
             game.screen = MenuScreen(game)
         }
-        prefs.putInteger(Upgrades.ATTACK_DAMAGE.toString(), 5)
-        prefs.putInteger(Upgrades.ATTACK_SPEED.toString(), 5)
-        prefs.putInteger(Upgrades.DURABILITY.toString(), 5)
-        prefs.putInteger(Upgrades.MOVE_SPEED.toString(), 5)
     }
 
     override fun render(delta: Float) {
@@ -127,6 +123,8 @@ class UpgradeShopScreen(private val game: SpaceShooter) : Screen {
                     add(TextButton("Upgrade", game.COMMON_SKIN, "fancy-hover-h3").onClick {
                         prefs.putInteger(upgrade.toString(), ++lvl)
                         scrapAmount -= price
+                        prefs.putInteger("money", scrapAmount)
+                        prefs.flush()
                         renderDescription(upgrade)
                     }).colspan(5).row()
                 }
