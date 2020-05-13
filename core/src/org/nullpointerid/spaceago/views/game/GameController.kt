@@ -1,13 +1,17 @@
 package org.nullpointerid.spaceago.views.game
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
+import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.math.MathUtils
-import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.World
 import org.nullpointerid.spaceago.config.GameConfig
+import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.entities.*
 import org.nullpointerid.spaceago.utils.isKeyPressed
 import org.nullpointerid.spaceago.utils.logger
+import org.nullpointerid.spaceago.views.upgrade.UpgradeShopScreen
+import org.nullpointerid.spaceago.utils.toInternalFile
 import org.nullpointerid.spaceago.views.gameover.GameOverScreen
 import org.nullpointerid.spaceago.views.multiplayer.MultiplayerController
 import kotlin.random.Random
@@ -17,7 +21,22 @@ class GameController(var mpController: MultiplayerController?) {
     companion object {
         @JvmStatic
         val log = logger<GameController>()
+        const val volumeSuppress = 0.5f
     }
+
+    private val prefs = Gdx.app.getPreferences("spaceshooter")
+
+    private val volume = prefs.getFloat("volume", 0.5f)
+    private val moveUp = prefs.getString("moveUp", "W")
+    private val moveDown = prefs.getString("moveDown", "S")
+    private val moveLeft = prefs.getString("moveLeft", "A")
+    private val moveRight = prefs.getString("moveRight", "D")
+    private val shoot = prefs.getString("shoot", "Space")
+    private val ultimateWeapon = prefs.getString("ultimate", "N")
+
+    private val moveSpeedUpgrade = prefs.getInteger(UpgradeShopScreen.Upgrades.MOVE_SPEED.toString(), 0)
+    private val attackSpeedUpgrade = prefs.getInteger(UpgradeShopScreen.Upgrades.ATTACK_SPEED.toString(), 0)
+    private val durabilityUpgrade = prefs.getInteger(UpgradeShopScreen.Upgrades.DURABILITY.toString(), 0)
 
     private var simpleEnemyTimer = 0.15f + Random.nextFloat() * (0.50f - 0.15f)
     private var civilianShipTimer = 2f
@@ -25,6 +44,8 @@ class GameController(var mpController: MultiplayerController?) {
     var world = World()
     val player = Player(2f, Player.START_Y).also { world.entities.add(it) }
     var player2: Player? = null
+    private var shotSound: Sound = Gdx.audio.newSound("audio/shotSound.mp3".toInternalFile())
+    private var explosionSound: Sound = Gdx.audio.newSound("audio/enemyExplosionSound.mp3".toInternalFile())
 
     init {
         if (mpController != null) {
@@ -68,11 +89,6 @@ class GameController(var mpController: MultiplayerController?) {
             playerShootTimer = 0f
             world.entities.add(Bullet(player2!!.x, player2!!.y, player2))
         }
-//        if (Input.Keys.N.isKeyPressed() && player.ultimateWeapon > 0 && !laserBeam.used) {
-//            player.ultimateWeapon--
-//            laserBeam.lived = 0f
-//            laserBeam.used = true
-//        }
 
         println("shooting $xSpeed $ySpeed $")
         mpController!!.clientConnection!!.sendTCP(player2)
@@ -89,15 +105,16 @@ class GameController(var mpController: MultiplayerController?) {
         var xSpeed = 0f
         var ySpeed = 0f
 
-        if (Input.Keys.D.isKeyPressed()) xSpeed = Player.MAX_SPEED * delta
-        if (Input.Keys.A.isKeyPressed()) xSpeed = -Player.MAX_SPEED * delta
-        if (Input.Keys.W.isKeyPressed()) ySpeed = Player.MAX_SPEED * delta
-        if (Input.Keys.S.isKeyPressed()) ySpeed = -Player.MAX_SPEED * delta
-        if (Input.Keys.SPACE.isKeyPressed() && playerShootTimer > Player.SHOOT_TIMER) {
+        if (Input.Keys.valueOf(moveRight).isKeyPressed()) xSpeed = (Player.MAX_SPEED  + moveSpeedUpgrade.toFloat() * 0.02f) * delta
+        if (Input.Keys.valueOf(moveLeft).isKeyPressed()) xSpeed = (-Player.MAX_SPEED  - moveSpeedUpgrade.toFloat() * 0.02f) * delta
+        if (Input.Keys.valueOf(moveUp).isKeyPressed()) ySpeed = (Player.MAX_SPEED  + moveSpeedUpgrade.toFloat() * 0.02f)* delta
+        if (Input.Keys.valueOf(moveDown).isKeyPressed()) ySpeed = (-Player.MAX_SPEED  - moveSpeedUpgrade.toFloat() * 0.02f)* delta
+        if (Input.Keys.valueOf(shoot).isKeyPressed() && playerShootTimer > (Player.SHOOT_TIMER - attackSpeedUpgrade.toFloat() * 0.02f)) {
             playerShootTimer = 0f
             world.entities.add(Bullet(player.x, player.y, player))
+            shotSound.play(volume * 0.3f * volumeSuppress)
         }
-//        if (Input.Keys.N.isKeyPressed() && player.ultimateWeapon > 0 && !laserBeam.used) {
+//        if (Input.Keys.valueOf(ultimateWeapon).isKeyPressed() && player.ultimateWeapon > 0 && !laserBeam.used) {
 //            player.ultimateWeapon--
 //            laserBeam.lived = 0f
 //            laserBeam.used = true

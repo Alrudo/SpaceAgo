@@ -1,56 +1,140 @@
 {
   "com.badlogic.gdx.graphics.Color": {
-    "white": { "r": 0.973, "g": 0.906, "b": 0.996, "a": 1 },
-    "yellow": { "r": 1, "g": 1, "b": 0, "a": 1 }
+    "white": {
+      "r": 0.973,
+      "g": 0.906,
+      "b": 0.996,
+      "a": 1
+    },
+    "yellow": {
+      "r": 1,
+      "g": 1,
+      "b": 0,
+      "a": 1
+    }
   },
   "com.badlogic.gdx.graphics.g2d.BitmapFont": {
-    "h1": { "file": "fonts/MenuFont.fnt" },
+    "h1": {
+      "file": "fonts/MenuFont.fnt"
+    },
     "h2": {
       "file": "fonts/MenuFont.fnt",
       "scaledSize": 48,
       "markupEnabled": false,
-      "flip" : false
+      "flip": false
     },
     "h3": {
       "file": "fonts/MenuFont.fnt",
       "scaledSize": 36,
       "markupEnabled": false,
-      "flip" : false
+      "flip": false
     },
     "h4": {
       "file": "fonts/MenuFont.fnt",
       "scaledSize": 24,
       "markupEnabled": false,
-      "flip" : false
+      "flip": false
+    },
+    "h5": {
+      "file": "fonts/MenuFont.fnt",
+      "scaledSize": 34,
+      "markupEnabled": false,
+      "flip": false
     }
   },
   "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
     "default": {
-      "font": "h1", "fontColor": "white", "overFontColor": "yellow"
+      "font": "h1",
+      "fontColor": "white",
+      "overFontColor": "yellow"
     },
     "fancy-h1": {
-      "font": "h1", "up": "default-fancy-up", "down": "default-fancy-down"
+      "font": "h1",
+      "up": "default-fancy-up",
+      "down": "default-fancy-down"
+    },
+    "fancy-hover-h1": {
+      "font": "h1",
+      "fontColor": "white",
+      "overFontColor": "yellow",
+      "up": "default-fancy-up",
+      "down": "default-fancy-down"
     },
     "fancy-h2": {
-      "font": "h2", "up": "default-fancy-up", "down": "default-fancy-down"
+      "font": "h2",
+      "up": "default-fancy-up",
+      "down": "default-fancy-down"
+    },
+    "fancy-hover-h2": {
+      "font": "h2",
+      "fontColor": "white",
+      "overFontColor": "yellow",
+      "up": "default-fancy-up",
+      "down": "default-fancy-down"
+    },
+    "button-h3": {
+      "font": "h3",
+      "fontColor": "white",
+      "overFontColor": "yellow"
+    },
+    "fancy-hover-h3": {
+      "font": "h3",
+      "fontColor": "white",
+      "overFontColor": "yellow",
+      "up": "default-fancy-up",
+      "down": "default-fancy-down"
     },
     "fancy-h3": {
-      "font": "h3", "up": "default-fancy-up", "down": "default-fancy-down"
+      "font": "h3",
+      "up": "default-fancy-up",
+      "down": "default-fancy-down"
+    },
+    "button-h4": {
+      "font": "h4",
+      "fontColor": "white",
+      "overFontColor": "yellow"
+    },
+    "fancy-hover-h5": {
+      "font": "h5",
+      "fontColor": "white",
+      "overFontColor": "yellow",
+      "up": "default-fancy-up",
+      "down": "default-fancy-down"
     }
   },
   "com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle": {
     "default": {
-      "font": "h3", "fontColor": "white", "background": "default-fancy-input",
+      "font": "h3",
+      "fontColor": "white",
+      "background": "default-fancy-input",
       "cursor": "cursor",
       "selection": "selection"
     }
   },
   "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
     "default": {
-      "font": "h3", "fontColor": "white"
+      "font": "h3",
+      "fontColor": "white"
+    },
+    "label-h1": {
+      "font": "h1",
+      "fontColor": "white"
+    },
+    "label-h2": {
+      "font": "h2",
+      "fontColor": "white"
+    },
+    "label-h4": {
+      "font": "h4",
+      "fontColor": "white"
+    },
+    "label-h5": {
+      "font": "h5",
+      "fontColor": "white"
     },
     "game-title": {
-      "font": "halo", "fontColor": "white"
+      "font": "halo",
+      "fontColor": "white"
     }
   }
 }

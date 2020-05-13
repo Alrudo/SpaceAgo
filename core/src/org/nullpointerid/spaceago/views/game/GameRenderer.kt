@@ -16,8 +16,12 @@ import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.entities.Player
 import org.nullpointerid.spaceago.utils.*
+import org.nullpointerid.spaceago.views.upgrade.UpgradeShopScreen
 
 class GameRenderer(world: World) : Disposable {
+
+    private val prefs = Gdx.app.getPreferences("spaceshooter")
+    private val durabilityUpgrade = prefs.getInteger(UpgradeShopScreen.Upgrades.DURABILITY.toString(), 0)
 
     private val camera = OrthographicCamera()
     private val uiCamera = OrthographicCamera()
@@ -110,7 +114,7 @@ class GameRenderer(world: World) : Disposable {
             player.lives < GameConfig.LIVES_START * 0.75f -> renderer.color = Color.YELLOW
             else -> renderer.color = Color.GREEN
         }
-        renderer.rect(0f, 0f, GameConfig.WORLD_WIDTH * (player.lives / GameConfig.LIVES_START), 0.2f)
+        renderer.rect(0f, 0f, GameConfig.WORLD_WIDTH * (player.lives / (GameConfig.LIVES_START + durabilityUpgrade.toFloat() * 0.1f)), 0.2f)
         renderer.color = oldColor
         renderer.end()
     }

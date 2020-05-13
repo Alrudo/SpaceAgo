@@ -25,6 +25,7 @@ object SpaceShooter : Game() {
     lateinit var explosionTexture: Texture
 
     val COMMON_SKIN = Skin()
+    val SETTINGS_SKIN = Skin()
 
     override fun create() {
         Gdx.app.logLevel = Application.LOG_DEBUG

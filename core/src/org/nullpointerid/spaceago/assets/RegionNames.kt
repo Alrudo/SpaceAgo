@@ -10,8 +10,6 @@ object RegionNames {
     const val PLAYER = "player"
     const val SIMPLE_ENEMY = "corona_extra"
 
-    const val GAME_OVER = "game_over"
-
     const val CIVILIAN_SHIP_RIGHT = "civilian_ship_right"
     const val CIVILIAN_SHIP_LEFT = "civilian_ship_left"
 
