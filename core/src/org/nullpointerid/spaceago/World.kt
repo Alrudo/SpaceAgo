@@ -1,10 +1,6 @@
 package org.nullpointerid.spaceago
 
 import org.nullpointerid.spaceago.entities.EntityBase
+import java.io.Serializable
 
-class World {
-
-    val entities: MutableList<EntityBase> = mutableListOf()
-
-
-}
+data class World(val entities: MutableList<EntityBase> = mutableListOf()) : Serializable

@@ -1,11 +1,24 @@
 package org.nullpointerid.spaceago.views.multiplayer
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.math.Polygon
+import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.utils.Array.ArrayIterable
+import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryonet.Client
 import com.esotericsoftware.kryonet.Connection
 import com.esotericsoftware.kryonet.Listener
 import com.esotericsoftware.kryonet.Server
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.nullpointerid.spaceago.SpaceShooter
+import org.nullpointerid.spaceago.World
+import org.nullpointerid.spaceago.entities.*
+import org.nullpointerid.spaceago.utils.GdxArray
+import org.nullpointerid.spaceago.utils.XRectangle
+import org.nullpointerid.spaceago.views.game.GameController
+import org.nullpointerid.spaceago.views.game.GameScreen
+
 
 object MultiplayerController {
 
@@ -17,12 +30,13 @@ object MultiplayerController {
         CLIENT, SERVER
     }
 
+    var game: GameController? = null
     var clientConnection: Connection? = null
     var serverConnection: Connection? = null
 
     var screen = MultiplayerScreen()
-    var server = Server()
-    var client = Client()
+    var server = Server(1000000, 1000000)
+    var client = Client(1000000, 1000000)
     var tcpPort = 0
     var udpPort = 1
     var role: Role? = null
@@ -66,6 +80,7 @@ object MultiplayerController {
         state = State.WAITING_CLIENT
         role = Role.SERVER
         GlobalScope.launch {
+            server.kryo.apply { register(this)}
             server.start()
             tcpPort = port1
             udpPort = port2
@@ -83,6 +98,9 @@ object MultiplayerController {
         state = State.CONNECTING_TO_SERVER
         role = Role.CLIENT
         GlobalScope.launch {
+            client.kryo.apply {
+                register(this)
+            }
             client.start()
             tcpPort = port1
             udpPort = port2
@@ -102,9 +120,9 @@ object MultiplayerController {
     }
 
     fun serverReceived(con: Connection, data: Any) {
-        if (data is String) {
-            println(data)
-            con.sendTCP("wow")
+        if(data is Player && game != null){
+            game!!.player2!!.x = data.x
+            game!!.player2!!.y = data.y
         }
     }
 
@@ -127,8 +145,14 @@ object MultiplayerController {
 
     fun clientReceived(connection: Connection, data: Any) {
         if (data is String) {
-            println(data)
-            connection.sendTCP("wow")
+            if(data == "Start Game"){
+                Gdx.app.postRunnable{
+                    SpaceShooter.screen = GameScreen(this)
+                }
+            }
+        }
+        if (data is World && game != null){
+            game!!.world = data
         }
     }
 
@@ -153,15 +177,32 @@ object MultiplayerController {
         when (role) {
             Role.SERVER -> {
                 server.close()
-                server = Server()
+                server = Server(1000000, 1000000)
             }
             Role.CLIENT -> {
                 client.close()
-                client = Client()
+                client = Client(1000000, 1000000)
             }
         }
         state = State.NONE
         role = null
     }
 
+    private fun register(kryo: Kryo){
+        with(kryo) {
+            register(Array<Any>::class.java)
+            register(GdxArray::class.java)
+            register(FloatArray::class.java)
+            register(Player::class.java)
+            register(Polygon::class.java)
+            register(XRectangle::class.java)
+            register(SimpleEnemy::class.java)
+            register(Bullet::class.java)
+            register(CivilianShip::class.java)
+            register(Explosion::class.java)
+            register(EntityBase::class.java)
+            register(ArrayList::class.java)
+            register(World::class.java)
+        }
+    }
 }

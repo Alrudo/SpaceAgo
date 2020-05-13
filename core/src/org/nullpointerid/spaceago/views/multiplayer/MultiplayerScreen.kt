@@ -15,15 +15,16 @@ import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.SpaceShooter.COMMON_SKIN
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.utils.*
+import org.nullpointerid.spaceago.views.game.GameScreen
 import org.nullpointerid.spaceago.views.menu.MenuScreen
 
 class MultiplayerScreen : Screen {
 
-    private val CNTLR = MultiplayerController
-    private val batch = SpriteBatch()
-    private val renderer = ShapeRenderer()
-    private val camera = OrthographicCamera()
-    private val viewport = FitViewport(GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT, camera)
+    private val mpController = MultiplayerController
+    private lateinit var batch: SpriteBatch
+    private lateinit var renderer: ShapeRenderer
+    private lateinit var camera: OrthographicCamera
+    private lateinit var viewport: FitViewport
 
     private val menuStage: Stage = Stage()
 
@@ -40,9 +41,15 @@ class MultiplayerScreen : Screen {
     val startGame: TextButton
     private val exitBtn: TextButton
 
-    init {
+    override fun show() {
         Gdx.input.inputProcessor = this.menuStage
+        batch = SpriteBatch()
+        renderer = ShapeRenderer()
+        camera = OrthographicCamera()
+        viewport = FitViewport(GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT, camera)
+    }
 
+    init {
         spaceAgo = Label("SpaceAgo", COMMON_SKIN, "game-title").apply {
             setPosition(20f, menuStage.height - height - 27f)
         }.bind(menuStage)
@@ -70,7 +77,7 @@ class MultiplayerScreen : Screen {
         }
 
         openSocketBtn = TextButton("Host game", COMMON_SKIN, "fancy-h3").extend(20f).apply { serverDiv.add(this).colspan(2) }.onClick {
-            MultiplayerController.startServer(portInput.text.toInt()-1, portInput.text.toInt())
+            MultiplayerController.startServer(portInput.text.toInt() - 1, portInput.text.toInt())
         }
         // ### END HOST SECTION ###
 
@@ -92,7 +99,7 @@ class MultiplayerScreen : Screen {
         }
 
         TextButton("Search", COMMON_SKIN, "fancy-h3").apply { setPosition(600f, 460f); clientDiv.add(this).colspan(2).row() }.onClick {
-            MultiplayerController.startClient(portInput.text.toInt()-1, portInput.text.toInt())
+            MultiplayerController.startClient(portClientInput.text.toInt() - 1, portClientInput.text.toInt())
         }
         // ### END CLIENT SECTION ###
 
@@ -116,6 +123,9 @@ class MultiplayerScreen : Screen {
 
         startGame = TextButton("Start game", COMMON_SKIN, "fancy-h3").apply {
             connectedDiv.add(this).colspan(2).center().row()
+        }.onClick {
+            mpController.serverConnection!!.sendTCP("Start Game")
+            SpaceShooter.screen = GameScreen(mpController)
         }
         // ### END WAITING CLIENT SECTION ###
 
@@ -129,6 +139,7 @@ class MultiplayerScreen : Screen {
 
         MultiplayerController.screen = this
     }
+
 
     override fun render(delta: Float) {
         clearScreen()
@@ -165,7 +176,6 @@ class MultiplayerScreen : Screen {
         dispose()
     }
 
-    override fun show() {}
     override fun pause() {}
     override fun resume() {}
 }

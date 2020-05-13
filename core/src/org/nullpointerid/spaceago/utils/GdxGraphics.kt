@@ -3,7 +3,10 @@ package org.nullpointerid.spaceago.utils
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.math.Polygon
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
@@ -11,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+import org.nullpointerid.spaceago.entities.EntityBase
 import java.awt.Color
 
 @JvmOverloads  // if you want to mix Java and Kotlin
@@ -34,6 +38,12 @@ inline fun ShapeRenderer.use(action: () -> Unit) {
     begin(ShapeRenderer.ShapeType.Line)
     action()
     end()
+}
+
+fun SpriteBatch.draw(entity: EntityBase){
+    this.draw(entity.texture(), entity.coreBound.x, entity.coreBound.y,
+            entity.textureWidth() / 2, entity.textureHeight() / 2,
+            entity.textureWidth(), entity.textureHeight(), 1f, 1f, entity.coreBound.rotation)
 }
 
 fun ShapeRenderer.rectangle(r: Rectangle) {
@@ -97,6 +107,7 @@ fun maintainFPS(fps: Int) {
             try {
                 Thread.sleep(targetDelay - diff)
             } catch (e: InterruptedException) {
+                e.printStackTrace()
             }
         }
         start = System.currentTimeMillis()

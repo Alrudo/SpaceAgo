@@ -2,21 +2,36 @@ package org.nullpointerid.spaceago.views.game
 
 import com.badlogic.gdx.Screen
 import org.nullpointerid.spaceago.SpaceShooter
-import org.nullpointerid.spaceago.views.gameover.GameOverScreen
+import org.nullpointerid.spaceago.utils.maintainFPS
 import org.nullpointerid.spaceago.views.multiplayer.MultiplayerController
+import java.lang.Exception
+import java.util.*
 
 class GameScreen(val mpController: MultiplayerController? = null) : Screen {
 
-    private lateinit var controller: GameController
-    private lateinit var renderer: GameRenderer
+    lateinit var controller: GameController
+    lateinit var renderer: GameRenderer
 
     override fun show() {
         controller = GameController(mpController)
-        renderer = GameRenderer(SpaceShooter.assetManager, controller)
+        renderer = GameRenderer(controller.world)
     }
 
     override fun render(delta: Float) {
-        controller.update(delta)
+        maintainFPS(60)
+        if (mpController == null) {
+            controller.update(delta)
+            renderer.render(delta)
+            return
+        }
+
+        if(mpController.role == MultiplayerController.Role.SERVER){
+            controller.update(delta)
+            mpController.serverConnection!!.sendTCP(controller.world)
+        }else{
+            renderer.world = controller.world
+            controller.updateClient(delta)
+        }
         renderer.render(delta)
     }
 

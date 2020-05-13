@@ -6,7 +6,7 @@ interface Collidable {
 
     val bounds: MutableList<Rectangle>
 
-    fun isColliding(){
+    fun isColliding() {
 
     }
 

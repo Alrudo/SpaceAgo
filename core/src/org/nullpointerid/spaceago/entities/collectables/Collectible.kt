@@ -1,6 +1,5 @@
 package org.nullpointerid.spaceago.entities.collectables
 
-import org.nullpointerid.spaceago.entities.EntityBase
 import org.nullpointerid.spaceago.entities.Player
 import kotlin.random.Random
 
@@ -16,13 +15,13 @@ interface Collectible {
             return false
         }
 
-        fun decideCollectible(): EntityBase {
-            return when (Random.nextInt(1, 4)) {
-                1 -> HealthPack()
-                2 -> UltimateWeapon()
-                else -> MoneyCrate()
-            }
-        }
+//        fun decideCollectible(): Class<EntityBase> {
+//            return when (Random.nextInt(1, 4)) {
+//                1 -> HealthPack::class.java
+//                2 -> UltimateWeapon::class.java
+//                else -> MoneyCrate::class.java
+//            }
+//        }
     }
 
     var lived: Float

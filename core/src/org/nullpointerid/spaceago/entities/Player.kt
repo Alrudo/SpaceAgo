@@ -1,42 +1,46 @@
 package org.nullpointerid.spaceago.entities
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.badlogic.gdx.math.Rectangle
 import org.nullpointerid.spaceago.SpaceShooter.gameAtlas
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.entities.collectables.Collectible
-import org.nullpointerid.spaceago.utils.GdxArray
+import org.nullpointerid.spaceago.utils.XRectangle
 import org.nullpointerid.spaceago.utils.get
 import org.nullpointerid.spaceago.views.game.GameController
 import kotlin.math.round
 
-class Player : EntityBase() {
+class Player(x: Float, y: Float, var name: String = "player1") : EntityBase(x, y, WIDTH, HEIGHT) {
+    constructor() : this(0f, 0f)
 
     companion object {
         val TEXTURE = gameAtlas[RegionNames.PLAYER]!!
-        const val TEXTURE_WIDTH = 1f
-        const val TEXTURE_HEIGHT = 1f
+        const val WIDTH = 0.8f
+        const val HEIGHT = 0.8f
+        private const val ration = WIDTH / 48
 
-        const val BOUNDS_VER_X_OFFSET = 0.43f
-        const val BOUNDS_HOR_X_OFFSET = 0.17f
+        const val BOUNDS_1_X_OFFSET = 19 * ration
+        const val BOUNDS_1_Y_OFFSET = 27 * ration
+        const val BOUNDS_1_WIDTH = 10 * ration
+        const val BOUNDS_1_HEIGHT = 21 * ration
 
-        const val BOUNDS_VER_Y_OFFSET = 0.1f
-        const val BOUNDS_HOR_Y_OFFSET = 0.3f
+        const val BOUNDS_2_X_OFFSET = 0f
+        const val BOUNDS_2_Y_OFFSET = 14 * ration
+        const val BOUNDS_2_WIDTH = 48 * ration
+        const val BOUNDS_2_HEIGHT = 13 * ration
 
-        const val BOUNDS_VER_WIDTH = 0.13f
-        const val BOUNDS_HOR_WIDTH = 0.66f
+        const val BOUNDS_3_X_OFFSET = 10 * ration
+        const val BOUNDS_3_Y_OFFSET = 0 * ration
+        const val BOUNDS_3_WIDTH = 28 * ration
+        const val BOUNDS_3_HEIGHT = 14 * ration
 
-        const val BOUNDS_VER_HEIGHT = 0.8f
-        const val BOUNDS_HOR_HEIGHT = 0.25f
+        const val MIN_X = 0.3f
+        const val MAX_X = GameConfig.WORLD_WIDTH - 0.3f
 
-        const val MIN_X = -0.1f
-        const val MAX_X = GameConfig.WORLD_WIDTH - 0.9f
-
-        const val MIN_Y = 0.1f
+        const val MIN_Y = 0.3f
         const val MAX_Y = GameConfig.WORLD_WIDTH - 2.9f
 
-        const val MAX_SPEED = 0.12f
+        const val MAX_SPEED = 5f
         const val SHOOT_TIMER = 0.2f
 
         const val START_Y = 1f
@@ -48,13 +52,14 @@ class Player : EntityBase() {
     var score = 0
     var ultimateWeapon = 2
 
-    private val bound1 = Rectangle(0f, 0f, BOUNDS_VER_WIDTH, BOUNDS_VER_HEIGHT)
-    private val bound2 = Rectangle(0f, 0f, BOUNDS_HOR_WIDTH, BOUNDS_HOR_HEIGHT)
-    override val bounds = GdxArray<Rectangle>().apply { add(bound1, bound2) }
+    override val innerBounds = mutableListOf(
+            XRectangle(0f, 0f, BOUNDS_1_WIDTH, BOUNDS_1_HEIGHT).bindToRect(coreBound, BOUNDS_1_X_OFFSET, BOUNDS_1_Y_OFFSET),
+            XRectangle(0f, 0f, BOUNDS_2_WIDTH, BOUNDS_2_HEIGHT).bindToRect(coreBound, BOUNDS_2_X_OFFSET, BOUNDS_2_Y_OFFSET),
+            XRectangle(0f, 0f, BOUNDS_3_WIDTH, BOUNDS_3_HEIGHT).bindToRect(coreBound, BOUNDS_3_X_OFFSET, BOUNDS_3_Y_OFFSET)
+    )
 
     override fun updateBounds() {
-        bound1.setPosition(x + BOUNDS_VER_X_OFFSET, y + BOUNDS_VER_Y_OFFSET)
-        bound2.setPosition(x + BOUNDS_HOR_X_OFFSET, y + BOUNDS_HOR_Y_OFFSET)
+        coreBound.setPosition(x - textureWidth() / 2, y - textureHeight() / 2)
     }
 
     override fun canCollideWith(entity: EntityBase): Boolean {
@@ -88,7 +93,7 @@ class Player : EntityBase() {
     fun damage(amount: Float) {
         lives -= amount
         lives = round(lives * 100) / 100
-        GameController.log.debug("PlayerHP: ${lives}")
+        GameController.log.debug("PlayerHP: $lives")
     }
 
     override fun texture(): TextureRegion {
@@ -96,10 +101,10 @@ class Player : EntityBase() {
     }
 
     override fun textureWidth(): Float {
-        return TEXTURE_WIDTH
+        return WIDTH
     }
 
     override fun textureHeight(): Float {
-        return TEXTURE_HEIGHT
+        return HEIGHT
     }
 }
