@@ -2,8 +2,7 @@ package org.nullpointerid.spaceago.views.multiplayer
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.Polygon
-import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.utils.Array.ArrayIterable
+import com.badlogic.gdx.math.Vector2
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryonet.Client
 import com.esotericsoftware.kryonet.Connection
@@ -14,10 +13,14 @@ import kotlinx.coroutines.launch
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.World
 import org.nullpointerid.spaceago.entities.*
-import org.nullpointerid.spaceago.utils.GdxArray
+import org.nullpointerid.spaceago.entities.projectile.Bullet
+import org.nullpointerid.spaceago.utils.gdx.GdxArray
+import org.nullpointerid.spaceago.utils.KeyboardState
+import org.nullpointerid.spaceago.utils.UpgradeState
 import org.nullpointerid.spaceago.utils.XRectangle
 import org.nullpointerid.spaceago.views.game.GameController
 import org.nullpointerid.spaceago.views.game.GameScreen
+import org.nullpointerid.spaceago.views.upgrade.UpgradeShopScreen
 
 
 object MultiplayerController {
@@ -120,9 +123,11 @@ object MultiplayerController {
     }
 
     fun serverReceived(con: Connection, data: Any) {
-        if(data is Player && game != null){
-            game!!.player2!!.x = data.x
-            game!!.player2!!.y = data.y
+        if(data is UpgradeState && game != null){
+            game!!.players.find { it.name == "player2" }?.upgradeState = data
+        }
+        if(data is KeyboardState && game != null){
+            game!!.players.find { it.name == "player2" }?.keyboardState = data
         }
     }
 
@@ -165,6 +170,7 @@ object MultiplayerController {
         clientConnection = con
         state = State.CONNECTED
         println("Connected to host " + con.remoteAddressTCP)
+        clientConnection!!.sendTCP(UpgradeState())
     }
 
     fun clientDisconnected(con: Connection) {
@@ -192,7 +198,12 @@ object MultiplayerController {
         with(kryo) {
             register(Array<Any>::class.java)
             register(GdxArray::class.java)
+            register(LinkedHashMap::class.java)
             register(FloatArray::class.java)
+            register(Vector2::class.java)
+            register(KeyboardState::class.java)
+            register(UpgradeState::class.java)
+            register(UpgradeShopScreen.Upgrades::class.java)
             register(Player::class.java)
             register(Polygon::class.java)
             register(XRectangle::class.java)

@@ -15,6 +15,7 @@ import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.SpaceShooter.COMMON_SKIN
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.utils.*
+import org.nullpointerid.spaceago.utils.gdx.*
 import org.nullpointerid.spaceago.views.game.GameScreen
 import org.nullpointerid.spaceago.views.menu.MenuScreen
 
@@ -151,8 +152,8 @@ class MultiplayerScreen : Screen {
         clearScreen()
 
         batch.use {
-            batch.draw(SpaceShooter.background, 0f, 0f)
-            SpaceShooter.movingBackground.updateRender(delta, batch)
+            batch.draw(SpaceShooter.BACKGROUND, 0f, 0f)
+            SpaceShooter.MBACKGROUND.updateRender(delta, batch)
         }
 
         if (GameConfig.DEBUG_MODE) {

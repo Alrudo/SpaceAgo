@@ -1,10 +1,12 @@
 package org.nullpointerid.spaceago.entities
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import org.nullpointerid.spaceago.SpaceShooter.gameAtlas
+import org.nullpointerid.spaceago.SpaceShooter.GAME_ATLAS
+import org.nullpointerid.spaceago.World
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
-import org.nullpointerid.spaceago.utils.get
+import org.nullpointerid.spaceago.entities.collectables.HealthPack
+import org.nullpointerid.spaceago.utils.gdx.get
 import kotlin.random.Random
 
 class SimpleEnemy(x: Float, y: Float) : EntityBase(x, y, WIDTH, HEIGHT), Destroyable {
@@ -13,7 +15,7 @@ class SimpleEnemy(x: Float, y: Float) : EntityBase(x, y, WIDTH, HEIGHT), Destroy
     }
 
     companion object {
-        val TEXTURE = gameAtlas[RegionNames.SIMPLE_ENEMY]!!
+        val TEXTURE = GAME_ATLAS[RegionNames.SIMPLE_ENEMY]!!
         const val WIDTH = 0.255f
         const val HEIGHT = 0.96f
 
@@ -25,10 +27,11 @@ class SimpleEnemy(x: Float, y: Float) : EntityBase(x, y, WIDTH, HEIGHT), Destroy
         const val SCORE_VALUE = 100
     }
 
+    private var health: Float = getMaxHealth()
     var rotationSpeed = Random.nextDouble(13.0, 39.0).toFloat() * Random.nextDouble(-1.0, 1.0).toFloat()
     var xSpeed = (Random.nextFloat() - 0.5f) * 2
 
-    override fun update(delta: Float) {
+    override fun update(delta: Float, world: World) {
         y -= MAX_SPEED * delta
         x -= xSpeed * delta
         coreBound.rotation += rotationSpeed * delta
@@ -38,24 +41,24 @@ class SimpleEnemy(x: Float, y: Float) : EntityBase(x, y, WIDTH, HEIGHT), Destroy
         return TEXTURE
     }
 
-    override fun textureWidth(): Float {
-        return WIDTH
+    override fun onDestroy(world: World) {
+        world.entities.add(HealthPack(x, y))
     }
 
-    override fun textureHeight(): Float {
-        return HEIGHT
+    override fun getScore(): Int {
+        return 35
     }
 
     override fun getMaxHealth(): Float {
-        TODO("Not yet implemented")
+        return 0.1f
     }
 
     override fun getHealth(): Float {
-        TODO("Not yet implemented")
+        return health
     }
 
     override fun setHealth(amount: Float) {
-        TODO("Not yet implemented")
+        health = amount
     }
 }
 

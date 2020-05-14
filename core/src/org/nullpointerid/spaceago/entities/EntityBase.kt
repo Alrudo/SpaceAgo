@@ -3,9 +3,10 @@ package org.nullpointerid.spaceago.entities
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Intersector
 import org.nullpointerid.spaceago.SpaceShooter
+import org.nullpointerid.spaceago.World
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.utils.XRectangle
-import org.nullpointerid.spaceago.utils.get
+import org.nullpointerid.spaceago.utils.gdx.get
 import java.io.Serializable
 
 
@@ -57,22 +58,14 @@ abstract class EntityBase(x: Float, y: Float, var width: Float = 1f, var height:
     open fun onCollide(entity: EntityBase) {
     }
 
-    open fun onDestroy() {
+    open fun onDestroy(world: World) {
     }
 
-    open fun update(delta: Float) {
+    open fun update(delta: Float, world: World) {
     }
 
     open fun texture(): TextureRegion {
-        return SpaceShooter.gameAtlas[RegionNames.LASER_BEAM]!!
-    }
-
-    open fun textureWidth(): Float {
-        return 1f;
-    }
-
-    open fun textureHeight(): Float {
-        return 1f;
+        return SpaceShooter.GAME_ATLAS[RegionNames.LASER_BEAM]!!
     }
 
 }

@@ -12,11 +12,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.viewport.FitViewport
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.SpaceShooter.COMMON_SKIN
-import org.nullpointerid.spaceago.SpaceShooter.movingBackground
+import org.nullpointerid.spaceago.SpaceShooter.MBACKGROUND
+import org.nullpointerid.spaceago.SpaceShooter.STORAGE
 import org.nullpointerid.spaceago.assets.AssetDescriptors
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.utils.*
+import org.nullpointerid.spaceago.utils.gdx.*
 import org.nullpointerid.spaceago.views.game.GameScreen
 import org.nullpointerid.spaceago.views.menu.MenuScreen
 
@@ -30,9 +32,8 @@ class GameOverScreen(assetManager: AssetManager,
         private const val STEP = 100f
     }
 
-    private val prefs = Gdx.app.getPreferences("spaceshooter")
-    private val highscore = prefs.getInteger("highscore", 0)
-    private val currentCash = prefs.getInteger("money", 0)
+    private val highscore = STORAGE.getInteger("highscore", 0)
+    private val currentCash = STORAGE.getInteger("money", 0)
     private val background = assetManager[AssetDescriptors.GAME_PLAY_ATLAS][RegionNames.GAMEPLAY_BACKGROUND]
 
     private val batch = SpriteBatch()
@@ -89,11 +90,11 @@ class GameOverScreen(assetManager: AssetManager,
 
     override fun show() {
         if (score > highscore) {
-            prefs.putInteger("highscore", score)
+            STORAGE.putInteger("highscore", score)
         }
-        prefs.putInteger("money", currentCash + score / 100)
-        prefs.flush()
-        log.debug("${prefs.getInteger("money")}")
+        STORAGE.putInteger("money", currentCash + score / 100)
+        STORAGE.flush()
+        log.debug("${STORAGE.getInteger("money")}")
     }
 
     override fun render(delta: Float) {
@@ -102,7 +103,7 @@ class GameOverScreen(assetManager: AssetManager,
 
         batch.use {
             batch.draw(background, 0f, 0f, GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT)
-            movingBackground.updateRender(delta, batch)
+            MBACKGROUND.updateRender(delta, batch)
         }
 
         if (GameConfig.DEBUG_MODE) {

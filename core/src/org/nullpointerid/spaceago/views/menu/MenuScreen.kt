@@ -10,12 +10,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.viewport.FitViewport
 import org.nullpointerid.spaceago.SpaceShooter
-import org.nullpointerid.spaceago.SpaceShooter.movingBackground
+import org.nullpointerid.spaceago.SpaceShooter.MBACKGROUND
 import org.nullpointerid.spaceago.SpaceShooter.COMMON_SKIN
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.utils.*
+import org.nullpointerid.spaceago.utils.gdx.*
 import org.nullpointerid.spaceago.views.game.GameScreen
-import org.nullpointerid.spaceago.views.multiplayer.MultiplayerController.game
 import org.nullpointerid.spaceago.views.multiplayer.MultiplayerScreen
 import org.nullpointerid.spaceago.views.settings.SettingsScreen
 import org.nullpointerid.spaceago.views.upgrade.UpgradeShopScreen
@@ -67,7 +67,7 @@ class MenuScreen : Screen {
         settingsBtn = TextButton("Settings", COMMON_SKIN).extend(20f, 10f).apply {
             setPosition(menuStage.width / 2 - width / 2, upgradeMenuBtn.y - upgradeMenuBtn.height - step)
         }.bind(menuStage).onClick {
-            SpaceShooter.screen = SettingsScreen(game)
+            SpaceShooter.screen = SettingsScreen()
         }
 
         exitBtn = TextButton("Exit", COMMON_SKIN).extend(20f, 10f).apply {
@@ -81,8 +81,8 @@ class MenuScreen : Screen {
         clearScreen()
 
         batch.use {
-            batch.draw(SpaceShooter.background, 0f, 0f)
-            movingBackground.updateRender(delta, batch)
+            batch.draw(SpaceShooter.BACKGROUND, 0f, 0f)
+            MBACKGROUND.updateRender(delta, batch)
         }
 
         if (GameConfig.DEBUG_MODE) {

@@ -9,19 +9,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.FitViewport
-import org.nullpointerid.spaceago.SpaceShooter.gameAtlas
-import org.nullpointerid.spaceago.World
+import org.nullpointerid.spaceago.SpaceShooter.GAME_ATLAS
+import org.nullpointerid.spaceago.SpaceShooter.STORAGE
 import org.nullpointerid.spaceago.assets.AssetPaths
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
-import org.nullpointerid.spaceago.entities.Player
 import org.nullpointerid.spaceago.utils.*
+import org.nullpointerid.spaceago.utils.gdx.*
 import org.nullpointerid.spaceago.views.upgrade.UpgradeShopScreen
 
-class GameRenderer(world: World) : Disposable {
+class GameRenderer(var controller: GameController) : Disposable {
 
-    private val prefs = Gdx.app.getPreferences("spaceshooter")
-    private val durabilityUpgrade = prefs.getInteger(UpgradeShopScreen.Upgrades.DURABILITY.toString(), 0)
+    private val durabilityUpgrade = STORAGE.getInteger(UpgradeShopScreen.Upgrades.DURABILITY.toString(), 0)
 
     private val camera = OrthographicCamera()
     private val uiCamera = OrthographicCamera()
@@ -31,20 +30,10 @@ class GameRenderer(world: World) : Disposable {
     private val batch = SpriteBatch()
     private val layout = GlyphLayout()
 
-    private val background = gameAtlas[RegionNames.GAMEPLAY_BACKGROUND]
+    private val background = GAME_ATLAS[RegionNames.GAMEPLAY_BACKGROUND]
     private val font = BitmapFont(AssetPaths.SCORE_FONT.toInternalFile())
     private val gameFont = BitmapFont(Gdx.files.internal("fonts/gameFont.fnt"))
 
-    var world: World = world
-        set(value) {
-            field = value
-            player = world.entities.find { it is Player && it.name == "player1"}!! as Player
-            player2 = world.entities.find { it is Player && it.name == "player2"} as Player?
-            entities = world.entities
-        }
-    private var player = world.entities.find { it is Player && it.name == "player1"}!! as Player
-    private var player2: Player? = null
-    private var entities = world.entities
 
 
     fun render(delta: Float) {
@@ -66,7 +55,7 @@ class GameRenderer(world: World) : Disposable {
 
         renderer.use {
             // Draw simpleEnemy hitboxes
-            entities.forEach {
+            controller.world.entities.forEach {
                 renderer.color = Color.ROYAL
                 renderer.polygon(it.coreBound.transformedVertices)
                 renderer.color = Color.GREEN
@@ -85,11 +74,11 @@ class GameRenderer(world: World) : Disposable {
 
         batch.use {
             // Draw score text
-            layout.setText(font, player.score.toString())
+            layout.setText(font, controller.localPlayer.score.toString())
             font.draw(batch, layout, GameConfig.HUD_WIDTH / 2f - layout.width, GameConfig.HUD_HEIGHT - layout.height)
 
             // Draw Ultimate weapon text
-            layout.setText(gameFont, "Ultimate weapon: ${player.ultimateWeapon}")
+            layout.setText(gameFont, "Ultimate weapon: ${controller.localPlayer.ultimateWeapon}")
             gameFont.draw(batch, layout, 15f, 55f)
         }
     }
@@ -99,7 +88,7 @@ class GameRenderer(world: World) : Disposable {
         batch.projectionMatrix = camera.combined
         batch.use {
             batch.draw(background, 0f, 0f, GameConfig.WORLD_WIDTH, GameConfig.WORLD_HEIGHT)
-            entities.forEach {
+            controller.world.entities.forEach {
                 batch.draw(it)
             }
         }
@@ -109,12 +98,12 @@ class GameRenderer(world: World) : Disposable {
         renderer.projectionMatrix = camera.combined
         renderer.begin(ShapeRenderer.ShapeType.Filled)
         when {
-            player.lives < GameConfig.LIVES_START * 0.25f -> renderer.color = Color.RED
-            player.lives < GameConfig.LIVES_START * 0.5f -> renderer.color = Color.ORANGE
-            player.lives < GameConfig.LIVES_START * 0.75f -> renderer.color = Color.YELLOW
+            controller.localPlayer.lives < GameConfig.LIVES_START * 0.25f -> renderer.color = Color.RED
+            controller.localPlayer.lives < GameConfig.LIVES_START * 0.5f -> renderer.color = Color.ORANGE
+            controller.localPlayer.lives < GameConfig.LIVES_START * 0.75f -> renderer.color = Color.YELLOW
             else -> renderer.color = Color.GREEN
         }
-        renderer.rect(0f, 0f, GameConfig.WORLD_WIDTH * (player.lives / (GameConfig.LIVES_START + durabilityUpgrade.toFloat() * 0.1f)), 0.2f)
+        renderer.rect(0f, 0f, GameConfig.WORLD_WIDTH * (controller.localPlayer.lives / (GameConfig.LIVES_START + durabilityUpgrade.toFloat() * 0.1f)), 0.2f)
         renderer.color = oldColor
         renderer.end()
     }

@@ -2,9 +2,10 @@ package org.nullpointerid.spaceago.entities
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import org.nullpointerid.spaceago.SpaceShooter
+import org.nullpointerid.spaceago.World
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.utils.XRectangle
-import org.nullpointerid.spaceago.utils.get
+import org.nullpointerid.spaceago.utils.gdx.get
 
 class CivilianShip(x: Float, y: Float, val toLeft: Boolean = false) : EntityBase(x, y, TEXTURE_WIDTH, TEXTURE_HEIGHT), Destroyable {
     constructor() : this(0f, 0f) {
@@ -12,8 +13,8 @@ class CivilianShip(x: Float, y: Float, val toLeft: Boolean = false) : EntityBase
     }
 
     companion object {
-        val TEXTURE1 = SpaceShooter.gameAtlas[RegionNames.CIVILIAN_SHIP_LEFT]!!
-        val TEXTURE2 = SpaceShooter.gameAtlas[RegionNames.CIVILIAN_SHIP_RIGHT]!!
+        val TEXTURE1 = SpaceShooter.GAME_ATLAS[RegionNames.CIVILIAN_SHIP_LEFT]!!
+        val TEXTURE2 = SpaceShooter.GAME_ATLAS[RegionNames.CIVILIAN_SHIP_RIGHT]!!
         const val TEXTURE_WIDTH = 3.2f
         const val TEXTURE_HEIGHT = 0.8f
 
@@ -23,7 +24,7 @@ class CivilianShip(x: Float, y: Float, val toLeft: Boolean = false) : EntityBase
         const val BODY_WIDTH = 0.5f * TEXTURE_WIDTH
         const val NOSE_WIDTH = 0.5f * TEXTURE_WIDTH
 
-        const val MAX_HEALTH = 0.5f
+        const val MAX_HEALTH = 2.5f
         const val MAX_SPEED = 1.5f
 
         const val SCORE_VALUE = -500
@@ -45,7 +46,7 @@ class CivilianShip(x: Float, y: Float, val toLeft: Boolean = false) : EntityBase
         updateBounds()
     }
 
-    override fun update(delta: Float) {
+    override fun update(delta: Float, world: World) {
         if (toLeft) x -= MAX_SPEED * delta
         else x += MAX_SPEED * delta
     }
@@ -65,14 +66,6 @@ class CivilianShip(x: Float, y: Float, val toLeft: Boolean = false) : EntityBase
         return if (toLeft) TEXTURE1 else TEXTURE2
     }
 
-    override fun textureWidth(): Float {
-        return TEXTURE_WIDTH
-    }
-
-    override fun textureHeight(): Float {
-        return TEXTURE_HEIGHT
-    }
-
     override fun getMaxHealth(): Float {
         return MAX_HEALTH
     }
@@ -83,6 +76,13 @@ class CivilianShip(x: Float, y: Float, val toLeft: Boolean = false) : EntityBase
 
     override fun setHealth(amount: Float) {
         health = amount
+        if(isDead()){
+            toRemove = true
+        }
+    }
+
+    override fun getScore(): Int {
+        return SCORE_VALUE
     }
 
 }

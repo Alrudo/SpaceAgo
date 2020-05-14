@@ -2,7 +2,7 @@ package org.nullpointerid.spaceago.assets
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import org.nullpointerid.spaceago.utils.assetDescriptor
+import org.nullpointerid.spaceago.utils.gdx.assetDescriptor
 
 object AssetDescriptors {
 

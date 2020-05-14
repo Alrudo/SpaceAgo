@@ -3,6 +3,7 @@ package org.nullpointerid.spaceago.entities
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import org.nullpointerid.spaceago.SpaceShooter.explosionTexture
+import org.nullpointerid.spaceago.World
 import org.nullpointerid.spaceago.utils.XRectangle
 
 class Explosion(x: Float, y: Float) : EntityBase(x, y, TEXTURE_WIDTH, TEXTURE_HEIGHT) {
@@ -22,20 +23,12 @@ class Explosion(x: Float, y: Float) : EntityBase(x, y, TEXTURE_WIDTH, TEXTURE_HE
     var stateTime = 0f
     override val innerBounds: MutableList<XRectangle> = mutableListOf()
 
-    override fun update(delta: Float) {
+    override fun update(delta: Float, world: World) {
         stateTime += delta
         if (animation.isAnimationFinished(stateTime)) toRemove = true
     }
 
     override fun texture(): TextureRegion {
         return animation.getKeyFrame(stateTime)
-    }
-
-    override fun textureWidth(): Float {
-        return TEXTURE_WIDTH
-    }
-
-    override fun textureHeight(): Float {
-        return TEXTURE_HEIGHT
     }
 }
