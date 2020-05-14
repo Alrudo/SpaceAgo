@@ -86,10 +86,10 @@ class Player(x: Float, y: Float, var name: String = "player1") : EntityBase(x, y
         {
             shoot(delta, world)
         }
-//        if (Input.Keys.valueOf(ultimateWeapon).isKeyPressed() && player.ultimateWeapon > 0 && !laserBeam.used) {
-//            player.ultimateWeapon--
+//        if (keyboardState.isPressed("ultimate") && ultimateWeapon > 0 && !laserBeam.using) {
+//            ultimateWeapon--
 //            laserBeam.lived = 0f
-//            laserBeam.used = true
+//            laserBeam.using = true
 //        }
 
         x = MathUtils.clamp(x + xSpeed, MIN_X, MAX_X)
@@ -137,7 +137,7 @@ class Player(x: Float, y: Float, var name: String = "player1") : EntityBase(x, y
 
     override fun canCollideWith(entity: EntityBase): Boolean {
         return entity.run {
-            this is CivilianShip || this is SimpleEnemy || this is Collectible
+            this is CivilianShip || this is SimpleEnemy || this is Collectible || this is ShootingEnemy
         }
     }
 
@@ -151,12 +151,17 @@ class Player(x: Float, y: Float, var name: String = "player1") : EntityBase(x, y
     override fun onCollide(entity: EntityBase) {
         when (entity) {
             is CivilianShip -> {
-                score += CivilianShip.SCORE_VALUE
+                score += entity.getScore()
                 entity.toRemove = true
                 damage(0.2f)
             }
             is SimpleEnemy -> {
-                score += SimpleEnemy.SCORE_VALUE
+                score += entity.getScore()
+                entity.toRemove = true
+                damage(0.2f)
+            }
+            is ShootingEnemy -> {
+                score += entity.getScore()
                 entity.toRemove = true
                 damage(0.2f)
             }

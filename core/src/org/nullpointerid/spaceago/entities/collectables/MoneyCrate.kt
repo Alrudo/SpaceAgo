@@ -27,12 +27,23 @@ class MoneyCrate(x: Float, y: Float) : Collectible, EntityBase(x, y, TEXTURE_WID
         }
     }
 
+    override fun canCollideWith(entity: EntityBase): Boolean {
+        return entity is Player
+    }
+
+    override fun onCollide(entity: EntityBase) {
+        if (canCollideWith(entity)) {
+            action(entity as Player)
+        }
+    }
+
     override fun texture(): TextureRegion {
         return TEXTURE
     }
 
     override fun action(player: Player): Boolean {
         player.score += SCORE_VALUE
+        toRemove = true
         return true
     }
 }

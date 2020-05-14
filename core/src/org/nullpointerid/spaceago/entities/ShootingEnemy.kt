@@ -6,6 +6,9 @@ import org.nullpointerid.spaceago.SpaceShooter.GAME_ATLAS
 import org.nullpointerid.spaceago.World
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
+import org.nullpointerid.spaceago.entities.collectables.HealthPack
+import org.nullpointerid.spaceago.entities.collectables.MoneyCrate
+import org.nullpointerid.spaceago.entities.collectables.UltimateWeapon
 import org.nullpointerid.spaceago.entities.projectile.Bullet
 import org.nullpointerid.spaceago.entities.projectile.EnemyBullet
 import org.nullpointerid.spaceago.utils.XRectangle
@@ -73,6 +76,14 @@ class ShootingEnemy(x: Float, y: Float) : EntityBase(x, y, WIDTH, HEIGHT), Destr
                 it.coreBound.rotation = coreBound.rotation
                 it.vector = Vector2(0f, 1f).rotate(coreBound.rotation).nor()
             } )
+        }
+    }
+
+    override fun onDestroy(world: World) {
+        when (Random.nextInt(3)) {
+            1 -> world.entities.add(HealthPack(x, y))
+            2 -> world.entities.add(MoneyCrate(x, y))
+            else -> world.entities.add(UltimateWeapon(x, y))
         }
     }
 

@@ -43,11 +43,11 @@ class Bullet(x: Float, y: Float, var owner: Player? = null) : EntityBase(x, y, W
                 }
                 this.toRemove = true
             }
-            is SimpleEnemy -> {
-                owner!!.score += SimpleEnemy.SCORE_VALUE
-                entity.toRemove = true
-                this.toRemove = true
-            }
+//            is SimpleEnemy -> {
+//                owner!!.score += entity.getScore()
+//                entity.toRemove = true
+//                this.toRemove = true
+//            }
         }
     }
 }

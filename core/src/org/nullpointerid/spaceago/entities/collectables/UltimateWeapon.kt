@@ -29,9 +29,20 @@ class UltimateWeapon(x: Float, y: Float) : Collectible, EntityBase(x, y, TEXTURE
         return TEXTURE
     }
 
+    override fun canCollideWith(entity: EntityBase): Boolean {
+        return entity is Player
+    }
+
+    override fun onCollide(entity: EntityBase) {
+        if (canCollideWith(entity)) {
+            action(entity as Player)
+        }
+    }
+
     override fun action(player: Player): Boolean {
         if (player.ultimateWeapon < Player.MAX_ULTIMATE_WEAPON_COUNT) {
             player.ultimateWeapon += 1
+            toRemove = true
             return true
         }
         return false

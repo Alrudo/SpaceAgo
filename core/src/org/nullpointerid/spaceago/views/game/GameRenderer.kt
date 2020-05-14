@@ -54,7 +54,6 @@ class GameRenderer(var controller: GameController) : Disposable {
         val oldColor = renderer.color.cpy()
 
         renderer.use {
-            // Draw simpleEnemy hitboxes
             controller.world.entities.forEach {
                 renderer.color = Color.ROYAL
                 renderer.polygon(it.coreBound.transformedVertices)

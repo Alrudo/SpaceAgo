@@ -39,7 +39,8 @@ class HealthPack(x: Float, y: Float) : EntityBase(x, y, TEXTURE_WIDTH, TEXTURE_H
 
     override fun action(player: Player): Boolean {
         if (player.lives < GameConfig.LIVES_START) {
-            player.lives = (player.lives + healAmount).coerceAtMost(GameConfig.LIVES_START)
+            player.lives = (player.lives + healAmount).coerceAtMost(GameConfig.LIVES_START)  // TODO: Doesn't take upgrades into account.
+            toRemove = true
             return true
         }
         return false

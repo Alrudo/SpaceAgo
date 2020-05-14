@@ -11,7 +11,7 @@ interface Collectible {
         private const val DROP_CHANCE = 5
 
         fun collectibleChance(): Boolean {
-            if (Random.nextInt(101) <= DROP_CHANCE) return true
+            if (Random.nextInt(100) <= DROP_CHANCE) return true
             return false
         }
 

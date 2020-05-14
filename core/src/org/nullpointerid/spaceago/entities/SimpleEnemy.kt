@@ -6,6 +6,8 @@ import org.nullpointerid.spaceago.World
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.entities.collectables.HealthPack
+import org.nullpointerid.spaceago.entities.collectables.MoneyCrate
+import org.nullpointerid.spaceago.entities.collectables.UltimateWeapon
 import org.nullpointerid.spaceago.utils.gdx.get
 import kotlin.random.Random
 
@@ -23,8 +25,6 @@ class SimpleEnemy(x: Float, y: Float) : EntityBase(x, y, WIDTH, HEIGHT), Destroy
         const val MAX_X = GameConfig.WORLD_WIDTH - 0.12f
 
         const val MAX_SPEED = 2f
-
-        const val SCORE_VALUE = 100
     }
 
     private var health: Float = getMaxHealth()
@@ -42,7 +42,11 @@ class SimpleEnemy(x: Float, y: Float) : EntityBase(x, y, WIDTH, HEIGHT), Destroy
     }
 
     override fun onDestroy(world: World) {
-        world.entities.add(HealthPack(x, y))
+        when (Random.nextInt(3)) {
+            1 -> world.entities.add(HealthPack(x, y))
+            2 -> world.entities.add(MoneyCrate(x, y))
+            else -> world.entities.add(UltimateWeapon(x, y))
+        }
     }
 
     override fun getScore(): Int {
