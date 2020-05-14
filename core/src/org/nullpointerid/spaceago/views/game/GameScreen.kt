@@ -1,25 +1,34 @@
 package org.nullpointerid.spaceago.views.game
 
 import com.badlogic.gdx.Screen
-import org.nullpointerid.spaceago.SpaceShooter
-import org.nullpointerid.spaceago.views.gameover.GameOverScreen
+import org.nullpointerid.spaceago.utils.gdx.maintainFPS
+import org.nullpointerid.spaceago.views.multiplayer.MultiplayerController
 
-class GameScreen(private val game: SpaceShooter) : Screen {
+class GameScreen(val mpController: MultiplayerController? = null) : Screen {
 
-    private val assetManager = game.assetManager
-    private lateinit var controller: GameController
-    private lateinit var renderer: GameRenderer
+    lateinit var controller: GameController
+    lateinit var renderer: GameRenderer
 
     override fun show() {
-        controller = GameController()
-        renderer = GameRenderer(assetManager, controller)
+        controller = GameController(mpController)
+        renderer = GameRenderer(controller)
     }
 
     override fun render(delta: Float) {
-        if (controller.player.lives <= 0f) {
-            game.screen = GameOverScreen(assetManager, game, controller.player.score)
+        maintainFPS(60)
+        if (mpController == null) {
+            controller.update(delta)
+            renderer.render(delta)
+            return
         }
-        controller.update(delta)
+
+        if(mpController.role == MultiplayerController.Role.SERVER){
+            controller.update(delta)
+            mpController.serverConnection?.sendTCP(controller.world)
+        }else{
+            controller.world = controller.world
+            controller.updateClient(delta)
+        }
         renderer.render(delta)
     }
 
@@ -32,8 +41,6 @@ class GameScreen(private val game: SpaceShooter) : Screen {
     }
 
     override fun hide() {
-        // WARNING : screens are not disposed automatically!
-        // without dispose() call screen will be not disposed.
         dispose()
     }
 

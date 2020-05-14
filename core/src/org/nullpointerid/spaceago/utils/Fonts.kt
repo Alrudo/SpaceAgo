@@ -3,6 +3,7 @@ package org.nullpointerid.spaceago.utils
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+import org.nullpointerid.spaceago.utils.gdx.toInternalFile
 
 object Fonts {
     val MENU = BitmapFont("fonts/MenuFont.fnt".toInternalFile())

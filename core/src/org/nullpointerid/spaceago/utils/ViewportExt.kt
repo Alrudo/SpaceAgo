@@ -3,6 +3,7 @@ package org.nullpointerid.spaceago.utils
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.viewport.Viewport
+import org.nullpointerid.spaceago.utils.gdx.use
 
 @JvmOverloads
 fun Viewport.drawGrid(renderer: ShapeRenderer, cellSize: Float = 1f, color: Color = Color(0x505050ff)) {

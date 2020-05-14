@@ -11,15 +11,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.viewport.FitViewport
 import org.nullpointerid.spaceago.SpaceShooter
+import org.nullpointerid.spaceago.SpaceShooter.COMMON_SKIN
+import org.nullpointerid.spaceago.SpaceShooter.MBACKGROUND
+import org.nullpointerid.spaceago.SpaceShooter.STORAGE
 import org.nullpointerid.spaceago.assets.AssetDescriptors
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.utils.*
+import org.nullpointerid.spaceago.utils.gdx.*
 import org.nullpointerid.spaceago.views.game.GameScreen
 import org.nullpointerid.spaceago.views.menu.MenuScreen
 
 class GameOverScreen(assetManager: AssetManager,
-                     private val game: SpaceShooter,
                      private val score: Int) : Screen {
 
     companion object {
@@ -29,9 +32,8 @@ class GameOverScreen(assetManager: AssetManager,
         private const val STEP = 100f
     }
 
-    private val prefs = Gdx.app.getPreferences("spaceshooter")
-    private val highscore = prefs.getInteger("highscore", 0)
-    private val currentCash = prefs.getInteger("money", 0)
+    private val highscore = STORAGE.getInteger("highscore", 0)
+    private val currentCash = STORAGE.getInteger("money", 0)
     private val background = assetManager[AssetDescriptors.GAME_PLAY_ATLAS][RegionNames.GAMEPLAY_BACKGROUND]
 
     private val batch = SpriteBatch()
@@ -53,46 +55,46 @@ class GameOverScreen(assetManager: AssetManager,
     init {
         Gdx.input.inputProcessor = menuStage
 
-        spaceAgo = Label("SpaceAgo", game.COMMON_SKIN, "game-title").apply {
+        spaceAgo = Label("SpaceAgo", COMMON_SKIN, "game-title").apply {
             setPosition(20f, menuStage.height - height - 27f)
         }.bind(menuStage)
 
-        gameOver = Label("Game Over", game.COMMON_SKIN, "label-h1").apply {
+        gameOver = Label("Game Over", COMMON_SKIN, "label-h1").apply {
             setPosition(menuStage.width / 2f - width / 2f, 550f)
         }.bind(menuStage)
 
-        currentScore = Label("Score: $score", game.COMMON_SKIN).apply {
+        currentScore = Label("Score: $score", COMMON_SKIN).apply {
             setPosition(menuStage.width / 2f - width / 2f, gameOver.y - STEP)
         }.bind(menuStage)
 
-        highScore = Label("Highscore: $highscore", game.COMMON_SKIN).apply {
+        highScore = Label("Highscore: $highscore", COMMON_SKIN).apply {
             setPosition(menuStage.width / 2f - width / 2f, currentScore.y - STEP)
         }.bind(menuStage)
 
-        earnedCash = Label("Earned: ${score / 100} scrap", game.COMMON_SKIN).apply {
+        earnedCash = Label("Earned: ${score / 100} scrap", COMMON_SKIN).apply {
             setPosition(menuStage.width / 2f - width / 2f, highScore.y - STEP)
         }.bind(menuStage)
 
-        toMenuBtn = TextButton("Menu", game.COMMON_SKIN, "fancy-hover-h3").extend(25f, 10f).apply {
+        toMenuBtn = TextButton("Menu", COMMON_SKIN, "fancy-hover-h3").extend(25f, 10f).apply {
             setPosition(menuStage.width / 2f - width / 2f - 200f, 100f)
         }.bind(menuStage).onClick {
-            game.screen = MenuScreen(game)
+            SpaceShooter.screen = MenuScreen()
         }
 
-        retry = TextButton("Retry", game.COMMON_SKIN, "fancy-hover-h3").extend(20f, 10f).apply {
+        retry = TextButton("Retry", COMMON_SKIN, "fancy-hover-h3").extend(20f, 10f).apply {
             setPosition(menuStage.width / 2f - width / 2f + 200f, 100f)
         }.bind(menuStage).onClick {
-            game.screen = GameScreen(game)
+            SpaceShooter.screen = GameScreen()
         }
     }
 
     override fun show() {
         if (score > highscore) {
-            prefs.putInteger("highscore", score)
+            STORAGE.putInteger("highscore", score)
         }
-        prefs.putInteger("money", currentCash + score / 100)
-        prefs.flush()
-        log.debug("${prefs.getInteger("money")}")
+        STORAGE.putInteger("money", currentCash + score / 100)
+        STORAGE.flush()
+        log.debug("${STORAGE.getInteger("money")}")
     }
 
     override fun render(delta: Float) {
@@ -101,7 +103,7 @@ class GameOverScreen(assetManager: AssetManager,
 
         batch.use {
             batch.draw(background, 0f, 0f, GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT)
-            game.movingBackground.updateRender(delta, batch)
+            MBACKGROUND.updateRender(delta, batch)
         }
 
         if (GameConfig.DEBUG_MODE) {

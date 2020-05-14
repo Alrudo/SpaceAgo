@@ -1,7 +1,6 @@
 package org.nullpointerid.spaceago.views.game
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.BitmapFont
@@ -10,27 +9,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.FitViewport
-import org.nullpointerid.spaceago.assets.AssetDescriptors
+import org.nullpointerid.spaceago.SpaceShooter.GAME_ATLAS
+import org.nullpointerid.spaceago.SpaceShooter.STORAGE
 import org.nullpointerid.spaceago.assets.AssetPaths
 import org.nullpointerid.spaceago.assets.RegionNames
-import org.nullpointerid.spaceago.collectables.HealthPack
-import org.nullpointerid.spaceago.collectables.MoneyCrate
-import org.nullpointerid.spaceago.collectables.UltimateWeapon
 import org.nullpointerid.spaceago.config.GameConfig
-import org.nullpointerid.spaceago.entities.*
 import org.nullpointerid.spaceago.utils.*
+import org.nullpointerid.spaceago.utils.gdx.*
 import org.nullpointerid.spaceago.views.upgrade.UpgradeShopScreen
 
-class GameRenderer(assetManager: AssetManager,
-                   controller: GameController) : Disposable {
+class GameRenderer(var controller: GameController) : Disposable {
 
-    companion object {
-        const val BULLET_OFFSET_X = -0.08f
-        const val BULLET_OFFSET_Y = -0.03f
-    }
-
-    private val prefs = Gdx.app.getPreferences("spaceshooter")
-    private val durabilityUpgrade = prefs.getInteger(UpgradeShopScreen.Upgrades.DURABILITY.toString(), 0)
+    private val durabilityUpgrade = STORAGE.getInteger(UpgradeShopScreen.Upgrades.DURABILITY.toString(), 0)
 
     private val camera = OrthographicCamera()
     private val uiCamera = OrthographicCamera()
@@ -40,86 +30,40 @@ class GameRenderer(assetManager: AssetManager,
     private val batch = SpriteBatch()
     private val layout = GlyphLayout()
 
-    private val gameAtlas = assetManager[AssetDescriptors.GAME_PLAY_ATLAS]
-    private val background = gameAtlas[RegionNames.GAMEPLAY_BACKGROUND]
-    private val playerTexture = gameAtlas[RegionNames.PLAYER]
-    private val simpleEnemyTexture = gameAtlas[RegionNames.SIMPLE_ENEMY]?.apply { flip(true, true) }
-    private val bulletTexture = gameAtlas[RegionNames.BULLET]
-    private val explosions = controller.explosions
-    private val civilianShipToRight = gameAtlas[RegionNames.CIVILIAN_SHIP_RIGHT]
-    private val civilianShipToLeft = gameAtlas[RegionNames.CIVILIAN_SHIP_LEFT]
-    private val healthPack = gameAtlas[RegionNames.HEALTH_PACK]
-    private val bulletCrate = gameAtlas[RegionNames.AMMO_CRATE]
-    private val treasureChest = gameAtlas[RegionNames.TREASURE_CHEST]
-    private val laserBeamTexture = gameAtlas[RegionNames.LASER_BEAM]
+    private val background = GAME_ATLAS[RegionNames.GAMEPLAY_BACKGROUND]
     private val font = BitmapFont(AssetPaths.SCORE_FONT.toInternalFile())
     private val gameFont = BitmapFont(Gdx.files.internal("fonts/gameFont.fnt"))
 
-    private val player = controller.player
-    private val secondPlayer = controller.secondPlayer
-    private val simpleEnemies = controller.simpleEnemies
-    private val bullets = controller.bullets
-    private val civilianShips = controller.civilianShips
-    private val collectibles = controller.collectibles
-    private val laserBeam = controller.laserBeam
 
 
     fun render(delta: Float) {
         clearScreen()
 
-        renderGameplay(delta)
+        renderGameplay()
         renderUi()
 
-        if (GameConfig.DEBUG_MODE) {
-            viewport.drawGrid(renderer)
-            renderDebug()
-        }
+        if (GameConfig.DEBUG_MODE) renderDebug()
+
     }
 
     private fun renderDebug() {
         viewport.apply()
+        viewport.drawGrid(renderer)
         renderer.projectionMatrix = camera.combined
 
         val oldColor = renderer.color.cpy()
 
         renderer.use {
-            // Draw player hitboxes
-            renderer.color = Color.GREEN
-
-            // player one hitboxes
-            player.bounds.forEach {
-                renderer.rectangle(it)
-            }
-
-            //player AI hitboxes
-            secondPlayer.bounds.forEach {
-                renderer.rectangle(it)
-            }
-
             // Draw simpleEnemy hitboxes
-            simpleEnemies.forEach {
-                renderer.rectangle(it.bounds[0])
-            }
+            controller.world.entities.forEach {
+                renderer.color = Color.ROYAL
+                renderer.polygon(it.coreBound.transformedVertices)
+                renderer.color = Color.GREEN
 
-            // Draw civilian ship hitboxes
-            civilianShips.forEach {
-                it.bounds.forEach { bound ->
-                    renderer.rectangle(bound)
+                it.innerBounds.forEach { bound ->
+                    renderer.polygon(bound.transformedVertices)
                 }
             }
-
-            // Draw bullet hitboxes
-            bullets.forEach {
-                renderer.rectangle(it.bounds[0])
-            }
-
-            // Draw collectibles hitboxes
-            collectibles.forEach {
-                renderer.rectangle(it.bounds[0])
-            }
-
-            // Draw Laser Beam hitboxes.
-            renderer.rectangle(laserBeam.bounds[0])
         }
         renderer.color = oldColor
     }
@@ -130,86 +74,36 @@ class GameRenderer(assetManager: AssetManager,
 
         batch.use {
             // Draw score text
-            layout.setText(font, player.score.toString())
+            layout.setText(font, controller.localPlayer.score.toString())
             font.draw(batch, layout, GameConfig.HUD_WIDTH / 2f - layout.width, GameConfig.HUD_HEIGHT - layout.height)
 
             // Draw Ultimate weapon text
-            layout.setText(gameFont, "Ultimate weapon: ${player.ultimateWeapon}")
+            layout.setText(gameFont, "Ultimate weapon: ${controller.localPlayer.ultimateWeapon}")
             gameFont.draw(batch, layout, 15f, 55f)
         }
     }
 
-    private fun renderGameplay(delta: Float) {
+    private fun renderGameplay() {
         viewport.apply()
         batch.projectionMatrix = camera.combined
-        val oldColor = renderer.color.cpy()
-
         batch.use {
-            // Draw background texture
             batch.draw(background, 0f, 0f, GameConfig.WORLD_WIDTH, GameConfig.WORLD_HEIGHT)
-
-            // Player one texture
-            batch.color = Color.GREEN
-            batch.draw(playerTexture, player.x, player.y, Player.TEXTURE_WIDTH, Player.TEXTURE_HEIGHT)
-
-            // Player AI texture
-            batch.color = Color.RED
-            batch.draw(playerTexture, secondPlayer.x, secondPlayer.y, Player.TEXTURE_WIDTH, Player.TEXTURE_HEIGHT)
-            batch.color = oldColor
-
-            // Draw simpleEnemy texture
-            simpleEnemies.forEach {
-                batch.draw(simpleEnemyTexture, it.x, it.y, SimpleEnemy.TEXTURE_WIDTH, SimpleEnemy.TEXTURE_HEIGHT)
-            }
-
-            // Draw collectibles
-            collectibles.forEach {
-                when (it) {
-                    is MoneyCrate -> batch.draw(treasureChest, it.x, it.y, MoneyCrate.TEXTURE_WIDTH, MoneyCrate.TEXTURE_HEIGHT)
-                    is HealthPack -> batch.draw(healthPack, it.x, it.y, HealthPack.TEXTURE_WIDTH, HealthPack.TEXTURE_HEIGHT)
-                    is UltimateWeapon -> batch.draw(bulletCrate, it.x, it.y, UltimateWeapon.TEXTURE_WIDTH, UltimateWeapon.TEXTURE_HEIGHT)
-                }
-            }
-
-            // Draw civilian ship texture.
-            civilianShips.forEach {
-                if (it.toLeft) {
-                    batch.draw(civilianShipToLeft, it.x, it.y, CivilianShip.TEXTURE_WIDTH, CivilianShip.TEXTURE_HEIGH)
-                } else {
-                    batch.draw(civilianShipToRight, it.x, it.y, CivilianShip.TEXTURE_WIDTH, CivilianShip.TEXTURE_HEIGH)
-                }
-            }
-
-            // Draw bullet texture
-            bullets.forEach {
-                batch.draw(bulletTexture, it.x + BULLET_OFFSET_X, it.y + BULLET_OFFSET_Y, Bullet.TEXTURE_WIDTH, Bullet.TEXTURE_HEIGHT)
-            }
-
-            // Draw explosion texture
-            explosions.forEach {
-                it.stateTime += delta
-                batch.draw(it.animation.getKeyFrame(it.stateTime), it.x, it.y, Explosion.TEXTURE_WIDTH, Explosion.TEXTURE_HEIGHT)
-                if (it.animation.isAnimationFinished(it.stateTime)) explosions.removeValue(it, true)
-            }
-
-            // Draw laser beam texture
-            if (laserBeam.used) {
-                batch.draw(laserBeamTexture, player.bounds[0].x - player.bounds[0].width / 2f + 0.01f,
-                        player.bounds[0].y + player.bounds[0].height + 0.05f,
-                        LaserBeam.TEXTURE_WIDTH, LaserBeam.TEXTURE_HEIGHT)
+            controller.world.entities.forEach {
+                batch.draw(it)
             }
         }
 
+        val oldColor = renderer.color.cpy()
         // Draw player healthpoints
         renderer.projectionMatrix = camera.combined
         renderer.begin(ShapeRenderer.ShapeType.Filled)
         when {
-            player.lives < GameConfig.LIVES_START * 0.25f -> renderer.color = Color.RED
-            player.lives < GameConfig.LIVES_START * 0.5f -> renderer.color = Color.ORANGE
-            player.lives < GameConfig.LIVES_START * 0.75f -> renderer.color = Color.YELLOW
+            controller.localPlayer.lives < GameConfig.LIVES_START * 0.25f -> renderer.color = Color.RED
+            controller.localPlayer.lives < GameConfig.LIVES_START * 0.5f -> renderer.color = Color.ORANGE
+            controller.localPlayer.lives < GameConfig.LIVES_START * 0.75f -> renderer.color = Color.YELLOW
             else -> renderer.color = Color.GREEN
         }
-        renderer.rect(0f, 0f, GameConfig.WORLD_WIDTH * (player.lives / (GameConfig.LIVES_START + durabilityUpgrade.toFloat() * 0.1f)), 0.2f)
+        renderer.rect(0f, 0f, GameConfig.WORLD_WIDTH * (controller.localPlayer.lives / (GameConfig.LIVES_START + durabilityUpgrade.toFloat() * 0.1f)), 0.2f)
         renderer.color = oldColor
         renderer.end()
     }

@@ -13,6 +13,9 @@ import org.nullpointerid.spaceago.assets.AssetPaths
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.utils.*
+import org.nullpointerid.spaceago.utils.gdx.clearScreen
+import org.nullpointerid.spaceago.utils.gdx.get
+import org.nullpointerid.spaceago.utils.gdx.toInternalFile
 import org.nullpointerid.spaceago.views.menu.MenuScreen
 
 class LoadingScreen(private val game: SpaceShooter) : ScreenAdapter() {
@@ -52,7 +55,9 @@ class LoadingScreen(private val game: SpaceShooter) : ScreenAdapter() {
             addRegions(TextureAtlas(AssetPaths.CRISPY_UI_ATLAS))
             load(AssetPaths.CRISPY_UI_JSON.toInternalFile())
         }
-        game.background = assetManager[AssetDescriptors.MAIN_MENU_ATLAS][RegionNames.MENU_BACKGROUND]!!
+        game.BACKGROUND = assetManager[AssetDescriptors.MAIN_MENU_ATLAS][RegionNames.MENU_BACKGROUND]!!
+        game.GAME_ATLAS = SpaceShooter.assetManager[AssetDescriptors.GAME_PLAY_ATLAS]
+        Audio
     }
 
     override fun render(delta: Float) {
@@ -67,7 +72,7 @@ class LoadingScreen(private val game: SpaceShooter) : ScreenAdapter() {
         draw()
         renderer.end()
 
-        if (changeScreen) game.screen = MenuScreen(game) // change screen when done.
+        if (changeScreen) game.screen = MenuScreen() // change screen when done.
     }
 
     override fun resize(width: Int, height: Int) {

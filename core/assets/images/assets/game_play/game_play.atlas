@@ -4,53 +4,95 @@ size: 2048,2048
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-bullet
+gameplay_background
   rotate: false
-  xy: 2, 2
-  size: 16, 16
-  orig: 16, 16
+  xy: 0, 0
+  size: 1000, 800
+  orig: 1000, 800
   offset: 0, 0
   index: -1
-bullet_crate
+corona_extra
   rotate: false
-  xy: 1306, 725
-  size: 319, 319
-  orig: 319, 319
-  offset: 0, 0
-  index: -1
-civilian_ship_left
-  rotate: false
-  xy: 504, 271
-  size: 626, 171
-  orig: 626, 171
+  xy: 1024, 0
+  size: 136, 512
+  orig: 136, 512
   offset: 0, 0
   index: -1
 civilian_ship_right
   rotate: false
-  xy: 504, 98
-  size: 626, 171
-  orig: 626, 171
+  xy: 1280, 0
+  size: 512, 123
+  orig: 512, 123
   offset: 0, 0
   index: -1
-explosion
+civilian_ship_left
   rotate: false
-  xy: 1781, 1213
-  size: 96, 32
-  orig: 96, 32
+  xy: 1280, 128
+  size: 512, 123
+  orig: 512, 123
   offset: 0, 0
   index: -1
-gameplay_background
+healthpack
   rotate: false
-  xy: 2, 1046
-  size: 1777, 1000
-  orig: 1777, 1000
+  xy: 1024, 512
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: -1
-heathpack
+bullet_crate
   rotate: false
-  xy: 1306, 440
-  size: 284, 283
-  orig: 284, 283
+  xy: 1152, 512
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+treasure_chest
+  rotate: false
+  xy: 1024, 640
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+player
+  rotate: false
+  xy: 1280, 256
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+player2
+  rotate: false
+  xy: 1344, 256
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+plasma_red
+  rotate: false
+  xy: 1536, 256
+  size: 8, 23
+  orig: 8, 23
+  offset: 0, 0
+  index: -1
+plasma_blue
+  rotate: false
+  xy: 1568, 256
+  size: 8, 23
+  orig: 8, 23
+  offset: 0, 0
+  index: -1
+plasma_green
+  rotate: false
+  xy: 1600, 256
+  size: 8, 23
+  orig: 8, 23
+  offset: 0, 0
+  index: -1
+bullet
+  rotate: false
+  xy: 1632, 256
+  size: 6, 16
+  orig: 6, 16
   offset: 0, 0
   index: -1
 laser_beam
@@ -58,33 +100,5 @@ laser_beam
   xy: 1781, 1247
   size: 98, 799
   orig: 98, 799
-  offset: 0, 0
-  index: -1
-moving_background
-  rotate: false
-  xy: 504, 444
-  size: 800, 600
-  orig: 800, 600
-  offset: 0, 0
-  index: -1
-player
-  rotate: false
-  xy: 1627, 916
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: -1
-simple_enemy
-  rotate: false
-  xy: 2, 20
-  size: 500, 1024
-  orig: 500, 1024
-  offset: 0, 0
-  index: -1
-treasure_chest
-  rotate: false
-  xy: 1881, 1877
-  size: 162, 169
-  orig: 162, 169
   offset: 0, 0
   index: -1

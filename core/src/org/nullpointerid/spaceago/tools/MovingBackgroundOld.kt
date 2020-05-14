@@ -3,7 +3,7 @@ package org.nullpointerid.spaceago.tools
 //import com.badlogic.gdx.graphics.Texture
 //import com.badlogic.gdx.graphics.g2d.SpriteBatch
 //import org.nullpointerid.spaceago.SpaceShooterOld
-//import org.nullpointerid.spaceago.utils.toInternalFile
+//import org.nullpointerid.spaceago.utils.gdx.toInternalFile
 //
 class MovingBackgroundOld {}
 //

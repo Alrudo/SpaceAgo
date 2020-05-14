@@ -1,4 +1,4 @@
-package org.nullpointerid.spaceago.utils
+package org.nullpointerid.spaceago.utils.gdx
 
 typealias GdxArray<T> = com.badlogic.gdx.utils.Array<T>
 

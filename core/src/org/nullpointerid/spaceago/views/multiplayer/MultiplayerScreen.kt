@@ -15,15 +15,17 @@ import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.SpaceShooter.COMMON_SKIN
 import org.nullpointerid.spaceago.config.GameConfig
 import org.nullpointerid.spaceago.utils.*
+import org.nullpointerid.spaceago.utils.gdx.*
+import org.nullpointerid.spaceago.views.game.GameScreen
 import org.nullpointerid.spaceago.views.menu.MenuScreen
 
 class MultiplayerScreen : Screen {
 
-    private val CNTLR = MultiplayerController
-    private val batch = SpriteBatch()
-    private val renderer = ShapeRenderer()
-    private val camera = OrthographicCamera()
-    private val viewport = FitViewport(GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT, camera)
+    private val mpController = MultiplayerController
+    private lateinit var batch: SpriteBatch
+    private lateinit var renderer: ShapeRenderer
+    private lateinit var camera: OrthographicCamera
+    private lateinit var viewport: FitViewport
 
     private val menuStage: Stage = Stage()
 
@@ -32,15 +34,23 @@ class MultiplayerScreen : Screen {
     val clientDiv: Table
     val waitingDiv: Table
     val connectingDiv: Table
+    val connectedDiv: Table
 
     private val portInput: TextField
     private val portClientInput: TextField
     private val openSocketBtn: TextButton
+    val startGame: TextButton
     private val exitBtn: TextButton
 
-    init {
-        Gdx.input.inputProcessor = menuStage
+    override fun show() {
+        Gdx.input.inputProcessor = this.menuStage
+        batch = SpriteBatch()
+        renderer = ShapeRenderer()
+        camera = OrthographicCamera()
+        viewport = FitViewport(GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT, camera)
+    }
 
+    init {
         spaceAgo = Label("SpaceAgo", COMMON_SKIN, "game-title").apply {
             setPosition(20f, menuStage.height - height - 27f)
         }.bind(menuStage)
@@ -49,6 +59,7 @@ class MultiplayerScreen : Screen {
         clientDiv = Table().apply { defaults().left().pad(5f, 0f, 5f, 0f); setBounds(600f, 330f, 300f, 270f) }.bind(menuStage)
         waitingDiv = Table().apply { defaults().left().pad(5f, 0f, 5f, 0f); setBounds(300f, 330f, 400f, 270f); isVisible = false }.bind(menuStage)
         connectingDiv = Table().apply { defaults().left().pad(5f, 0f, 5f, 0f); setBounds(300f, 330f, 400f, 270f); isVisible = false }.bind(menuStage)
+        connectedDiv = Table().apply { defaults().left().pad(5f, 0f, 5f, 0f); setBounds(300f, 330f, 400f, 270f); isVisible = false }.bind(menuStage)
 
         // ### START HOST SECTION ###
         Label("Become game host:", COMMON_SKIN).apply { serverDiv.add(this).colspan(2).row() }
@@ -69,7 +80,7 @@ class MultiplayerScreen : Screen {
         openSocketBtn = TextButton("Host game", COMMON_SKIN, "fancy-hover-h3").extend(20f).apply {
             serverDiv.add(this).colspan(2)
         }.onClick {
-            MultiplayerController.startServer(portInput.text.toInt()-1, portInput.text.toInt())
+            MultiplayerController.startServer(portInput.text.toInt() - 1, portInput.text.toInt())
         }
         // ### END HOST SECTION ###
 
@@ -99,31 +110,50 @@ class MultiplayerScreen : Screen {
         }
         // ### END CLIENT SECTION ###
 
-        // ### START HOST SECTION ###
+        // ### START WAITING CLIENT SECTION ###
         Label("Waiting for client", COMMON_SKIN).apply {
             waitingDiv.add(this).colspan(2).row()
         }
+        // ### END WAITING CLIENT SECTION ###
 
-        Label("Port: ", COMMON_SKIN).apply { waitingDiv.add(this) }
-        // ### END CLIENT SECTION ###
+        // ### START WAITING SERVER SECTION ###
+        Label("Connecting to server", COMMON_SKIN).apply {
+            connectingDiv.add(this).colspan(2).row()
+        }
+        // ### END WAITING SERVER SECTION ###
+
+
+        // ### START WAITING SERVER SECTION ###
+        Label("Connected", COMMON_SKIN).apply {
+            connectedDiv.add(this).colspan(2).center().row()
+        }
+
+        startGame = TextButton("Start game", COMMON_SKIN, "fancy-h3").apply {
+            connectedDiv.add(this).colspan(2).center().row()
+        }.onClick {
+            mpController.serverConnection!!.sendTCP("Start Game")
+            SpaceShooter.screen = GameScreen(mpController)
+        }
+        // ### END WAITING CLIENT SECTION ###
 
 
         exitBtn = TextButton("Menu", COMMON_SKIN, "fancy-hover-h1").apply {
             setPosition(menuStage.width / 2 - width / 2, 100f)
         }.bind(menuStage).onClick {
-            MultiplayerController.closeServer()
-            SpaceShooter.screen = MenuScreen(SpaceShooter)
+            MultiplayerController.closeSocket()
+            SpaceShooter.screen = MenuScreen()
         }
 
         MultiplayerController.screen = this
     }
 
+
     override fun render(delta: Float) {
         clearScreen()
 
         batch.use {
-            batch.draw(SpaceShooter.background, 0f, 0f)
-            SpaceShooter.movingBackground.updateRender(delta, batch)
+            batch.draw(SpaceShooter.BACKGROUND, 0f, 0f)
+            SpaceShooter.MBACKGROUND.updateRender(delta, batch)
         }
 
         if (GameConfig.DEBUG_MODE) {
@@ -152,7 +182,6 @@ class MultiplayerScreen : Screen {
         dispose()
     }
 
-    override fun show() {}
     override fun pause() {}
     override fun resume() {}
 }

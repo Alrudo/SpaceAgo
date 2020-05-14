@@ -1,40 +1,64 @@
 package org.nullpointerid.spaceago.entities
 
-import com.badlogic.gdx.math.Rectangle
-import org.nullpointerid.spaceago.collectables.Collectible
+import com.badlogic.gdx.graphics.g2d.TextureRegion
+import org.nullpointerid.spaceago.SpaceShooter.GAME_ATLAS
+import org.nullpointerid.spaceago.World
+import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
-import org.nullpointerid.spaceago.utils.GdxArray
+import org.nullpointerid.spaceago.entities.collectables.HealthPack
+import org.nullpointerid.spaceago.utils.gdx.get
+import kotlin.random.Random
 
-class SimpleEnemy : EntityBase() {
+class SimpleEnemy(x: Float, y: Float) : EntityBase(x, y, WIDTH, HEIGHT), Destroyable {
+    constructor() : this(0f, 0f) {
+
+    }
 
     companion object {
-        const val TEXTURE_WIDTH = 0.55f
-        const val TEXTURE_HEIGHT = 1f
+        val TEXTURE = GAME_ATLAS[RegionNames.SIMPLE_ENEMY]!!
+        const val WIDTH = 0.255f
+        const val HEIGHT = 0.96f
 
-        const val BOUNDS_X_OFFSET = 0.13f
-        const val BOUNDS_Y_OFFSET = 0.03f
+        const val MIN_X = 0.12f
+        const val MAX_X = GameConfig.WORLD_WIDTH - 0.12f
 
-        const val BOUNDS_WIDTH = 0.27f
-        const val BOUNDS_HEIGHT = 0.93f
-
-        const val MIN_X = -0.12f
-        const val MAX_X = GameConfig.WORLD_WIDTH - 0.42f
-
-        const val MAX_SPEED = 0.07f
+        const val MAX_SPEED = 2f
 
         const val SCORE_VALUE = 100
     }
 
-    private val bound = Rectangle(0f, 0f, BOUNDS_WIDTH, BOUNDS_HEIGHT)
-    val containsDropable = Collectible.collectibleChance()
+    private var health: Float = getMaxHealth()
+    var rotationSpeed = Random.nextDouble(13.0, 39.0).toFloat() * Random.nextDouble(-1.0, 1.0).toFloat()
+    var xSpeed = (Random.nextFloat() - 0.5f) * 2
 
-    override val bounds = GdxArray<Rectangle>().apply { add(bound) }
-
-    fun update() {
-        y -= MAX_SPEED
+    override fun update(delta: Float, world: World) {
+        y -= MAX_SPEED * delta
+        x -= xSpeed * delta
+        coreBound.rotation += rotationSpeed * delta
     }
 
-    override fun updateBounds() {
-        bound.setPosition(x + BOUNDS_X_OFFSET, y + BOUNDS_Y_OFFSET)
+    override fun texture(): TextureRegion {
+        return TEXTURE
+    }
+
+    override fun onDestroy(world: World) {
+        world.entities.add(HealthPack(x, y))
+    }
+
+    override fun getScore(): Int {
+        return 35
+    }
+
+    override fun getMaxHealth(): Float {
+        return 0.1f
+    }
+
+    override fun getHealth(): Float {
+        return health
+    }
+
+    override fun setHealth(amount: Float) {
+        health = amount
     }
 }
+

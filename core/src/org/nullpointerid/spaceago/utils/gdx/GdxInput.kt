@@ -1,4 +1,4 @@
-package org.nullpointerid.spaceago.utils
+package org.nullpointerid.spaceago.utils.gdx
 
 import com.badlogic.gdx.Gdx
 
