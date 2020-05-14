@@ -14,6 +14,7 @@ import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.SpaceShooter.COMMON_SKIN
 import org.nullpointerid.spaceago.SpaceShooter.MBACKGROUND
 import org.nullpointerid.spaceago.SpaceShooter.STORAGE
+import org.nullpointerid.spaceago.SpaceShooter.assetManager
 import org.nullpointerid.spaceago.assets.AssetDescriptors
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
@@ -22,8 +23,7 @@ import org.nullpointerid.spaceago.utils.gdx.*
 import org.nullpointerid.spaceago.views.game.GameScreen
 import org.nullpointerid.spaceago.views.menu.MenuScreen
 
-class GameOverScreen(assetManager: AssetManager,
-                     private val score: Int) : Screen {
+class GameOverScreen(private val score: Int) : Screen {
 
     companion object {
         @JvmStatic

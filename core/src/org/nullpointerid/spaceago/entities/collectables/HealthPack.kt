@@ -10,6 +10,7 @@ import org.nullpointerid.spaceago.entities.Player
 import org.nullpointerid.spaceago.utils.gdx.get
 
 class HealthPack(x: Float, y: Float) : EntityBase(x, y, TEXTURE_WIDTH, TEXTURE_HEIGHT), Collectible {
+    constructor() : this(0f, 0f)
 
     companion object {
         val TEXTURE = GAME_ATLAS[RegionNames.HEALTH_PACK]!!
@@ -38,8 +39,8 @@ class HealthPack(x: Float, y: Float) : EntityBase(x, y, TEXTURE_WIDTH, TEXTURE_H
     }
 
     override fun action(player: Player): Boolean {
-        if (player.lives < GameConfig.LIVES_START) {
-            player.lives = (player.lives + healAmount).coerceAtMost(GameConfig.LIVES_START)  // TODO: Doesn't take upgrades into account.
+        if (player.lives < player.maxHealth()) {
+            player.lives = (player.lives + healAmount).coerceAtMost(player.maxHealth())
             toRemove = true
             return true
         }

@@ -3,6 +3,7 @@ package org.nullpointerid.spaceago.entities
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
+import com.sun.org.apache.xpath.internal.operations.Bool
 import org.nullpointerid.spaceago.SpaceShooter.GAME_ATLAS
 import org.nullpointerid.spaceago.World
 import org.nullpointerid.spaceago.assets.RegionNames
@@ -43,7 +44,7 @@ class Player(x: Float, y: Float, var name: String = "player1") : EntityBase(x, y
         const val MAX_X = GameConfig.WORLD_WIDTH - 0.3f
 
         const val MIN_Y = 0.3f
-        const val MAX_Y = GameConfig.WORLD_WIDTH - 2.9f
+        const val MAX_Y = GameConfig.WORLD_WIDTH - 2.3f
 
         const val MAX_SPEED = 5f
         const val SHOOT_TIMER = 0.2f
@@ -58,11 +59,13 @@ class Player(x: Float, y: Float, var name: String = "player1") : EntityBase(x, y
     @Transient var upgradeState: UpgradeState = UpgradeState()
     set(value) {
         field = value
-        lives = GameConfig.LIVES_START + 0.2f * upgradeState.getLevel(UpgradeShopScreen.Upgrades.DURABILITY)
+        lives = maxHealth()
     }
     var lives = GameConfig.LIVES_START + 0.2f * upgradeState.getLevel(UpgradeShopScreen.Upgrades.DURABILITY)
     var score = 0
     var ultimateWeapon = 2
+    @Transient
+    var laserBeam: LaserBeam? = null
 
     override val innerBounds = mutableListOf(
             XRectangle(0f, 0f, BOUNDS_1_WIDTH, BOUNDS_1_HEIGHT).bindToRect(coreBound, BOUNDS_1_X_OFFSET, BOUNDS_1_Y_OFFSET),
@@ -72,6 +75,11 @@ class Player(x: Float, y: Float, var name: String = "player1") : EntityBase(x, y
 
     override fun update(delta: Float, world: World) {
         playerShootTimer += delta
+        if(isDead()){
+            x = -1f
+            y = -1f
+            return
+        }
         
         var xSpeed = 0f
         var ySpeed = 0f
@@ -82,15 +90,14 @@ class Player(x: Float, y: Float, var name: String = "player1") : EntityBase(x, y
         if (keyboardState.isPressed("moveUp")) ySpeed = (MAX_SPEED  + speedBonus)* delta
         if (keyboardState.isPressed("moveDown")) ySpeed = (-MAX_SPEED  - speedBonus)* delta
         if (keyboardState.isPressed("shoot") &&
-                playerShootTimer > (SHOOT_TIMER - upgradeState.getLevel(UpgradeShopScreen.Upgrades.ATTACK_SPEED) * 0.02f))
+                playerShootTimer > (SHOOT_TIMER * Math.pow(0.8, upgradeState.getLevel(UpgradeShopScreen.Upgrades.ATTACK_SPEED).toDouble()).toFloat()))
         {
             shoot(delta, world)
         }
-//        if (keyboardState.isPressed("ultimate") && ultimateWeapon > 0 && !laserBeam.using) {
-//            ultimateWeapon--
-//            laserBeam.lived = 0f
-//            laserBeam.using = true
-//        }
+        if (keyboardState.isPressed("ultimate") && ultimateWeapon > 0 && (laserBeam == null || laserBeam!!.toRemove)) {
+            ultimateWeapon--
+            laserBeam = LaserBeam(-0.5f, 0f, this).also { world.entities.add(it) }
+        }
 
         x = MathUtils.clamp(x + xSpeed, MIN_X, MAX_X)
         y = MathUtils.clamp(y + ySpeed, MIN_Y, MAX_Y)
@@ -112,20 +119,26 @@ class Player(x: Float, y: Float, var name: String = "player1") : EntityBase(x, y
                 world.entities.add(Bullet(x + 0.07f, y + BOUNDS_1_HEIGHT, this).also { it.vector = Vector2(0f, 1f).rotate(-2f).nor() })
             }
             3 -> {
-                world.entities.add(Bullet(x - 0.17f, y - 0.07f, this).also { it.vector = Vector2(0f, 1f).rotate(4f).nor() })
-                world.entities.add(Bullet(x - 0.07f, y + BOUNDS_1_HEIGHT, this).also { it.vector = Vector2(0f, 1f).rotate(2f).nor() })
-                world.entities.add(Bullet(x, y + BOUNDS_1_HEIGHT + 0.15f, this))
-                world.entities.add(Bullet(x + 0.07f, y + BOUNDS_1_HEIGHT, this).also { it.vector = Vector2(0f, 1f).rotate(-2f).nor() })
-                world.entities.add(Bullet(x + 0.17f, y - 0.07f, this).also { it.vector = Vector2(0f, 1f).rotate(-4f).nor() })
+                world.entities.add(Bullet(x - 0.17f, y - 0.07f, this).also { it.vector = Vector2(0f, 1f).rotate(8f).nor() })
+                world.entities.add(Bullet(x - 0.05f, y + BOUNDS_1_HEIGHT, this).also { it.vector = Vector2(0f, 1f).rotate(1f).nor() })
+                world.entities.add(Bullet(x + 0.05f, y + BOUNDS_1_HEIGHT, this).also { it.vector = Vector2(0f, 1f).rotate(-1f).nor() })
+                world.entities.add(Bullet(x + 0.17f, y - 0.07f, this).also { it.vector = Vector2(0f, 1f).rotate(-8f).nor() })
             }
             4 -> {
-                world.entities.add(Bullet(x - 0.21f, y - 0.07f, this).also { it.vector = Vector2(0f, 1f).rotate(9f).nor() })
-                world.entities.add(Bullet(x - 0.17f, y - 0.07f, this).also { it.vector = Vector2(0f, 1f).rotate(4f).nor() })
+                world.entities.add(Bullet(x - 0.17f, y - 0.03f, this).also { it.vector = Vector2(0f, 1f).rotate(8f).nor() })
                 world.entities.add(Bullet(x - 0.07f, y + BOUNDS_1_HEIGHT, this).also { it.vector = Vector2(0f, 1f).rotate(2f).nor() })
                 world.entities.add(Bullet(x, y + BOUNDS_1_HEIGHT + 0.15f, this))
                 world.entities.add(Bullet(x + 0.07f, y + BOUNDS_1_HEIGHT, this).also { it.vector = Vector2(0f, 1f).rotate(-2f).nor() })
-                world.entities.add(Bullet(x + 0.17f, y - 0.07f, this).also { it.vector = Vector2(0f, 1f).rotate(-4f).nor() })
-                world.entities.add(Bullet(x + 0.21f, y - 0.07f, this).also { it.vector = Vector2(0f, 1f).rotate(-9f).nor() })
+                world.entities.add(Bullet(x + 0.17f, y - 0.03f, this).also { it.vector = Vector2(0f, 1f).rotate(-8f).nor() })
+            }
+            5 -> {
+                world.entities.add(Bullet(x - 0.21f, y - 0.17f, this).also { it.vector = Vector2(0f, 1f).rotate(48f).nor() })
+                world.entities.add(Bullet(x - 0.17f, y - 0.03f, this).also { it.vector = Vector2(0f, 1f).rotate(8f).nor() })
+                world.entities.add(Bullet(x - 0.07f, y + BOUNDS_1_HEIGHT, this).also { it.vector = Vector2(0f, 1f).rotate(2f).nor() })
+                world.entities.add(Bullet(x, y + BOUNDS_1_HEIGHT + 0.15f, this))
+                world.entities.add(Bullet(x + 0.07f, y + BOUNDS_1_HEIGHT, this).also { it.vector = Vector2(0f, 1f).rotate(-2f).nor() })
+                world.entities.add(Bullet(x + 0.17f, y - 0.03f, this).also { it.vector = Vector2(0f, 1f).rotate(-8f).nor() })
+                world.entities.add(Bullet(x + 0.21f, y - 0.17f, this).also { it.vector = Vector2(0f, 1f).rotate(-48f).nor() })
             }
         }
         Audio.shotSound.play(Audio.volume * 0.15f)
@@ -149,6 +162,7 @@ class Player(x: Float, y: Float, var name: String = "player1") : EntityBase(x, y
     }
 
     override fun onCollide(entity: EntityBase) {
+        if(isDead()) return
         when (entity) {
             is CivilianShip -> {
                 score += entity.getScore()
@@ -168,10 +182,18 @@ class Player(x: Float, y: Float, var name: String = "player1") : EntityBase(x, y
         }
     }
 
+    fun isDead(): Boolean {
+        return lives <= 0f
+    }
+
     fun damage(amount: Float) {
         lives -= amount
         lives = round(lives * 100) / 100
         GameController.log.debug("PlayerHP: $lives")
+    }
+
+    fun maxHealth(): Float{
+        return GameConfig.LIVES_START + 0.2f * upgradeState.getLevel(UpgradeShopScreen.Upgrades.DURABILITY)
     }
 
     override fun texture(): TextureRegion {

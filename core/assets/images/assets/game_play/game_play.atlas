@@ -60,11 +60,25 @@ player
   orig: 48, 48
   offset: 0, 0
   index: -1
-player2
+shootin_enemy
   rotate: false
   xy: 1344, 256
   size: 48, 48
   orig: 48, 48
+  offset: 0, 0
+  index: -1
+rammin_enemy
+  rotate: false
+  xy: 1280, 320
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+big_enemy
+  rotate: false
+  xy: 1280, 384
+  size: 96, 81
+  orig: 96, 81
   offset: 0, 0
   index: -1
 plasma_red
@@ -97,8 +111,8 @@ bullet
   index: -1
 laser_beam
   rotate: false
-  xy: 1781, 1247
-  size: 98, 799
-  orig: 98, 799
+  xy: 1792, 0
+  size: 87, 799
+  orig: 87, 799
   offset: 0, 0
   index: -1

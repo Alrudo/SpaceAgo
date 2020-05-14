@@ -11,7 +11,9 @@ object RegionNames {
     const val PLASMA_ENEMY = "plasma_red"
     const val PLAYER = "player"
     const val SIMPLE_ENEMY = "corona_extra"
-    const val SHOOTING_ENEMY = "player2"
+    const val SHOOTING_ENEMY = "shootin_enemy"
+    const val RAMMING_ENEMY = "rammin_enemy"
+    const val BIG_ENEMY = "big_enemy"
 
     const val CIVILIAN_SHIP_RIGHT = "civilian_ship_right"
     const val CIVILIAN_SHIP_LEFT = "civilian_ship_left"

@@ -5,9 +5,11 @@ import org.nullpointerid.spaceago.SpaceShooter.GAME_ATLAS
 import org.nullpointerid.spaceago.World
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
+import org.nullpointerid.spaceago.entities.projectile.Bullet
 import org.nullpointerid.spaceago.utils.gdx.get
 
-class LaserBeam(x: Float, y: Float, val owner: Player) : EntityBase(x, y) {
+class LaserBeam(x: Float, y: Float, val owner: Player? = null) : EntityBase(x, y, TEXTURE_WIDTH, TEXTURE_HEIGHT) {
+    constructor() : this(0f, 0f)
 
     companion object {
 
@@ -15,24 +17,32 @@ class LaserBeam(x: Float, y: Float, val owner: Player) : EntityBase(x, y) {
         const val TEXTURE_WIDTH = 0.25f
         const val TEXTURE_HEIGHT = GameConfig.WORLD_HEIGHT
 
-        const val LIVE_TIME = 3f
+        const val LIVE_TIME = 4f
     }
 
-    var lived = 0f
-    var using = false
+    var lived = LIVE_TIME
 
     override fun onCollide(entity: EntityBase) {
-        entity.toRemove = true
         when (entity) {
-            is CivilianShip -> owner.score += entity.getScore()
-            is SimpleEnemy -> owner.score += entity.getScore()
-            is ShootingEnemy -> owner.score += entity.getScore()
+            is Destroyable -> {
+                entity.damage(999f)
+                if(entity.isDead()){
+                    owner!!.score += entity.getScore()
+                    entity.toRemove = true
+                }
+            }
         }
     }
 
+
+
     override fun update(delta: Float, world: World) {
-        lived += delta
-        if (lived >= LIVE_TIME) toRemove = true
+        lived -= delta
+        if(owner != null){
+            x = owner.x
+            y = owner.y + height/2 + owner.height/2
+        }
+        if (lived <= 0) toRemove = true
     }
 
     override fun texture(): TextureRegion {

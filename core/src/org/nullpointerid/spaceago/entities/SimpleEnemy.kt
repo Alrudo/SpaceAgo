@@ -42,10 +42,10 @@ class SimpleEnemy(x: Float, y: Float) : EntityBase(x, y, WIDTH, HEIGHT), Destroy
     }
 
     override fun onDestroy(world: World) {
-        when (Random.nextInt(3)) {
+        when (Random.nextInt(40)) {
             1 -> world.entities.add(HealthPack(x, y))
             2 -> world.entities.add(MoneyCrate(x, y))
-            else -> world.entities.add(UltimateWeapon(x, y))
+            3 -> world.entities.add(UltimateWeapon(x, y))
         }
     }
 

@@ -13,12 +13,12 @@ import org.nullpointerid.spaceago.utils.XRectangle
 import org.nullpointerid.spaceago.utils.gdx.get
 import kotlin.random.Random
 
-class ShootingEnemy(x: Float, y: Float, @Transient var buff: Float = 1f) : EntityBase(x, y, WIDTH, HEIGHT), Destroyable {
+class RammingEnemy(x: Float, y: Float, @Transient var buff: Float = 1f) : EntityBase(x, y, WIDTH, HEIGHT), Destroyable {
     constructor() : this(0f, 0f)
 
     companion object {
-        val TEXTURE = GAME_ATLAS[RegionNames.SHOOTING_ENEMY]!!
-        const val WIDTH = 0.8f
+        val TEXTURE = GAME_ATLAS[RegionNames.RAMMING_ENEMY]!!
+        const val WIDTH = 0.6f
         const val HEIGHT = 0.8f
         private const val ration = WIDTH / 48
 
@@ -27,15 +27,10 @@ class ShootingEnemy(x: Float, y: Float, @Transient var buff: Float = 1f) : Entit
         const val BOUNDS_1_WIDTH = 10 * ration
         const val BOUNDS_1_HEIGHT = 21 * ration
 
-        const val BOUNDS_2_X_OFFSET = 6 * ration
+        const val BOUNDS_2_X_OFFSET = 0f
         const val BOUNDS_2_Y_OFFSET = 14 * ration
-        const val BOUNDS_2_WIDTH = 36 * ration
+        const val BOUNDS_2_WIDTH = 48 * ration
         const val BOUNDS_2_HEIGHT = 13 * ration
-
-        const val BOUNDS_3_X_OFFSET = 10 * ration
-        const val BOUNDS_3_Y_OFFSET = 0 * ration
-        const val BOUNDS_3_WIDTH = 28 * ration
-        const val BOUNDS_3_HEIGHT = 14 * ration
 
         const val MAX_SPEED = 2f
         const val SHOOT_TIMER = 0.95f
@@ -43,8 +38,7 @@ class ShootingEnemy(x: Float, y: Float, @Transient var buff: Float = 1f) : Entit
 
     override val innerBounds = mutableListOf(
             XRectangle(0f, 0f, BOUNDS_1_WIDTH, BOUNDS_1_HEIGHT).bindToRect(coreBound, BOUNDS_1_X_OFFSET, BOUNDS_1_Y_OFFSET),
-            XRectangle(0f, 0f, BOUNDS_2_WIDTH, BOUNDS_2_HEIGHT).bindToRect(coreBound, BOUNDS_2_X_OFFSET, BOUNDS_2_Y_OFFSET),
-            XRectangle(0f, 0f, BOUNDS_3_WIDTH, BOUNDS_3_HEIGHT).bindToRect(coreBound, BOUNDS_3_X_OFFSET, BOUNDS_3_Y_OFFSET)
+            XRectangle(0f, 0f, BOUNDS_2_WIDTH, BOUNDS_2_HEIGHT).bindToRect(coreBound, BOUNDS_2_X_OFFSET, BOUNDS_2_Y_OFFSET)
     )
 
     @Transient
@@ -92,7 +86,7 @@ class ShootingEnemy(x: Float, y: Float, @Transient var buff: Float = 1f) : Entit
     }
 
     override fun onDestroy(world: World) {
-        when (Random.nextInt(28)) {
+        when (Random.nextInt(40)) {
             1 -> world.entities.add(HealthPack(x, y))
             2 -> world.entities.add(MoneyCrate(x, y))
             3 -> world.entities.add(UltimateWeapon(x, y))

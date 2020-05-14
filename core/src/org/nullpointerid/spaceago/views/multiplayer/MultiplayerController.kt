@@ -13,13 +13,18 @@ import kotlinx.coroutines.launch
 import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.World
 import org.nullpointerid.spaceago.entities.*
+import org.nullpointerid.spaceago.entities.collectables.HealthPack
+import org.nullpointerid.spaceago.entities.collectables.MoneyCrate
+import org.nullpointerid.spaceago.entities.collectables.UltimateWeapon
 import org.nullpointerid.spaceago.entities.projectile.Bullet
+import org.nullpointerid.spaceago.entities.projectile.EnemyBullet
 import org.nullpointerid.spaceago.utils.gdx.GdxArray
 import org.nullpointerid.spaceago.utils.KeyboardState
 import org.nullpointerid.spaceago.utils.UpgradeState
 import org.nullpointerid.spaceago.utils.XRectangle
 import org.nullpointerid.spaceago.views.game.GameController
 import org.nullpointerid.spaceago.views.game.GameScreen
+import org.nullpointerid.spaceago.views.gameover.GameOverScreen
 import org.nullpointerid.spaceago.views.upgrade.UpgradeShopScreen
 
 
@@ -150,9 +155,16 @@ object MultiplayerController {
 
     fun clientReceived(connection: Connection, data: Any) {
         if (data is String) {
+            println("got: $data")
             if(data == "Start Game"){
                 Gdx.app.postRunnable{
                     SpaceShooter.screen = GameScreen(this)
+                }
+            }
+            if (data.startsWith("GameOver:")){
+                Gdx.app.postRunnable{
+                    closeSocket()
+                    SpaceShooter.screen = GameOverScreen(data.replace("GameOver:", "").toInt())
                 }
             }
         }
@@ -201,8 +213,14 @@ object MultiplayerController {
             register(LinkedHashMap::class.java)
             register(FloatArray::class.java)
             register(Vector2::class.java)
+            register(HealthPack::class.java)
+            register(UltimateWeapon::class.java)
+            register(LaserBeam::class.java)
+            register(MoneyCrate::class.java)
             register(KeyboardState::class.java)
             register(UpgradeState::class.java)
+            register(ShootingEnemy::class.java)
+            register(EnemyBullet::class.java)
             register(UpgradeShopScreen.Upgrades::class.java)
             register(Player::class.java)
             register(Polygon::class.java)

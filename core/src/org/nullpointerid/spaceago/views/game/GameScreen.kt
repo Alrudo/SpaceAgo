@@ -1,7 +1,11 @@
 package org.nullpointerid.spaceago.views.game
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.Screen
+import org.nullpointerid.spaceago.SpaceShooter
 import org.nullpointerid.spaceago.utils.gdx.maintainFPS
+import org.nullpointerid.spaceago.views.menu.MenuScreen
 import org.nullpointerid.spaceago.views.multiplayer.MultiplayerController
 
 class GameScreen(val mpController: MultiplayerController? = null) : Screen {
@@ -15,6 +19,12 @@ class GameScreen(val mpController: MultiplayerController? = null) : Screen {
     }
 
     override fun render(delta: Float) {
+        Gdx.input.inputProcessor = null
+        if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
+            mpController?.closeSocket()
+            SpaceShooter.screen = MenuScreen()
+            return
+        }
         maintainFPS(60)
         if (mpController == null) {
             controller.update(delta)
