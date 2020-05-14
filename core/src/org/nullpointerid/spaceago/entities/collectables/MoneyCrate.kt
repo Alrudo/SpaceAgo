@@ -25,7 +25,7 @@ class MoneyCrate(x: Float, y: Float) : Collectible, EntityBase(x, y, TEXTURE_WID
         if (lived <= 0){
             toRemove= true
         }
-    }
+    }//
 
     override fun canCollideWith(entity: EntityBase): Boolean {
         return entity is Player
