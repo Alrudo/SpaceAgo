@@ -118,7 +118,7 @@ class UpgradeShopScreen() : Screen {
 
     private fun renderDescription(upgrade: Upgrades) {
         var lvl = STORAGE.getInteger(upgrade.toString(), 0)
-        val price = when(lvl) {0 -> 50; 1 -> 100; 2 -> 175; 3 -> 250; 4 -> 500; else -> -1 }
+        val price = when(lvl) {0 -> 50; 1 -> 100; 2 -> 225; 3 -> 400; 4 -> 1000; else -> -1 }
         descriptionTable.apply {
             reset()
             defaults().center().pad(20f)

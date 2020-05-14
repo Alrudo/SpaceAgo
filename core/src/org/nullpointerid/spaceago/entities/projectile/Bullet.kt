@@ -15,14 +15,18 @@ class Bullet(x: Float, y: Float, var owner: Player? = null) : EntityBase(x, y, W
 
     companion object {
         val TEXTURE = SpaceShooter.GAME_ATLAS[RegionNames.PLASMA]!!
-        const val WIDTH = 0.09f
-        const val HEIGHT = 0.24f
+        const val WIDTH = 0.12f
+        const val HEIGHT = 0.32f
 
         const val MAX_SPEED = 7.5f
         const val DAMAGE = 0.1f
     }
 
     var vector: Vector2 = Vector2(0f, 1f)
+    set(value) {
+        field = value
+        coreBound.rotation = vector.angle()-90
+    }
 
     override fun update(delta: Float, world: World) {
         y += vector.y * MAX_SPEED * delta

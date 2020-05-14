@@ -20,7 +20,7 @@ class EnemyBullet(x: Float, y: Float) : EntityBase(x, y, WIDTH, HEIGHT) {
         const val HEIGHT = 0.24f
 
         const val MAX_SPEED = 3.5f
-        const val DAMAGE = 0.1f
+        const val DAMAGE = 0.08f
     }
 
     var vector: Vector2 = Vector2(0f, 1f)

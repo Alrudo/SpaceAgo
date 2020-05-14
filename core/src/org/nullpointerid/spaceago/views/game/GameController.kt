@@ -1,7 +1,5 @@
 package org.nullpointerid.spaceago.views.game
 
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.MathUtils
 import org.nullpointerid.spaceago.SpaceShooter
@@ -12,7 +10,6 @@ import org.nullpointerid.spaceago.utils.Audio
 import org.nullpointerid.spaceago.utils.KeyboardState
 import org.nullpointerid.spaceago.utils.XRectangle
 import org.nullpointerid.spaceago.utils.gdx.logger
-import org.nullpointerid.spaceago.utils.gdx.toInternalFile
 import org.nullpointerid.spaceago.views.gameover.GameOverScreen
 import org.nullpointerid.spaceago.views.menu.MenuScreen
 import org.nullpointerid.spaceago.views.multiplayer.MultiplayerController
@@ -26,6 +23,7 @@ class GameController(var mpController: MultiplayerController?) {
     }
 
 
+    private var sessionLength: Float = 0f
     private var simpleEnemyTimer = 0.1f + Random.nextFloat() * 0.2f
     private var civilianShipTimer = 7f + Random.nextFloat() * 8f
     private var playerShootTimer = 0f
@@ -37,8 +35,6 @@ class GameController(var mpController: MultiplayerController?) {
         }
     var players: List<Player>
     var localPlayer: Player
-    private var shotSound: Sound = Gdx.audio.newSound("audio/shotSound.mp3".toInternalFile())
-    private var explosionSound: Sound = Gdx.audio.newSound("audio/enemyExplosionSound.mp3".toInternalFile())
 
     init {
         if (mpController != null) {
@@ -65,13 +61,16 @@ class GameController(var mpController: MultiplayerController?) {
     }
 
     fun update(delta: Float) {
+        sessionLength += delta
         if (players.all { it.lives <= 0f }) {
-            SpaceShooter.screen = GameOverScreen(SpaceShooter.assetManager, localPlayer.score)
+            mpController?.serverConnection?.sendTCP("GameOver:" + (players.find { it.name == "player2" }?.score ?: 0))
+            SpaceShooter.screen = GameOverScreen(localPlayer.score)
+            mpController?.closeSocket()
             return
         }
         playerShootTimer += delta
 
-        spawnNewSimpleEnemy(delta)
+        spawnNewEnemy(delta)
         spawnNewCivilianShip(delta)
 
         updateEntities(delta)
@@ -105,15 +104,42 @@ class GameController(var mpController: MultiplayerController?) {
         }
     }
 
-    private fun spawnNewSimpleEnemy(delta: Float) {
+    private fun spawnNewEnemy(delta: Float) {
         simpleEnemyTimer -= delta
 
-        if (simpleEnemyTimer <= 0) {
-            simpleEnemyTimer = 0.15f + Random.nextFloat() * (0.50f - 0.15f)
-            val enemyX = MathUtils.random(SimpleEnemy.MIN_X, SimpleEnemy.MAX_X)
-            when (Random.nextInt(5)) {
-                0 -> world.entities.add(ShootingEnemy(enemyX, GameConfig.WORLD_HEIGHT))
-                else -> world.entities.add(SimpleEnemy(enemyX, GameConfig.WORLD_HEIGHT))
+        when{
+            sessionLength<30 -> {
+                if (simpleEnemyTimer <= 0) {
+                    simpleEnemyTimer = 0.25f + Random.nextFloat() * 0.45f
+                    val enemyX = MathUtils.random(SimpleEnemy.MIN_X, SimpleEnemy.MAX_X)
+                    when (Random.nextInt(5)) {
+                        0 -> world.entities.add(ShootingEnemy(enemyX, GameConfig.WORLD_HEIGHT))
+                        else -> world.entities.add(SimpleEnemy(enemyX, GameConfig.WORLD_HEIGHT))
+                    }
+                }
+            }
+            sessionLength<120 -> {
+                if (simpleEnemyTimer <= 0) {
+                    simpleEnemyTimer = 0.20f + Random.nextFloat() * 0.35f
+                    val enemyX = MathUtils.random(SimpleEnemy.MIN_X, SimpleEnemy.MAX_X)
+                    when (Random.nextInt(10)) {
+                        in 0..4 -> world.entities.add(ShootingEnemy(enemyX, GameConfig.WORLD_HEIGHT, 0.8f))
+                        else -> world.entities.add(SimpleEnemy(enemyX, GameConfig.WORLD_HEIGHT))
+                    }
+                }
+            }
+            sessionLength<240 -> {
+                if (simpleEnemyTimer <= 0) {
+                    simpleEnemyTimer = 0.10f + Random.nextFloat() * 0.25f
+                    val enemyX = MathUtils.random(SimpleEnemy.MIN_X, SimpleEnemy.MAX_X)
+                    when (Random.nextInt(10)) {
+                        in 0..7 -> world.entities.add(ShootingEnemy(enemyX, GameConfig.WORLD_HEIGHT, 0.5f))
+                        else -> world.entities.add(SimpleEnemy(enemyX, GameConfig.WORLD_HEIGHT))
+                    }
+                }
+            }
+            else -> {
+
             }
         }
     }
@@ -137,7 +163,7 @@ class GameController(var mpController: MultiplayerController?) {
                 it.onDestroy(world)
                 if (it is Destroyable) {
                     world.entities.add(Explosion(it.x, it.y))
-                    explosionSound.play(Audio.volume * 0.1f)
+                    Audio.explosionSound.play(Audio.volume * 0.1f)
                 }
                 world.entities.remove(it)
             }

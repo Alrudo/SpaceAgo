@@ -9,6 +9,7 @@ import org.nullpointerid.spaceago.entities.Player
 import org.nullpointerid.spaceago.utils.gdx.get
 
 class MoneyCrate(x: Float, y: Float) : Collectible, EntityBase(x, y, TEXTURE_WIDTH, TEXTURE_HEIGHT) {
+    constructor() : this(0f, 0f)
 
     companion object {
         val TEXTURE = SpaceShooter.GAME_ATLAS[RegionNames.TREASURE_CHEST]!!
