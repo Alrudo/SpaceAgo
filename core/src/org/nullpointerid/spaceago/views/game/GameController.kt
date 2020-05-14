@@ -108,12 +108,22 @@ class GameController(var mpController: MultiplayerController?) {
         simpleEnemyTimer -= delta
 
         when{
-            sessionLength<30 -> {
+            sessionLength<20 -> {
                 if (simpleEnemyTimer <= 0) {
                     simpleEnemyTimer = 0.25f + Random.nextFloat() * 0.45f
                     val enemyX = MathUtils.random(SimpleEnemy.MIN_X, SimpleEnemy.MAX_X)
                     when (Random.nextInt(5)) {
                         0 -> world.entities.add(ShootingEnemy(enemyX, GameConfig.WORLD_HEIGHT))
+                        else -> world.entities.add(SimpleEnemy(enemyX, GameConfig.WORLD_HEIGHT))
+                    }
+                }
+            }
+            sessionLength<60 -> {
+                if (simpleEnemyTimer <= 0) {
+                    simpleEnemyTimer = 0.25f + Random.nextFloat() * 0.45f
+                    val enemyX = MathUtils.random(SimpleEnemy.MIN_X, SimpleEnemy.MAX_X)
+                    when (Random.nextInt(8)) {
+                        in 0..3 -> world.entities.add(ShootingEnemy(enemyX, GameConfig.WORLD_HEIGHT))
                         else -> world.entities.add(SimpleEnemy(enemyX, GameConfig.WORLD_HEIGHT))
                     }
                 }
@@ -124,6 +134,7 @@ class GameController(var mpController: MultiplayerController?) {
                     val enemyX = MathUtils.random(SimpleEnemy.MIN_X, SimpleEnemy.MAX_X)
                     when (Random.nextInt(10)) {
                         in 0..4 -> world.entities.add(ShootingEnemy(enemyX, GameConfig.WORLD_HEIGHT, 0.8f))
+                        5 -> world.entities.add(RammingEnemy(enemyX, GameConfig.WORLD_HEIGHT))
                         else -> world.entities.add(SimpleEnemy(enemyX, GameConfig.WORLD_HEIGHT))
                     }
                 }
@@ -132,8 +143,9 @@ class GameController(var mpController: MultiplayerController?) {
                 if (simpleEnemyTimer <= 0) {
                     simpleEnemyTimer = 0.10f + Random.nextFloat() * 0.25f
                     val enemyX = MathUtils.random(SimpleEnemy.MIN_X, SimpleEnemy.MAX_X)
-                    when (Random.nextInt(10)) {
-                        in 0..7 -> world.entities.add(ShootingEnemy(enemyX, GameConfig.WORLD_HEIGHT, 0.5f))
+                    when (Random.nextInt(12)) {
+                        in 0..5 -> world.entities.add(ShootingEnemy(enemyX, GameConfig.WORLD_HEIGHT, 0.5f))
+                        in 5..7 -> world.entities.add(RammingEnemy(enemyX, GameConfig.WORLD_HEIGHT, 0.5f))
                         else -> world.entities.add(SimpleEnemy(enemyX, GameConfig.WORLD_HEIGHT))
                     }
                 }

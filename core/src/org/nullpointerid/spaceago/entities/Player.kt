@@ -150,7 +150,7 @@ class Player(x: Float, y: Float, var name: String = "player1") : EntityBase(x, y
 
     override fun canCollideWith(entity: EntityBase): Boolean {
         return entity.run {
-            this is CivilianShip || this is SimpleEnemy || this is Collectible || this is ShootingEnemy
+            this is Destroyable
         }
     }
 
@@ -162,19 +162,10 @@ class Player(x: Float, y: Float, var name: String = "player1") : EntityBase(x, y
     }
 
     override fun onCollide(entity: EntityBase) {
+        println(entity)
         if(isDead()) return
         when (entity) {
-            is CivilianShip -> {
-                score += entity.getScore()
-                entity.toRemove = true
-                damage(0.2f)
-            }
-            is SimpleEnemy -> {
-                score += entity.getScore()
-                entity.toRemove = true
-                damage(0.2f)
-            }
-            is ShootingEnemy -> {
+            is Destroyable -> {
                 score += entity.getScore()
                 entity.toRemove = true
                 damage(0.2f)

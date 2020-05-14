@@ -18,21 +18,21 @@ class RammingEnemy(x: Float, y: Float, @Transient var buff: Float = 1f) : Entity
 
     companion object {
         val TEXTURE = GAME_ATLAS[RegionNames.RAMMING_ENEMY]!!
-        const val WIDTH = 0.6f
+        const val WIDTH = 0.8f
         const val HEIGHT = 0.8f
         private const val ration = WIDTH / 48
 
-        const val BOUNDS_1_X_OFFSET = 19 * ration
-        const val BOUNDS_1_Y_OFFSET = 27 * ration
-        const val BOUNDS_1_WIDTH = 10 * ration
-        const val BOUNDS_1_HEIGHT = 21 * ration
+        const val BOUNDS_1_X_OFFSET = 16 * ration
+        const val BOUNDS_1_Y_OFFSET = 24 * ration
+        const val BOUNDS_1_WIDTH = 16 * ration
+        const val BOUNDS_1_HEIGHT = 24 * ration
 
         const val BOUNDS_2_X_OFFSET = 0f
-        const val BOUNDS_2_Y_OFFSET = 14 * ration
+        const val BOUNDS_2_Y_OFFSET = 0f
         const val BOUNDS_2_WIDTH = 48 * ration
-        const val BOUNDS_2_HEIGHT = 13 * ration
+        const val BOUNDS_2_HEIGHT = 24 * ration
 
-        const val MAX_SPEED = 2f
+        const val MAX_SPEED = 8f
         const val SHOOT_TIMER = 0.95f
     }
 
@@ -54,35 +54,36 @@ class RammingEnemy(x: Float, y: Float, @Transient var buff: Float = 1f) : Entity
     @Transient
     var target: Player? = null
 
+    var moveVector = Vector2(0f, -1f)
     var checkPoint: Boolean = false
     var checkPoint2: Float = 1f
+    var checkPoint3: Float = 2f
 
     @ExperimentalStdlibApi
     override fun update(delta: Float, world: World) {
         playerShootTimer += delta
 
         if (!checkPoint) {
-            y -= MAX_SPEED * 0.7f / Math.sqrt(buff.toDouble()).toFloat() * delta
+            y -= MAX_SPEED * 0.2f / Math.sqrt(buff.toDouble()).toFloat() * delta
             if (y <= 6.7f) checkPoint = true
             return
         } else if (checkPoint2 > 0f) {
+            if (target == null) {
+                target = world.entities.filter { it is Player && !it.isDead() }.randomOrNull() as Player?
+            }
+
+            if (target != null) {
+                var rot = -(180.0 / Math.PI * Math.atan2((x - target!!.x).toDouble(), (y - target!!.y).toDouble()) - 180f).toFloat()
+                coreBound.rotation = rot
+                moveVector = Vector2(0f, 1f).rotate(rot).nor()
+            }
             checkPoint2 -= delta
             return
+        }else if (checkPoint3 > 0f) {
+            checkPoint3 -= delta
         }
-        y -= MAX_SPEED * delta
-
-        if (target == null) {
-            target = world.entities.filter { it is Player }.randomOrNull() as Player?
-        }
-
-        if (target != null && playerShootTimer > (SHOOT_TIMER * buff) && y > 2f) {
-            var rot = -(180.0 / Math.PI * Math.atan2((x - target!!.x).toDouble(), (y - target!!.y).toDouble()) - 180f).toFloat()
-            playerShootTimer = 0f
-            world.entities.add(EnemyBullet(x, y).also {
-                it.coreBound.rotation = rot
-                it.vector = Vector2(0f, 1f).rotate(rot).nor()
-            })
-        }
+        x += moveVector.x *MAX_SPEED * delta
+        y += moveVector.y *MAX_SPEED * delta
     }
 
     override fun onDestroy(world: World) {

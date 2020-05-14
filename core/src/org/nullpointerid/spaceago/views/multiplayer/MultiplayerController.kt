@@ -220,6 +220,7 @@ object MultiplayerController {
             register(KeyboardState::class.java)
             register(UpgradeState::class.java)
             register(ShootingEnemy::class.java)
+            register(RammingEnemy::class.java)
             register(EnemyBullet::class.java)
             register(UpgradeShopScreen.Upgrades::class.java)
             register(Player::class.java)
