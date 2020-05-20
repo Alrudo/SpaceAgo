@@ -3,14 +3,15 @@ package org.nullpointerid.spaceago.entities
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
-import com.sun.org.apache.xpath.internal.operations.Bool
 import org.nullpointerid.spaceago.SpaceShooter.GAME_ATLAS
 import org.nullpointerid.spaceago.World
 import org.nullpointerid.spaceago.assets.RegionNames
 import org.nullpointerid.spaceago.config.GameConfig
-import org.nullpointerid.spaceago.entities.collectables.Collectible
 import org.nullpointerid.spaceago.entities.projectile.Bullet
-import org.nullpointerid.spaceago.utils.*
+import org.nullpointerid.spaceago.utils.Audio
+import org.nullpointerid.spaceago.utils.KeyboardState
+import org.nullpointerid.spaceago.utils.UpgradeState
+import org.nullpointerid.spaceago.utils.XRectangle
 import org.nullpointerid.spaceago.utils.gdx.get
 import org.nullpointerid.spaceago.views.game.GameController
 import org.nullpointerid.spaceago.views.upgrade.UpgradeShopScreen
@@ -55,15 +56,18 @@ class Player(x: Float, y: Float, var name: String = "player1") : EntityBase(x, y
     }
 
     private var playerShootTimer = 0f
-    @Transient var keyboardState: KeyboardState = KeyboardState()
-    @Transient var upgradeState: UpgradeState = UpgradeState()
-    set(value) {
-        field = value
-        lives = maxHealth()
-    }
+    @Transient
+    var keyboardState: KeyboardState = KeyboardState()
+    @Transient
+    var upgradeState: UpgradeState = UpgradeState()
+        set(value) {
+            field = value
+            lives = maxHealth()
+        }
     var lives = GameConfig.LIVES_START + 0.2f * upgradeState.getLevel(UpgradeShopScreen.Upgrades.DURABILITY)
     var score = 0
     var ultimateWeapon = 2
+
     @Transient
     var laserBeam: LaserBeam? = null
 
@@ -75,23 +79,22 @@ class Player(x: Float, y: Float, var name: String = "player1") : EntityBase(x, y
 
     override fun update(delta: Float, world: World) {
         playerShootTimer += delta
-        if(isDead()){
+        if (isDead()) {
             x = -1f
             y = -1f
             return
         }
-        
+
         var xSpeed = 0f
         var ySpeed = 0f
 
         val speedBonus = upgradeState.getLevel(UpgradeShopScreen.Upgrades.MOVE_SPEED) * 0.4f
-        if (keyboardState.isPressed("moveRight")) xSpeed = (MAX_SPEED  + speedBonus) * delta
-        if (keyboardState.isPressed("moveLeft")) xSpeed = (-MAX_SPEED  - speedBonus) * delta
-        if (keyboardState.isPressed("moveUp")) ySpeed = (MAX_SPEED  + speedBonus)* delta
-        if (keyboardState.isPressed("moveDown")) ySpeed = (-MAX_SPEED  - speedBonus)* delta
+        if (keyboardState.isPressed("moveRight")) xSpeed = (MAX_SPEED + speedBonus) * delta
+        if (keyboardState.isPressed("moveLeft")) xSpeed = (-MAX_SPEED - speedBonus) * delta
+        if (keyboardState.isPressed("moveUp")) ySpeed = (MAX_SPEED + speedBonus) * delta
+        if (keyboardState.isPressed("moveDown")) ySpeed = (-MAX_SPEED - speedBonus) * delta
         if (keyboardState.isPressed("shoot") &&
-                playerShootTimer > (SHOOT_TIMER * Math.pow(0.8, upgradeState.getLevel(UpgradeShopScreen.Upgrades.ATTACK_SPEED).toDouble()).toFloat()))
-        {
+                playerShootTimer > (SHOOT_TIMER * Math.pow(0.8, upgradeState.getLevel(UpgradeShopScreen.Upgrades.ATTACK_SPEED).toDouble()).toFloat())) {
             shoot(delta, world)
         }
         if (keyboardState.isPressed("ultimate") && ultimateWeapon > 0 && (laserBeam == null || laserBeam!!.toRemove)) {
@@ -105,7 +108,7 @@ class Player(x: Float, y: Float, var name: String = "player1") : EntityBase(x, y
 
     private fun shoot(delta: Float, world: World) {
         playerShootTimer = 0f
-        when(upgradeState.getLevel(UpgradeShopScreen.Upgrades.SHOOTING)){
+        when (upgradeState.getLevel(UpgradeShopScreen.Upgrades.SHOOTING)) {
             0 -> {
                 world.entities.add(Bullet(x, y + BOUNDS_1_HEIGHT + 0.15f, this))
             }
@@ -163,7 +166,7 @@ class Player(x: Float, y: Float, var name: String = "player1") : EntityBase(x, y
 
     override fun onCollide(entity: EntityBase) {
         println(entity)
-        if(isDead()) return
+        if (isDead()) return
         when (entity) {
             is Destroyable -> {
                 score += entity.getScore()
@@ -183,7 +186,7 @@ class Player(x: Float, y: Float, var name: String = "player1") : EntityBase(x, y
         GameController.log.debug("PlayerHP: $lives")
     }
 
-    fun maxHealth(): Float{
+    fun maxHealth(): Float {
         return GameConfig.LIVES_START + 0.2f * upgradeState.getLevel(UpgradeShopScreen.Upgrades.DURABILITY)
     }
 
