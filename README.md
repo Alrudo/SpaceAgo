@@ -6,7 +6,7 @@ Goal of our project is to create some sort of _shoot 'em up_ game, which action 
 
 First of all clone this project to your computer and open it via Intellij or any other development environment you are using.
 
-After project was clones and gradle changes imported, you can run DesktopLauncher, that is located in `desktop` module, to launch game
+After project was cloned and gradle changes imported, you can run DesktopLauncher, that is located in `desktop` module, to launch game
 
 ### Building game
 
